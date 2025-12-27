@@ -7,15 +7,37 @@
     <script type="application/javascript" src="composeApp.js"></script>
     <style>
         body {
-            height:20px;
-            background: beige;
+            margin: 0;
+            padding: 0;
+            background: #0A0A0F;
+        }
+        .contact-banner {
+            background: linear-gradient(90deg, rgba(10, 10, 15, 0.95) 0%, rgba(18, 18, 26, 0.95) 50%, rgba(10, 10, 15, 0.95) 100%);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 12px 20px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #B0B0B0;
+            letter-spacing: 0.5px;
+        }
+        .contact-banner a {
+            color: #00FFFF;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+        }
+        .contact-banner a:hover {
+            color: #FF00FF;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
         }
     </style>
 </head>
 <body>
-    <p style ="text-align:center;">
-        <label>I live in Madrid but work remotely, you can contact me via <a href="mailto:alvaroquintanapalacios@gmail.com">email</a></label >
-    </p>
+    <div class="contact-banner">
+        I live in Madrid but work remotely, you can contact me via <a href="mailto:alvaroquintanapalacios@gmail.com">email</a>
+    </div>
 
     <canvas id="ComposeTarget"></canvas>
 </body>
