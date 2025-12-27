@@ -2,165 +2,86 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Alvaro Quintana</title>
     <style>
-        /* Reset crítico para Wasm/Canvas */
         *, *::before, *::after {
             box-sizing: border-box;
         }
 
-        html {
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            /* Prevenir el bounce en iOS Safari */
-            overscroll-behavior: none;
-        }
-
-        body {
+        html, body {
             margin: 0;
             padding: 0;
-            height: 100%;
             width: 100%;
+            height: 100%;
             overflow: hidden;
             background: #0A0A0F;
-            /* Prevenir selección de texto accidental en móvil */
-            -webkit-user-select: none;
-            user-select: none;
-            /* Forzar GPU para mejor rendimiento */
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
         }
 
         .contact-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
             background: linear-gradient(90deg, rgba(10, 10, 15, 0.98) 0%, rgba(25, 25, 35, 0.98) 50%, rgba(10, 10, 15, 0.98) 100%);
             border-bottom: 2px solid rgba(0, 255, 255, 0.4);
-            padding: 14px 20px;
+            padding: 12px 20px;
+            padding-top: max(12px, env(safe-area-inset-top));
             text-align: center;
             font-family: 'Courier New', monospace;
-            font-size: 15px;
+            font-size: 14px;
             color: #E0E0E0;
             letter-spacing: 0.5px;
-            text-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
-            /* Altura fija para calcular correctamente el canvas */
-            height: 50px;
-            flex-shrink: 0;
-            /* Soporte para safe areas en móviles con notch */
-            padding-top: max(14px, env(safe-area-inset-top));
         }
 
         .contact-banner a {
             color: #00FFFF;
             text-decoration: none;
             font-weight: bold;
-            transition: all 0.3s ease;
             text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
-        }
-
-        .contact-banner a:hover {
-            color: #FF00FF;
-            text-shadow: 0 0 12px rgba(255, 0, 255, 0.6);
         }
 
         @media (max-width: 600px) {
             .contact-banner {
-                font-size: 13px;
-                padding: 10px 12px;
+                font-size: 12px;
+                padding: 10px 15px;
                 padding-top: max(10px, env(safe-area-inset-top));
-                height: auto;
-                min-height: 45px;
-                color: #FFFFFF;
-                text-shadow: 0 0 3px rgba(0, 255, 255, 0.3);
             }
-            .contact-banner a {
-                text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
-            }
-        }
-
-        #app-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-            /* Usa dvh para altura dinámica del viewport (mejor para móviles) */
-            height: 100dvh;
         }
 
         #ComposeTarget {
+            position: fixed;
+            top: 45px; /* altura del banner */
+            left: 0;
+            width: 100vw !important;
+            height: calc(100vh - 45px) !important;
+            height: calc(100dvh - 45px) !important;
             display: block;
-            flex: 1;
-            width: 100%;
-            min-height: 0; /* Importante para flexbox */
-            /* Permitir scroll táctil dentro del canvas */
-            touch-action: pan-y pan-x;
-            /* Eliminar outline en focus */
-            outline: none;
-            /* Prevenir problemas de rendering */
+            touch-action: pan-y pan-x pinch-zoom;
             -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (max-width: 600px) {
+            #ComposeTarget {
+                top: 40px;
+                height: calc(100vh - 40px) !important;
+                height: calc(100dvh - 40px) !important;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="app-container">
-        <div class="contact-banner">
-            I live in Madrid but work remotely, you can contact me via <a href="mailto:alvaroquintanapalacios@gmail.com">email</a>
-        </div>
-        <canvas id="ComposeTarget"></canvas>
+    <div class="contact-banner">
+        I live in Madrid but work remotely, you can contact me via <a href="mailto:alvaroquintanapalacios@gmail.com">email</a>
     </div>
+    <canvas id="ComposeTarget"></canvas>
 
-    <script>
-        // Función para redimensionar el canvas correctamente
-        function resizeCanvas() {
-            const canvas = document.getElementById('ComposeTarget');
-            const container = document.getElementById('app-container');
-            const banner = document.querySelector('.contact-banner');
-
-            if (!canvas || !container || !banner) return;
-
-            // Obtener Device Pixel Ratio para pantallas de alta densidad
-            const dpr = window.devicePixelRatio || 1;
-
-            // Calcular dimensiones disponibles
-            const bannerHeight = banner.offsetHeight;
-            const availableWidth = container.clientWidth;
-            const availableHeight = container.clientHeight - bannerHeight;
-
-            // Establecer dimensiones CSS (lo que el usuario ve)
-            canvas.style.width = availableWidth + 'px';
-            canvas.style.height = availableHeight + 'px';
-
-            // Establecer dimensiones del buffer del canvas (resolución real)
-            // Esto es CRÍTICO para pantallas de alta densidad (móviles)
-            canvas.width = Math.floor(availableWidth * dpr);
-            canvas.height = Math.floor(availableHeight * dpr);
-        }
-
-        // Ejecutar resize cuando la página carga
-        window.addEventListener('load', resizeCanvas);
-
-        // Ejecutar resize cuando cambia el tamaño de ventana
-        window.addEventListener('resize', resizeCanvas);
-
-        // Ejecutar resize cuando cambia la orientación (móviles)
-        window.addEventListener('orientationchange', function() {
-            // Pequeño delay para que el navegador actualice las dimensiones
-            setTimeout(resizeCanvas, 100);
-        });
-
-        // Para iOS Safari: detectar cambios en el viewport
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', resizeCanvas);
-        }
-
-        // Resize inicial
-        resizeCanvas();
-    </script>
-
-    <!-- Cargar scripts de Compose después de configurar el canvas -->
     <script type="application/javascript" src="skiko.js"></script>
     <script type="application/javascript" src="composeApp.js"></script>
 </body>
