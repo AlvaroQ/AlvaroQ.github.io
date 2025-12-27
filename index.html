@@ -2,16 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Alvaro Quintana</title>
     <style>
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
-
         html, body {
             margin: 0;
             padding: 0;
@@ -19,8 +14,6 @@
             height: 100%;
             overflow: hidden;
             background: #0A0A0F;
-            overscroll-behavior: none;
-            -webkit-overflow-scrolling: touch;
         }
 
         .contact-banner {
@@ -32,47 +25,33 @@
             background: linear-gradient(90deg, rgba(10, 10, 15, 0.98) 0%, rgba(25, 25, 35, 0.98) 50%, rgba(10, 10, 15, 0.98) 100%);
             border-bottom: 2px solid rgba(0, 255, 255, 0.4);
             padding: 12px 20px;
-            padding-top: max(12px, env(safe-area-inset-top));
             text-align: center;
             font-family: 'Courier New', monospace;
             font-size: 14px;
             color: #E0E0E0;
-            letter-spacing: 0.5px;
         }
 
         .contact-banner a {
             color: #00FFFF;
             text-decoration: none;
             font-weight: bold;
-            text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
         }
 
         @media (max-width: 600px) {
             .contact-banner {
                 font-size: 12px;
                 padding: 10px 15px;
-                padding-top: max(10px, env(safe-area-inset-top));
             }
         }
 
         #ComposeTarget {
-            position: fixed;
-            top: 45px; /* altura del banner */
-            left: 0;
-            width: 100vw !important;
-            height: calc(100vh - 45px) !important;
-            height: calc(100dvh - 45px) !important;
-            display: block;
-            touch-action: pan-y pan-x pinch-zoom;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        @media (max-width: 600px) {
-            #ComposeTarget {
-                top: 40px;
-                height: calc(100vh - 40px) !important;
-                height: calc(100dvh - 40px) !important;
-            }
+            position: fixed !important;
+            top: 42px !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100% !important;
+            height: calc(100% - 42px) !important;
         }
     </style>
 </head>
@@ -81,8 +60,6 @@
         I live in Madrid but work remotely, you can contact me via <a href="mailto:alvaroquintanapalacios@gmail.com">email</a>
     </div>
     <canvas id="ComposeTarget"></canvas>
-
-    <script type="application/javascript" src="skiko.js"></script>
     <script type="application/javascript" src="composeApp.js"></script>
 </body>
 </html>
