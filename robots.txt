@@ -1,0 +1,11 @@
+# Robots.txt for alvaroquintana.dev
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://alvaroquintana.dev/sitemap.xml
+
+# Block build artifacts and internal paths
+Disallow: /build/
+Disallow: /.gradle/
+Disallow: /.idea/

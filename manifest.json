@@ -1,0 +1,23 @@
+{
+  "name": "Alvaro Quintana - Portfolio",
+  "short_name": "AQ Portfolio",
+  "description": "Senior Mobile Developer & AI Specialist. Expert in Kotlin Multiplatform and AI Agent Orchestration.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0A0F",
+  "theme_color": "#00FFFF",
+  "orientation": "any",
+  "lang": "es",
+  "categories": ["portfolio", "technology", "developer"],
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
