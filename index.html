@@ -130,5 +130,32 @@
         }
     </script>
     <script type="application/javascript" src="composeApp.js"></script>
+
+    <!-- Chat Widget -->
+    <script src="chat-widget.js"></script>
+    <script>
+        // Initialize chat widget after DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            var savedTheme = localStorage.getItem('portfolio_theme') || 'dark';
+            var savedLang = localStorage.getItem('portfolio_lang') || 'es';
+
+            window.chatWidget = new PortfolioChatWidget({
+                theme: savedTheme,
+                lang: savedLang
+            });
+        });
+
+        // Expose functions for Kotlin interop to sync theme/lang
+        window.updateChatWidgetTheme = function(theme) {
+            if (window.chatWidget) {
+                window.chatWidget.setTheme(theme);
+            }
+        };
+        window.updateChatWidgetLang = function(lang) {
+            if (window.chatWidget) {
+                window.chatWidget.setLang(lang);
+            }
+        };
+    </script>
 </body>
 </html>
