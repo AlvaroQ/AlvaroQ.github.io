@@ -6,10 +6,15 @@
 class ProjectDetailModal {
   constructor() {
     this.isOpen = false;
+    this.lightboxOpen = false;
     this.theme = 'dark';
     this.lang = 'es';
     this.projectData = null;
     this.accentColor = '#FFFF00'; // Default yellow
+
+    // Bind popstate handler for browser back button
+    this.popstateHandler = this.handlePopstate.bind(this);
+    window.addEventListener('popstate', this.popstateHandler);
 
     this.translations = {
       es: {
@@ -64,6 +69,8 @@ class ProjectDetailModal {
         align-items: center;
         justify-content: center;
         padding: 20px;
+        padding-top: max(20px, env(safe-area-inset-top, 20px));
+        padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
         box-sizing: border-box;
       }
 
@@ -95,6 +102,7 @@ class ProjectDetailModal {
         width: 100%;
         max-width: 800px;
         max-height: 90vh;
+        max-height: 90dvh; /* Dynamic viewport height - respects mobile browser UI */
         border-radius: 16px;
         overflow: hidden;
         display: flex;
@@ -492,8 +500,17 @@ class ProjectDetailModal {
 
       /* Responsive */
       @media (max-width: 600px) {
+        #project-modal-overlay {
+          padding: 8px;
+          padding-top: max(8px, env(safe-area-inset-top, 8px));
+          padding-bottom: max(8px, env(safe-area-inset-bottom, 8px));
+          align-items: flex-start;
+        }
+
         #project-modal-content {
-          max-height: 95vh;
+          max-height: 92vh;
+          max-height: 92dvh;
+          border-radius: 12px;
         }
 
         .modal-header {
@@ -531,6 +548,15 @@ class ProjectDetailModal {
     }
   }
 
+  // Handle browser back button
+  handlePopstate(event) {
+    if (this.lightboxOpen) {
+      this.closeLightbox(false); // Don't manipulate history, we're handling popstate
+    } else if (this.isOpen) {
+      this.close(false); // Don't manipulate history, we're handling popstate
+    }
+  }
+
   open(projectData) {
     this.projectData = projectData;
 
@@ -547,16 +573,24 @@ class ProjectDetailModal {
     overlay.classList.add('open');
     this.isOpen = true;
 
+    // Push state for back button support
+    history.pushState({ projectModal: true }, '');
+
     // Prevent body scroll
     document.body.style.overflow = 'hidden';
   }
 
-  close() {
+  close(updateHistory = true) {
     const overlay = document.getElementById('project-modal-overlay');
     if (overlay) {
       overlay.classList.remove('open');
     }
     this.isOpen = false;
+
+    // Go back in history if we pushed a state (not when handling popstate)
+    if (updateHistory) {
+      history.back();
+    }
 
     // Restore body scroll
     document.body.style.overflow = '';
@@ -719,6 +753,10 @@ class ProjectDetailModal {
     `;
 
     document.body.appendChild(lightbox);
+    this.lightboxOpen = true;
+
+    // Push state for back button support
+    history.pushState({ lightbox: true }, '');
 
     // Close on click anywhere
     lightbox.addEventListener('click', () => this.closeLightbox());
@@ -727,10 +765,16 @@ class ProjectDetailModal {
     lightbox.querySelector('img').addEventListener('click', (e) => e.stopPropagation());
   }
 
-  closeLightbox() {
+  closeLightbox(updateHistory = true) {
     const lightbox = document.getElementById('screenshot-lightbox');
     if (lightbox) {
       lightbox.remove();
+    }
+    this.lightboxOpen = false;
+
+    // Go back in history if we pushed a state (not when handling popstate)
+    if (updateHistory) {
+      history.back();
     }
   }
 
