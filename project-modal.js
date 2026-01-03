@@ -12,6 +12,16 @@ class ProjectDetailModal {
     this.projectData = null;
     this.accentColor = '#FFFF00'; // Default yellow
 
+    // Lightbox navigation state
+    this.screenshots = [];
+    this.currentImageIndex = 0;
+
+    // Focus trap state
+    this.previouslyFocusedElement = null;
+
+    // Flag to prevent modal close when lightbox is closing
+    this.isClosingLightbox = false;
+
     // Bind popstate handler for browser back button
     this.popstateHandler = this.handlePopstate.bind(this);
     window.addEventListener('popstate', this.popstateHandler);
@@ -28,7 +38,11 @@ class ProjectDetailModal {
         videoDemo: 'Video Demo',
         videoPlaceholder: 'Grabacion en progreso...',
         close: 'Cerrar',
-        openDemo: 'Abrir Demo'
+        openDemo: 'Abrir Demo',
+        swipeToClose: 'Desliza para cerrar',
+        previousImage: 'Imagen anterior',
+        nextImage: 'Siguiente imagen',
+        imageOf: 'de'
       },
       en: {
         featured: 'FEATURED',
@@ -41,7 +55,11 @@ class ProjectDetailModal {
         videoDemo: 'Video Demo',
         videoPlaceholder: 'Recording in progress...',
         close: 'Close',
-        openDemo: 'Open Demo'
+        openDemo: 'Open Demo',
+        swipeToClose: 'Swipe to close',
+        previousImage: 'Previous image',
+        nextImage: 'Next image',
+        imageOf: 'of'
       }
     };
 
@@ -327,14 +345,50 @@ class ProjectDetailModal {
         }
       }
 
+      .modal-screenshot-container {
+        position: relative;
+        width: 100%;
+        min-height: 180px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid var(--accent-color-border);
+      }
+
+      .modal-screenshot-skeleton {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg,
+          var(--accent-color-dim) 0%,
+          rgba(255,255,255,0.05) 50%,
+          var(--accent-color-dim) 100%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+      }
+
+      @keyframes shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+
       .modal-screenshot-img {
         width: 100%;
         max-height: 250px;
         object-fit: contain;
         border-radius: 8px;
-        border: 1px solid var(--accent-color-border);
         cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition: transform 0.2s, box-shadow 0.2s, opacity 0.3s;
+        opacity: 0;
+      }
+
+      .modal-screenshot-img.loaded {
+        opacity: 1;
+      }
+
+      .modal-screenshot-container:has(.modal-screenshot-img.loaded) .modal-screenshot-skeleton {
+        display: none;
       }
 
       .modal-screenshot-img:hover {
@@ -454,16 +508,48 @@ class ProjectDetailModal {
         background: rgba(0, 0, 0, 0.95);
         backdrop-filter: blur(10px);
         cursor: zoom-out;
-        animation: lightboxFadeIn 0.2s ease;
+        transition: background 0.2s ease;
       }
 
       #screenshot-lightbox.open {
         display: flex;
+        animation: lightboxFadeIn 0.25s ease;
+      }
+
+      #screenshot-lightbox.closing {
+        animation: lightboxFadeOut 0.2s ease forwards;
       }
 
       @keyframes lightboxFadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
+      }
+
+      @keyframes lightboxFadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+      }
+
+      #screenshot-lightbox .lightbox-img-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.1s ease-out, opacity 0.1s ease-out;
+        touch-action: none;
+        user-select: none;
+      }
+
+      #screenshot-lightbox .lightbox-img-container.dragging {
+        transition: none;
+      }
+
+      #screenshot-lightbox .lightbox-img-container.zooming {
+        transition: none;
+      }
+
+      #screenshot-lightbox .lightbox-img-container.zoomed {
+        cursor: move;
       }
 
       #screenshot-lightbox img {
@@ -472,12 +558,61 @@ class ProjectDetailModal {
         object-fit: contain;
         border-radius: 8px;
         box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
-        animation: lightboxZoomIn 0.2s ease;
+        pointer-events: none;
+        transform-origin: center center;
+      }
+
+      #screenshot-lightbox.open .lightbox-img-container {
+        animation: lightboxZoomIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      #screenshot-lightbox.closing .lightbox-img-container {
+        animation: lightboxZoomOut 0.2s ease forwards;
       }
 
       @keyframes lightboxZoomIn {
         from { transform: scale(0.9); opacity: 0; }
         to { transform: scale(1); opacity: 1; }
+      }
+
+      @keyframes lightboxZoomOut {
+        from { transform: scale(1); opacity: 1; }
+        to { transform: scale(0.9); opacity: 0; }
+      }
+
+      #screenshot-lightbox .swipe-hint {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 12px;
+        animation: swipeHintPulse 2s ease-in-out infinite;
+      }
+
+      .swipe-hint-arrow {
+        font-size: 20px;
+        animation: swipeArrowBounce 1.5s ease-in-out infinite;
+      }
+
+      @keyframes swipeHintPulse {
+        0%, 100% { opacity: 0.6; }
+        50% { opacity: 1; }
+      }
+
+      @keyframes swipeArrowBounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(5px); }
+      }
+
+      @media (min-width: 601px) {
+        #screenshot-lightbox .swipe-hint {
+          display: none;
+        }
       }
 
       #screenshot-lightbox .lightbox-close {
@@ -496,6 +631,78 @@ class ProjectDetailModal {
       #screenshot-lightbox .lightbox-close:hover {
         opacity: 1;
         transform: scale(1.1);
+      }
+
+      /* Lightbox navigation buttons */
+      #screenshot-lightbox .lightbox-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        font-size: 24px;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s, background 0.2s, transform 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+      }
+
+      #screenshot-lightbox .lightbox-nav:hover {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.7);
+      }
+
+      #screenshot-lightbox .lightbox-nav:active {
+        transform: translateY(-50%) scale(0.95);
+      }
+
+      #screenshot-lightbox .lightbox-nav:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      #screenshot-lightbox .lightbox-nav.prev {
+        left: 20px;
+      }
+
+      #screenshot-lightbox .lightbox-nav.next {
+        right: 20px;
+      }
+
+      #screenshot-lightbox .lightbox-indicator {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.6);
+        padding: 6px 14px;
+        border-radius: 20px;
+        color: white;
+        font-size: 14px;
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      @media (max-width: 600px) {
+        #screenshot-lightbox .lightbox-nav {
+          width: 40px;
+          height: 40px;
+          font-size: 20px;
+        }
+
+        #screenshot-lightbox .lightbox-nav.prev {
+          left: 10px;
+        }
+
+        #screenshot-lightbox .lightbox-nav.next {
+          right: 10px;
+        }
       }
 
       /* Responsive */
@@ -552,26 +759,41 @@ class ProjectDetailModal {
   handlePopstate(event) {
     if (this.lightboxOpen) {
       this.closeLightbox(false); // Don't manipulate history, we're handling popstate
-    } else if (this.isOpen) {
+    } else if (this.isOpen && !this.isClosingLightbox) {
+      // Only close modal if we're not in the middle of closing the lightbox
       this.close(false); // Don't manipulate history, we're handling popstate
     }
+    // Reset the flag after handling
+    this.isClosingLightbox = false;
   }
 
   open(projectData) {
     this.projectData = projectData;
+
+    // Store screenshots for lightbox navigation
+    this.screenshots = projectData.screenshots || [];
 
     // Set accent color from project data
     if (projectData.accentColor) {
       this.accentColor = projectData.accentColor;
     }
 
+    // Save currently focused element for focus trap
+    this.previouslyFocusedElement = document.activeElement;
+
     this.render();
     this.bindEvents();
     this.updateAccentColor(this.accentColor);
+    this.setupLazyLoadingImages();
+    this.setupFocusTrap();
 
     const overlay = document.getElementById('project-modal-overlay');
     overlay.classList.add('open');
     this.isOpen = true;
+
+    // Focus the close button for accessibility
+    const closeBtn = document.getElementById('project-modal-close');
+    if (closeBtn) closeBtn.focus();
 
     // Push state for back button support
     history.pushState({ projectModal: true }, '');
@@ -581,11 +803,20 @@ class ProjectDetailModal {
   }
 
   close(updateHistory = true) {
+    this.cleanupLazyLoading();
+    this.cleanupFocusTrap();
+
     const overlay = document.getElementById('project-modal-overlay');
     if (overlay) {
       overlay.classList.remove('open');
     }
     this.isOpen = false;
+
+    // Restore focus to previously focused element
+    if (this.previouslyFocusedElement) {
+      this.previouslyFocusedElement.focus();
+      this.previouslyFocusedElement = null;
+    }
 
     // Go back in history if we pushed a state (not when handling popstate)
     if (updateHistory) {
@@ -686,9 +917,98 @@ class ProjectDetailModal {
 
   renderScreenshots(screenshots) {
     if (!screenshots || screenshots.length === 0) return '';
-    return screenshots.map(src =>
-      `<img src="${src}" alt="Screenshot" class="modal-screenshot-img" loading="lazy" onclick="window.projectModal.openLightbox('${src}')" />`
-    ).join('');
+    return screenshots.map((src, index) => {
+      // First image loads immediately (critical), rest are lazy loaded
+      const isFirst = index === 0;
+      const imgAttrs = isFirst
+        ? `src="${src}" onload="this.classList.add('loaded')"`
+        : `data-src="${src}"`;
+      return `<div class="modal-screenshot-container">
+        <div class="modal-screenshot-skeleton"></div>
+        <img ${imgAttrs} alt="Screenshot ${index + 1}" class="modal-screenshot-img" onclick="window.projectModal.openLightbox('${src}')" />
+      </div>`;
+    }).join('');
+  }
+
+  setupLazyLoadingImages() {
+    const modalBody = document.querySelector('.modal-body');
+    if (!modalBody) return;
+
+    const images = document.querySelectorAll('.modal-screenshot-img[data-src]');
+    if (images.length === 0) return;
+
+    // Use IntersectionObserver for lazy loading within modal scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          const src = img.dataset.src;
+          if (src) {
+            img.src = src;
+            img.onload = () => {
+              img.classList.add('loaded');
+            };
+            img.onerror = () => {
+              img.classList.add('loaded'); // Hide skeleton even on error
+            };
+            delete img.dataset.src;
+            observer.unobserve(img);
+          }
+        }
+      });
+    }, {
+      root: modalBody, // Observe within modal scroll container
+      rootMargin: '100px', // Load 100px before visible
+      threshold: 0
+    });
+
+    images.forEach(img => observer.observe(img));
+    this.imageObserver = observer;
+  }
+
+  cleanupLazyLoading() {
+    if (this.imageObserver) {
+      this.imageObserver.disconnect();
+      this.imageObserver = null;
+    }
+  }
+
+  setupFocusTrap() {
+    const overlay = document.getElementById('project-modal-overlay');
+    if (!overlay) return;
+
+    this.focusTrapHandler = (e) => {
+      if (e.key !== 'Tab') return;
+
+      const focusableElements = overlay.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) {
+        // Shift + Tab: if on first element, go to last
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        // Tab: if on last element, go to first
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', this.focusTrapHandler);
+  }
+
+  cleanupFocusTrap() {
+    if (this.focusTrapHandler) {
+      document.removeEventListener('keydown', this.focusTrapHandler);
+      this.focusTrapHandler = null;
+    }
   }
 
   bindEvents() {
@@ -739,17 +1059,35 @@ class ProjectDetailModal {
     return formatted;
   }
 
-  openLightbox(src) {
+  openLightbox(src, clickedElement = null) {
+    // Find current image index
+    this.currentImageIndex = this.screenshots.indexOf(src);
+    if (this.currentImageIndex === -1) this.currentImageIndex = 0;
+
     // Remove existing lightbox if any
     const existing = document.getElementById('screenshot-lightbox');
     if (existing) existing.remove();
 
+    const hasMultipleImages = this.screenshots.length > 1;
     const lightbox = document.createElement('div');
     lightbox.id = 'screenshot-lightbox';
     lightbox.className = 'open';
     lightbox.innerHTML = `
-      <button class="lightbox-close" aria-label="Close">&times;</button>
-      <img src="${src}" alt="Screenshot expanded" />
+      <button class="lightbox-close" aria-label="${this.t.close}">&times;</button>
+      ${hasMultipleImages ? `
+        <button class="lightbox-nav prev" aria-label="${this.t.previousImage}">&#8249;</button>
+        <button class="lightbox-nav next" aria-label="${this.t.nextImage}">&#8250;</button>
+        <div class="lightbox-indicator">
+          <span class="current-index">${this.currentImageIndex + 1}</span> ${this.t.imageOf} ${this.screenshots.length}
+        </div>
+      ` : ''}
+      <div class="lightbox-img-container">
+        <img src="${src}" alt="Screenshot expanded" />
+      </div>
+      <div class="swipe-hint">
+        <span class="swipe-hint-arrow">↓</span>
+        <span>${this.t.swipeToClose}</span>
+      </div>
     `;
 
     document.body.appendChild(lightbox);
@@ -758,22 +1096,390 @@ class ProjectDetailModal {
     // Push state for back button support
     history.pushState({ lightbox: true }, '');
 
-    // Close on click anywhere
-    lightbox.addEventListener('click', () => this.closeLightbox());
+    const imgContainer = lightbox.querySelector('.lightbox-img-container');
 
-    // Prevent closing when clicking on image
-    lightbox.querySelector('img').addEventListener('click', (e) => e.stopPropagation());
+    // Setup navigation buttons
+    if (hasMultipleImages) {
+      this.setupLightboxNavigation(lightbox);
+      this.updateNavigationState(lightbox);
+      this.preloadAdjacentImages();
+    }
+
+    // Setup keyboard navigation
+    this.setupLightboxKeyboard(lightbox);
+
+    // Setup swipe to close (mobile)
+    this.setupSwipeToClose(lightbox, imgContainer);
+
+    // Setup pinch-to-zoom (mobile)
+    this.setupPinchZoom(lightbox, imgContainer);
+
+    // Close on click on backdrop (not on image container)
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox || e.target.classList.contains('lightbox-close')) {
+        this.closeLightbox();
+      }
+    });
+
+    // Close button
+    lightbox.querySelector('.lightbox-close').addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.closeLightbox();
+    });
+
+    // Prevent closing when clicking on image container
+    imgContainer.addEventListener('click', (e) => e.stopPropagation());
+  }
+
+  setupLightboxNavigation(lightbox) {
+    const prevBtn = lightbox.querySelector('.lightbox-nav.prev');
+    const nextBtn = lightbox.querySelector('.lightbox-nav.next');
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.navigateLightbox(-1);
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.navigateLightbox(1);
+      });
+    }
+  }
+
+  setupLightboxKeyboard(lightbox) {
+    this.lightboxKeyHandler = (e) => {
+      if (!this.lightboxOpen) return;
+
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        this.navigateLightbox(-1);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        this.navigateLightbox(1);
+      }
+    };
+    document.addEventListener('keydown', this.lightboxKeyHandler);
+  }
+
+  navigateLightbox(direction) {
+    if (this.screenshots.length <= 1) return;
+
+    const newIndex = this.currentImageIndex + direction;
+    if (newIndex < 0 || newIndex >= this.screenshots.length) return;
+
+    this.currentImageIndex = newIndex;
+    const lightbox = document.getElementById('screenshot-lightbox');
+    if (!lightbox) return;
+
+    // Update image with fade transition
+    const img = lightbox.querySelector('.lightbox-img-container img');
+    const imgContainer = lightbox.querySelector('.lightbox-img-container');
+
+    imgContainer.style.opacity = '0';
+    imgContainer.style.transform = `translateX(${direction * 20}px)`;
+
+    setTimeout(() => {
+      img.src = this.screenshots[this.currentImageIndex];
+      imgContainer.style.transform = `translateX(${-direction * 20}px)`;
+
+      requestAnimationFrame(() => {
+        imgContainer.style.opacity = '1';
+        imgContainer.style.transform = 'translateX(0)';
+      });
+    }, 100);
+
+    // Update indicator
+    const indicator = lightbox.querySelector('.current-index');
+    if (indicator) {
+      indicator.textContent = this.currentImageIndex + 1;
+    }
+
+    this.updateNavigationState(lightbox);
+    this.preloadAdjacentImages();
+  }
+
+  updateNavigationState(lightbox) {
+    const prevBtn = lightbox.querySelector('.lightbox-nav.prev');
+    const nextBtn = lightbox.querySelector('.lightbox-nav.next');
+
+    if (prevBtn) {
+      prevBtn.disabled = this.currentImageIndex === 0;
+    }
+    if (nextBtn) {
+      nextBtn.disabled = this.currentImageIndex === this.screenshots.length - 1;
+    }
+  }
+
+  preloadAdjacentImages() {
+    // Preload previous and next images
+    const indicesToPreload = [
+      this.currentImageIndex - 1,
+      this.currentImageIndex + 1
+    ].filter(i => i >= 0 && i < this.screenshots.length);
+
+    indicesToPreload.forEach(index => {
+      const img = new Image();
+      img.src = this.screenshots[index];
+    });
+  }
+
+  setupSwipeToClose(lightbox, imgContainer) {
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+
+    const onTouchStart = (e) => {
+      // Don't start swipe if using 2 fingers (pinch) or if zoomed
+      if (e.touches.length > 1 || imgContainer.classList.contains('zoomed')) {
+        isDragging = false;
+        return;
+      }
+      startY = e.touches[0].clientY;
+      currentY = startY;
+      isDragging = true;
+      imgContainer.classList.add('dragging');
+    };
+
+    const onTouchMove = (e) => {
+      // Don't interfere when zoomed - let pinchZoom handle it
+      if (imgContainer.classList.contains('zoomed')) {
+        return;
+      }
+      // Cancel swipe if second finger added (pinch starting)
+      if (e.touches.length > 1) {
+        if (isDragging) {
+          // Only reset if we were actually dragging
+          isDragging = false;
+          imgContainer.classList.remove('dragging');
+          imgContainer.style.transform = '';
+          imgContainer.style.opacity = '';
+          lightbox.style.background = '';
+        }
+        return;
+      }
+      if (!isDragging) return;
+      currentY = e.touches[0].clientY;
+      const deltaY = currentY - startY;
+
+      // Only allow dragging down
+      if (deltaY > 0) {
+        const progress = Math.min(deltaY / 200, 1);
+        imgContainer.style.transform = `translateY(${deltaY}px) scale(${1 - progress * 0.1})`;
+        imgContainer.style.opacity = 1 - progress * 0.5;
+        lightbox.style.background = `rgba(0, 0, 0, ${0.95 - progress * 0.4})`;
+      }
+    };
+
+    const onTouchEnd = () => {
+      if (!isDragging) return;
+      isDragging = false;
+      imgContainer.classList.remove('dragging');
+
+      const deltaY = currentY - startY;
+
+      // If dragged more than 100px down, close
+      if (deltaY > 100) {
+        this.closeLightbox();
+      } else {
+        // Reset position
+        imgContainer.style.transform = '';
+        imgContainer.style.opacity = '';
+        lightbox.style.background = '';
+      }
+    };
+
+    imgContainer.addEventListener('touchstart', onTouchStart, { passive: true });
+    imgContainer.addEventListener('touchmove', onTouchMove, { passive: true });
+    imgContainer.addEventListener('touchend', onTouchEnd);
+    imgContainer.addEventListener('touchcancel', onTouchEnd);
+  }
+
+  setupPinchZoom(lightbox, imgContainer) {
+    const img = imgContainer.querySelector('img');
+    let initialDistance = 0;
+    let currentScale = 1;
+    let startScale = 1;
+    let translateX = 0;
+    let translateY = 0;
+    let startX = 0;
+    let startY = 0;
+    let isPinching = false;
+    let isPanning = false;
+    // Store base image size (without zoom) for pan limits
+    let baseWidth = 0;
+    let baseHeight = 0;
+
+    const getDistance = (touches) => {
+      const dx = touches[0].clientX - touches[1].clientX;
+      const dy = touches[0].clientY - touches[1].clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    };
+
+    const getCenter = (touches) => {
+      return {
+        x: (touches[0].clientX + touches[1].clientX) / 2,
+        y: (touches[0].clientY + touches[1].clientY) / 2
+      };
+    };
+
+    const updateTransform = () => {
+      img.style.transform = `scale(${currentScale}) translate(${translateX / currentScale}px, ${translateY / currentScale}px)`;
+    };
+
+    const onTouchStart = (e) => {
+      if (e.touches.length === 2) {
+        // Pinch start - capture base size before any zoom
+        if (currentScale === 1) {
+          const rect = img.getBoundingClientRect();
+          baseWidth = rect.width;
+          baseHeight = rect.height;
+        }
+        isPinching = true;
+        isPanning = false;
+        initialDistance = getDistance(e.touches);
+        startScale = currentScale;
+        imgContainer.classList.add('zooming');
+        imgContainer.classList.remove('dragging');
+      } else if (e.touches.length === 1 && currentScale > 1) {
+        // Pan start (only when zoomed)
+        isPanning = true;
+        startX = e.touches[0].clientX - translateX;
+        startY = e.touches[0].clientY - translateY;
+        imgContainer.classList.add('zooming');
+      }
+    };
+
+    const onTouchMove = (e) => {
+      if (isPinching && e.touches.length === 2) {
+        e.preventDefault();
+        const distance = getDistance(e.touches);
+        const scale = (distance / initialDistance) * startScale;
+        currentScale = Math.min(Math.max(scale, 1), 4); // Limit zoom 1x-4x
+
+        if (currentScale === 1) {
+          translateX = 0;
+          translateY = 0;
+          imgContainer.classList.remove('zoomed');
+        } else {
+          imgContainer.classList.add('zoomed');
+        }
+
+        updateTransform();
+      } else if (isPanning && e.touches.length === 1 && currentScale > 1) {
+        e.preventDefault();
+        translateX = e.touches[0].clientX - startX;
+        translateY = e.touches[0].clientY - startY;
+
+        // Limit panning based on how much the scaled image exceeds viewport
+        // The extra visible area on each side is: (scaledSize - baseSize) / 2
+        const extraX = (baseWidth * currentScale - baseWidth) / 2;
+        const extraY = (baseHeight * currentScale - baseHeight) / 2;
+        // Divide by currentScale because translate is applied after scale
+        const maxPanX = extraX / currentScale;
+        const maxPanY = extraY / currentScale;
+
+        translateX = Math.min(Math.max(translateX, -maxPanX), maxPanX);
+        translateY = Math.min(Math.max(translateY, -maxPanY), maxPanY);
+
+        updateTransform();
+      }
+    };
+
+    const onTouchEnd = (e) => {
+      if (e.touches.length < 2) {
+        isPinching = false;
+      }
+      if (e.touches.length === 0) {
+        isPanning = false;
+        imgContainer.classList.remove('zooming');
+
+        // Reset if zoomed out completely
+        if (currentScale <= 1) {
+          currentScale = 1;
+          translateX = 0;
+          translateY = 0;
+          img.style.transform = '';
+          imgContainer.classList.remove('zoomed');
+        }
+      }
+    };
+
+    // Double tap to zoom
+    let lastTap = 0;
+    const onDoubleTap = (e) => {
+      const now = Date.now();
+      if (now - lastTap < 300) {
+        e.preventDefault();
+        if (currentScale > 1) {
+          // Reset zoom
+          currentScale = 1;
+          translateX = 0;
+          translateY = 0;
+          img.style.transform = '';
+          imgContainer.classList.remove('zoomed');
+        } else {
+          // Capture base size before zoom
+          const rect = img.getBoundingClientRect();
+          baseWidth = rect.width;
+          baseHeight = rect.height;
+          // Zoom to 2x
+          currentScale = 2;
+          imgContainer.classList.add('zoomed');
+          updateTransform();
+        }
+      }
+      lastTap = now;
+    };
+
+    imgContainer.addEventListener('touchstart', onTouchStart, { passive: false });
+    imgContainer.addEventListener('touchmove', onTouchMove, { passive: false });
+    imgContainer.addEventListener('touchend', onTouchEnd);
+    imgContainer.addEventListener('touchcancel', onTouchEnd);
+    imgContainer.addEventListener('click', onDoubleTap);
+
+    // Store cleanup function
+    this.pinchZoomCleanup = () => {
+      imgContainer.removeEventListener('touchstart', onTouchStart);
+      imgContainer.removeEventListener('touchmove', onTouchMove);
+      imgContainer.removeEventListener('touchend', onTouchEnd);
+      imgContainer.removeEventListener('touchcancel', onTouchEnd);
+      imgContainer.removeEventListener('click', onDoubleTap);
+    };
   }
 
   closeLightbox(updateHistory = true) {
+    // Clean up pinch zoom
+    if (this.pinchZoomCleanup) {
+      this.pinchZoomCleanup();
+      this.pinchZoomCleanup = null;
+    }
+    // Clean up keyboard handler
+    if (this.lightboxKeyHandler) {
+      document.removeEventListener('keydown', this.lightboxKeyHandler);
+      this.lightboxKeyHandler = null;
+    }
+
     const lightbox = document.getElementById('screenshot-lightbox');
     if (lightbox) {
-      lightbox.remove();
+      // Add closing animation
+      lightbox.classList.remove('open');
+      lightbox.classList.add('closing');
+
+      // Remove after animation completes
+      setTimeout(() => {
+        lightbox.remove();
+      }, 200);
     }
     this.lightboxOpen = false;
 
     // Go back in history if we pushed a state (not when handling popstate)
     if (updateHistory) {
+      // Set flag to prevent modal from closing when popstate fires
+      this.isClosingLightbox = true;
       history.back();
     }
   }
