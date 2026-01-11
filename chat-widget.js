@@ -2,11 +2,20 @@
  * Portfolio Chat Widget - Floating Overlay Version
  * Connects to Cloudflare Worker RAG API
  */
+
+// Configuration constants
+const CHAT_CONFIG = {
+  API_URL: 'https://portfolio-chatbot.alvaroq-dev.workers.dev',
+  CURSOR_BLINK_INTERVAL: 500,   // Cursor blink interval (ms)
+  DEFAULT_LANG: 'es',
+  DEFAULT_THEME: 'dark'
+};
+
 class PortfolioChatWidget {
   constructor(options = {}) {
-    this.apiUrl = options.apiUrl || 'https://portfolio-chatbot.alvaroq-dev.workers.dev';
-    this.lang = options.lang || 'es';
-    this.theme = options.theme || 'dark';
+    this.apiUrl = options.apiUrl || CHAT_CONFIG.API_URL;
+    this.lang = options.lang || CHAT_CONFIG.DEFAULT_LANG;
+    this.theme = options.theme || CHAT_CONFIG.DEFAULT_THEME;
     this.isOpen = false;
     this.hasShownSuggestions = false;
 
@@ -395,6 +404,38 @@ class PortfolioChatWidget {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && this.isOpen) this.close();
     });
+
+    // Setup focus trap for accessibility
+    this.setupFocusTrap();
+  }
+
+  setupFocusTrap() {
+    const panel = document.getElementById('chat-panel');
+    if (!panel) return;
+
+    panel.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab' || !this.isOpen) return;
+
+      const focusableElements = panel.querySelectorAll(
+        'button, input, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) {
+        // Shift + Tab: if on first element, go to last
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        // Tab: if on last element, go to first
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    });
   }
 
   toggle() {
@@ -466,7 +507,15 @@ class PortfolioChatWidget {
         body: JSON.stringify({ question, lang: this.lang })
       });
 
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        console.error('[ChatWidget] Response parse error:', parseError);
+        this.hideTyping();
+        this.addMessage('assistant', this.t.error);
+        return;
+      }
       this.hideTyping();
       this.addMessage('assistant', data.answer || this.t.error);
     } catch (error) {

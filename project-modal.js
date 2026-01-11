@@ -3,6 +3,20 @@
  * Following the pattern of chat-widget.js
  * Supports dynamic accent colors per project
  */
+
+// Configuration constants
+const MODAL_CONFIG = {
+  SWIPE_CLOSE_THRESHOLD: 100,    // Minimum swipe distance (px) to trigger close
+  SWIPE_OPACITY_DIVISOR: 200,    // Divisor for calculating swipe opacity
+  LIGHTBOX_NAV_OFFSET: 20,       // Transition offset for navigation (px)
+  LIGHTBOX_NAV_DELAY: 100,       // Delay between navigation transitions (ms)
+  CLOSING_ANIMATION_DURATION: 200, // Modal closing animation duration (ms)
+  LAZY_LOAD_MARGIN: '100px',     // IntersectionObserver margin for lazy loading
+  ZOOM_MIN: 1,                   // Minimum zoom level
+  ZOOM_MAX: 4,                   // Maximum zoom level
+  DOUBLE_TAP_DELAY: 300          // Max time between taps for double-tap (ms)
+};
+
 class ProjectDetailModal {
   constructor() {
     this.isOpen = false;
@@ -15,6 +29,9 @@ class ProjectDetailModal {
     // Lightbox navigation state
     this.screenshots = [];
     this.currentImageIndex = 0;
+
+    // Image preload cache to avoid redundant preloading
+    this.preloadedImages = new Set();
 
     // Focus trap state
     this.previouslyFocusedElement = null;
@@ -136,14 +153,20 @@ class ProjectDetailModal {
 
       #project-modal-overlay.dark #project-modal-content {
         background: #12121A;
-        border: 1px solid var(--accent-color-border);
         box-shadow: 0 0 40px var(--accent-color-dim);
       }
 
       #project-modal-overlay.light #project-modal-content {
         background: #FFFFFF;
-        border: 1px solid var(--accent-color-border);
         box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Border only on mobile */
+      @media (max-width: 600px) {
+        #project-modal-overlay.dark #project-modal-content,
+        #project-modal-overlay.light #project-modal-content {
+          border: 1px solid var(--accent-color-border);
+        }
       }
 
       .modal-header {
@@ -255,20 +278,12 @@ class ProjectDetailModal {
         cursor: pointer;
         padding: 0;
         line-height: 1;
-        transition: transform 0.2s, opacity 0.2s;
-        opacity: 0.7;
-      }
-
-      #project-modal-overlay.dark .modal-close {
-        color: #E0E0E0;
-      }
-
-      #project-modal-overlay.light .modal-close {
-        color: #333333;
+        transition: transform 0.2s, color 0.2s;
+        color: var(--accent-color-border);
       }
 
       .modal-close:hover {
-        opacity: 1;
+        color: var(--accent-color);
         transform: scale(1.1);
       }
 
@@ -279,6 +294,28 @@ class ProjectDetailModal {
         display: flex;
         flex-direction: column;
         gap: 24px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--accent-color-border) transparent;
+      }
+
+      /* Custom scrollbar for Webkit browsers */
+      .modal-body::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .modal-body::-webkit-scrollbar-track {
+        background: transparent;
+        border-radius: 4px;
+      }
+
+      .modal-body::-webkit-scrollbar-thumb {
+        background: var(--accent-color-border);
+        border-radius: 4px;
+        transition: background 0.2s;
+      }
+
+      .modal-body::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-color);
       }
 
       .modal-section {
@@ -351,7 +388,6 @@ class ProjectDetailModal {
         min-height: 180px;
         border-radius: 8px;
         overflow: hidden;
-        border: 1px solid var(--accent-color-border);
       }
 
       .modal-screenshot-skeleton {
@@ -920,14 +956,27 @@ class ProjectDetailModal {
     return screenshots.map((src, index) => {
       // First image loads immediately (critical), rest are lazy loaded
       const isFirst = index === 0;
+      // Escape src for safe use in onclick handler
+      const safeSrc = this.escapeAttr(src);
       const imgAttrs = isFirst
-        ? `src="${src}" onload="this.classList.add('loaded')"`
-        : `data-src="${src}"`;
+        ? `src="${safeSrc}" onload="this.classList.add('loaded')"`
+        : `data-src="${safeSrc}"`;
       return `<div class="modal-screenshot-container">
         <div class="modal-screenshot-skeleton"></div>
-        <img ${imgAttrs} alt="Screenshot ${index + 1}" class="modal-screenshot-img" onclick="window.projectModal.openLightbox('${src}')" />
+        <img ${imgAttrs} alt="Screenshot ${index + 1}" class="modal-screenshot-img" onclick="window.projectModal.openLightbox('${safeSrc}')" />
       </div>`;
     }).join('');
+  }
+
+  // Escape attribute values for safe HTML insertion
+  escapeAttr(text) {
+    if (!text) return '';
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/'/g, '&#39;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
   }
 
   setupLazyLoadingImages() {
@@ -1180,17 +1229,17 @@ class ProjectDetailModal {
     const imgContainer = lightbox.querySelector('.lightbox-img-container');
 
     imgContainer.style.opacity = '0';
-    imgContainer.style.transform = `translateX(${direction * 20}px)`;
+    imgContainer.style.transform = `translateX(${direction * MODAL_CONFIG.LIGHTBOX_NAV_OFFSET}px)`;
 
     setTimeout(() => {
       img.src = this.screenshots[this.currentImageIndex];
-      imgContainer.style.transform = `translateX(${-direction * 20}px)`;
+      imgContainer.style.transform = `translateX(${-direction * MODAL_CONFIG.LIGHTBOX_NAV_OFFSET}px)`;
 
       requestAnimationFrame(() => {
         imgContainer.style.opacity = '1';
         imgContainer.style.transform = 'translateX(0)';
       });
-    }, 100);
+    }, MODAL_CONFIG.LIGHTBOX_NAV_DELAY);
 
     // Update indicator
     const indicator = lightbox.querySelector('.current-index');
@@ -1215,15 +1264,20 @@ class ProjectDetailModal {
   }
 
   preloadAdjacentImages() {
-    // Preload previous and next images
+    // Preload previous and next images (with cache to avoid redundant loads)
     const indicesToPreload = [
       this.currentImageIndex - 1,
       this.currentImageIndex + 1
     ].filter(i => i >= 0 && i < this.screenshots.length);
 
     indicesToPreload.forEach(index => {
-      const img = new Image();
-      img.src = this.screenshots[index];
+      const src = this.screenshots[index];
+      // Only preload if not already cached
+      if (!this.preloadedImages.has(src)) {
+        const img = new Image();
+        img.src = src;
+        this.preloadedImages.add(src);
+      }
     });
   }
 
@@ -1267,7 +1321,7 @@ class ProjectDetailModal {
 
       // Only allow dragging down
       if (deltaY > 0) {
-        const progress = Math.min(deltaY / 200, 1);
+        const progress = Math.min(deltaY / MODAL_CONFIG.SWIPE_OPACITY_DIVISOR, 1);
         imgContainer.style.transform = `translateY(${deltaY}px) scale(${1 - progress * 0.1})`;
         imgContainer.style.opacity = 1 - progress * 0.5;
         lightbox.style.background = `rgba(0, 0, 0, ${0.95 - progress * 0.4})`;
@@ -1281,8 +1335,8 @@ class ProjectDetailModal {
 
       const deltaY = currentY - startY;
 
-      // If dragged more than 100px down, close
-      if (deltaY > 100) {
+      // If dragged more than threshold, close
+      if (deltaY > MODAL_CONFIG.SWIPE_CLOSE_THRESHOLD) {
         this.closeLightbox();
       } else {
         // Reset position
@@ -1358,7 +1412,7 @@ class ProjectDetailModal {
         e.preventDefault();
         const distance = getDistance(e.touches);
         const scale = (distance / initialDistance) * startScale;
-        currentScale = Math.min(Math.max(scale, 1), 4); // Limit zoom 1x-4x
+        currentScale = Math.min(Math.max(scale, MODAL_CONFIG.ZOOM_MIN), MODAL_CONFIG.ZOOM_MAX);
 
         if (currentScale === 1) {
           translateX = 0;
@@ -1412,7 +1466,7 @@ class ProjectDetailModal {
     let lastTap = 0;
     const onDoubleTap = (e) => {
       const now = Date.now();
-      if (now - lastTap < 300) {
+      if (now - lastTap < MODAL_CONFIG.DOUBLE_TAP_DELAY) {
         e.preventDefault();
         if (currentScale > 1) {
           // Reset zoom
@@ -1472,7 +1526,7 @@ class ProjectDetailModal {
       // Remove after animation completes
       setTimeout(() => {
         lightbox.remove();
-      }, 200);
+      }, MODAL_CONFIG.CLOSING_ANIMATION_DURATION);
     }
     this.lightboxOpen = false;
 

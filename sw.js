@@ -1,11 +1,17 @@
 // Service Worker for Alvaro Quintana Portfolio
-const CACHE_NAME = 'aq-portfolio-v1';
+// Cache version uses build timestamp for automatic invalidation on new deploys
+const BUILD_TIMESTAMP = '2026-01-11T00:00:00Z'; // Updated at build time
+const CACHE_NAME = `aq-portfolio-${BUILD_TIMESTAMP.replace(/[:.]/g, '-')}`;
+
+// Core assets to cache for offline support
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/composeApp.js',
   '/favicon.svg',
-  '/manifest.json'
+  '/manifest.json',
+  '/chat-widget.js',
+  '/project-modal.js'
 ];
 
 // Install event - cache core assets

@@ -6,6 +6,20 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval';
+        style-src 'self' 'unsafe-inline';
+        img-src 'self' data: https:;
+        connect-src 'self' https://portfolio-chatbot.alvaroq-dev.workers.dev;
+        font-src 'self';
+        object-src 'none';
+        frame-ancestors 'none';
+        base-uri 'self';
+        form-action 'self';
+    ">
+
     <!-- SEO Meta Tags -->
     <title>Alvaro Quintana | Mobile & AI Developer | Kotlin, KMP, AI Agents</title>
     <meta name="description" content="Senior Mobile Developer & AI Specialist. +12 years building Android, iOS, and KMP apps. Expert in Kotlin Multiplatform, Jetpack Compose, and AI Agent Orchestration with Claude, LangChain, MCP.">
@@ -116,16 +130,21 @@
             }
         })();
 
-        // Register Service Worker for PWA
+        // Register Service Worker for PWA (unregister old ones first to ensure fresh cache)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(function(registration) {
-                        console.log('[PWA] Service Worker registered:', registration.scope);
-                    })
-                    .catch(function(error) {
-                        console.log('[PWA] Service Worker registration failed:', error);
+                // Unregister old service workers to ensure fresh content during development
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    registrations.forEach(function(registration) {
+                        registration.unregister();
                     });
+                }).then(function() {
+                    return navigator.serviceWorker.register('/sw.js');
+                }).then(function(registration) {
+                    console.log('[PWA] Service Worker registered:', registration.scope);
+                }).catch(function(error) {
+                    console.log('[PWA] Service Worker registration failed:', error);
+                });
             });
         }
     </script>
