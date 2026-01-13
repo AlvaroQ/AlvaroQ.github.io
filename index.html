@@ -91,25 +91,188 @@
             width: 100% !important;
             height: 100% !important;
         }
+
+        /* Loading indicator */
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+            font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+            transition: opacity 0.5s ease;
+        }
+
+        #loadingOverlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 255, 255, 0.2);
+            border-top-color: #00FFFF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            color: var(--text-color);
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+
+        .loading-subtext {
+            margin-top: 8px;
+            color: rgba(224, 224, 224, 0.5);
+            font-size: 11px;
+        }
+
+        /* Browser compatibility warning */
+        #browserWarning {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 10, 15, 0.98);
+            border: 1px solid #FF8000;
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            font-family: 'JetBrains Mono', Consolas, monospace;
+            color: #E0E0E0;
+            z-index: 10000;
+            max-width: 420px;
+        }
+
+        #browserWarning h2 {
+            color: #FF8000;
+            margin: 0 0 16px;
+            font-size: 18px;
+        }
+
+        #browserWarning p {
+            margin: 0 0 12px;
+            line-height: 1.6;
+            font-size: 13px;
+        }
+
+        #browserWarning .browsers {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        #browserWarning .browsers a {
+            color: #00FFFF;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid #00FFFF;
+            border-radius: 6px;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        #browserWarning .browsers a:hover {
+            background: rgba(0, 255, 255, 0.1);
+        }
     </style>
 </head>
 <body>
+    <!-- Loading overlay -->
+    <div id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">INITIALIZING...</div>
+        <div class="loading-subtext">Loading WebAssembly module</div>
+    </div>
+
+    <!-- Browser compatibility warning (hidden by default) -->
+    <div id="browserWarning">
+        <h2>[ BROWSER NOT SUPPORTED ]</h2>
+        <p>This portfolio uses WebAssembly technology that your browser doesn't fully support.</p>
+        <p>Please use a modern browser:</p>
+        <div class="browsers">
+            <a href="https://www.google.com/chrome/" target="_blank">Chrome</a>
+            <a href="https://www.mozilla.org/firefox/" target="_blank">Firefox</a>
+            <a href="https://www.microsoft.com/edge" target="_blank">Edge</a>
+        </div>
+    </div>
+
     <canvas id="ComposeTarget"></canvas>
     <script>
+        // Check WebAssembly support
+        (function() {
+            var wasmSupported = typeof WebAssembly === 'object' &&
+                typeof WebAssembly.instantiate === 'function' &&
+                typeof WebAssembly.compile === 'function';
+
+            if (!wasmSupported) {
+                console.error('[WASM] WebAssembly not supported in this browser');
+                document.getElementById('loadingOverlay').style.display = 'none';
+                document.getElementById('browserWarning').style.display = 'block';
+                return;
+            }
+            console.log('[WASM] WebAssembly supported');
+        })();
+
+        // Hide loading overlay when WASM app starts rendering
+        window.hideLoadingOverlay = function() {
+            var overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.classList.add('hidden');
+                setTimeout(function() {
+                    overlay.style.display = 'none';
+                }, 500);
+            }
+        };
+
+        // Auto-hide loading after WASM initializes (fallback timeout)
+        // 45 seconds to accommodate slow connections loading ~11MB of WASM
+        var loadingTimeout = setTimeout(function() {
+            var overlay = document.getElementById('loadingOverlay');
+            if (overlay && !overlay.classList.contains('hidden')) {
+                console.warn('[WASM] Loading timeout - hiding overlay anyway');
+                window.hideLoadingOverlay();
+            }
+        }, 45000); // 45 second timeout for slow connections
+
         // Global error handling for WASM
         window.onerror = function(message, source, lineno, colno, error) {
             console.error('[WASM Error]', message, source, lineno, colno);
+            clearTimeout(loadingTimeout);
+
+            // Hide loading overlay
+            var loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) loadingOverlay.style.display = 'none';
+
             // Show user-friendly error message
-            var canvas = document.getElementById('ComposeTarget');
-            if (canvas && !document.getElementById('errorOverlay')) {
+            if (!document.getElementById('errorOverlay')) {
                 var overlay = document.createElement('div');
                 overlay.id = 'errorOverlay';
                 overlay.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);' +
                     'background:rgba(10,10,15,0.95);border:1px solid #FF0080;border-radius:12px;' +
                     'padding:32px;text-align:center;font-family:monospace;color:#E0E0E0;z-index:9999;max-width:400px;';
                 overlay.innerHTML = '<h2 style="color:#FF0080;margin:0 0 16px">[ SYSTEM ERROR ]</h2>' +
-                    '<p>An unexpected error occurred. Please refresh the page.</p>' +
-                    '<button onclick="location.reload()" style="margin-top:16px;padding:12px 24px;' +
+                    '<p>An unexpected error occurred. Please try:</p>' +
+                    '<ul style="text-align:left;margin:12px 0;font-size:13px;line-height:1.8;">' +
+                    '<li>Refresh the page (Ctrl+Shift+R)</li>' +
+                    '<li>Clear browser cache</li>' +
+                    '<li>Use Chrome, Firefox, or Edge</li></ul>' +
+                    '<button onclick="location.reload(true)" style="margin-top:16px;padding:12px 24px;' +
                     'background:transparent;border:1px solid #00FFFF;color:#00FFFF;cursor:pointer;' +
                     'border-radius:8px;font-family:monospace;font-weight:bold;">[ RELOAD ]</button>';
                 document.body.appendChild(overlay);
@@ -130,21 +293,19 @@
             }
         })();
 
-        // Register Service Worker for PWA (unregister old ones first to ensure fresh cache)
+        // Register Service Worker for PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                // Unregister old service workers to ensure fresh content during development
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                    registrations.forEach(function(registration) {
-                        registration.unregister();
+                // Use relative path for subdirectory compatibility
+                navigator.serviceWorker.register('./sw.js')
+                    .then(function(registration) {
+                        console.log('[PWA] Service Worker registered:', registration.scope);
+                        // Check for updates
+                        registration.update();
+                    })
+                    .catch(function(error) {
+                        console.log('[PWA] Service Worker registration failed:', error);
                     });
-                }).then(function() {
-                    return navigator.serviceWorker.register('/sw.js');
-                }).then(function(registration) {
-                    console.log('[PWA] Service Worker registered:', registration.scope);
-                }).catch(function(error) {
-                    console.log('[PWA] Service Worker registration failed:', error);
-                });
             });
         }
     </script>

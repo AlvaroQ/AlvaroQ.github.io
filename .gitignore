@@ -1,0 +1,9 @@
+# Claude Code temporary files
+tmpclaude-*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Windows special file (created accidentally)
+nul
