@@ -140,13 +140,18 @@
 .profile-glow::after {
   content: '';
   position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+  inset: -6px;
+  border-radius: 1.5rem;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--neon-cyan) 40%, transparent) 0%,
+    color-mix(in srgb, var(--neon-magenta) 20%, transparent) 50%,
+    transparent 100%
+  );
   z-index: -1;
   opacity: 0.6;
-  filter: blur(10px);
-  animation: profile-pulse 3s ease-in-out infinite alternate;
+  filter: blur(12px);
+  animation: profile-pulse 2s ease-in-out infinite alternate;
 }
 
 @keyframes profile-pulse {
