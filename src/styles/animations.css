@@ -145,12 +145,13 @@
   background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
   z-index: -1;
   opacity: 0.6;
+  filter: blur(10px);
   animation: profile-pulse 3s ease-in-out infinite alternate;
 }
 
 @keyframes profile-pulse {
-  from { opacity: 0.4; filter: blur(8px); }
-  to { opacity: 0.8; filter: blur(12px); }
+  from { opacity: 0.4; }
+  to { opacity: 0.8; }
 }
 
 /* ===== TIMELINE CONNECTION LINE ===== */

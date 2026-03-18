@@ -20,48 +20,38 @@
 }
 
 /* ===== CYBERPUNK THEME VARIABLES ===== */
-@theme {
-  --color-neon-cyan: #00FFFF;
-  --color-neon-green: #39FF14;
-  --color-neon-magenta: #FF00FF;
-  --color-neon-purple: #8B00FF;
-  --color-neon-pink: #FF0080;
-  --color-neon-yellow: #FFFF00;
-  --color-orchid: #DA70D6;
-  --color-santander-blue: #4A90D9;
-  --color-bg-primary: #0A0A0F;
-  --color-bg-surface: #12121A;
-  --color-bg-card: #1A1A2E;
-  --color-bg-gradient: #0A0A1A;
-  --color-grid-lines: #16213E;
-  --color-text-primary: #E0E0E0;
-  --color-text-secondary: #B0B0B0;
-}
-
-:root {
+@theme inline {
   --neon-cyan: #00FFFF;
   --neon-green: #39FF14;
   --neon-magenta: #FF00FF;
   --neon-purple: #8B00FF;
-  --neon-pink: #FF0080;
-  --neon-yellow: #FFFF00;
+  --neon-pink: #FF006E;
+  --neon-yellow: #FFD700;
   --orchid: #DA70D6;
   --santander-blue: #4A90D9;
 
   --bg-primary: #0A0A0F;
-  --bg-surface: #12121A;
+  --bg-secondary: #12121A;
   --bg-card: #1A1A2E;
+  --bg-surface: #16161E;
   --bg-gradient: #0A0A1A;
   --grid-lines: #16213E;
 
-  --text-primary: #E0E0E0;
+  --text-primary: #FFFFFF;
   --text-secondary: #B0B0B0;
 
-  --glow-cyan: rgba(0, 255, 255, 0.4);
+  --glow-cyan: rgba(0, 255, 255, 0.3);
+  --glow-purple: rgba(191, 0, 255, 0.3);
   --glow-magenta: rgba(255, 0, 255, 0.4);
   --logo-bg: #1A1A1A;
 
-  color-scheme: dark;
+  --neon-cyan-border: rgba(0, 255, 255, 0.15);
+  --neon-cyan-border-hover: rgba(0, 255, 255, 0.4);
+  --glass-bg: rgba(26, 26, 46, 0.6);
+  --glass-border: rgba(0, 255, 255, 0.08);
+
+  --text-micro: 0.65rem;
+  --text-label: 0.75rem;
 }
 
 html.light {
@@ -75,8 +65,9 @@ html.light {
   --santander-blue: #1A5090;
 
   --bg-primary: #F5F5FA;
-  --bg-surface: #EAEAF2;
+  --bg-secondary: #EAEAF2;
   --bg-card: #FFFFFF;
+  --bg-surface: #EAEAF2;
   --bg-gradient: #E5E5F0;
   --grid-lines: #D0D0E0;
 
@@ -84,8 +75,14 @@ html.light {
   --text-secondary: #3A3A4A;
 
   --glow-cyan: rgba(0, 100, 100, 0.3);
+  --glow-purple: rgba(100, 0, 200, 0.3);
   --glow-magenta: rgba(150, 0, 150, 0.3);
   --logo-bg: #F5F5F5;
+
+  --neon-cyan-border: rgba(0, 100, 100, 0.2);
+  --neon-cyan-border-hover: rgba(0, 100, 100, 0.5);
+  --glass-bg: rgba(230, 230, 245, 0.6);
+  --glass-border: rgba(0, 100, 100, 0.1);
 
   color-scheme: light;
 }
@@ -97,25 +94,25 @@ html.light {
     padding: 0;
     box-sizing: border-box;
   }
-}
 
-html {
-  scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
   html {
-    scroll-behavior: auto;
+    scroll-behavior: smooth;
   }
-}
 
-body {
-  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.6;
-  overflow-x: hidden;
-  min-height: 100vh;
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
 }
 
 /* ===== SCROLLBAR ===== */
@@ -161,37 +158,91 @@ body {
   color: var(--bg-primary);
 }
 
-/* ===== NEON CARD (Glassmorphism) ===== */
-.neon-card {
-  background: rgba(26, 26, 46, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 255, 255, 0.12);
-  border-radius: 12px;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
-  position: relative;
-}
+/* ===== COMPONENTS ===== */
+@layer components {
+  /* ===== NEON CARD (Glassmorphism) ===== */
+  .neon-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    position: relative;
+    will-change: transform;
+  }
 
-html.light .neon-card {
-  background: rgba(255, 255, 255, 0.5);
-  border-color: rgba(0, 100, 100, 0.15);
-}
+  html.light .neon-card {
+    background: rgba(255, 255, 255, 0.5);
+    border-color: var(--neon-cyan-border);
+  }
 
-.neon-card:hover {
-  border-color: var(--neon-cyan);
-  background: rgba(26, 26, 46, 0.75);
-  box-shadow: 0 0 20px var(--glow-cyan), inset 0 0 20px rgba(0, 255, 255, 0.05);
-  transform: translateY(-2px);
-}
+  .neon-card:hover {
+    border-color: var(--neon-cyan);
+    background: rgba(26, 26, 46, 0.75);
+    box-shadow: 0 0 20px var(--glow-cyan), inset 0 0 20px rgba(0, 255, 255, 0.05);
+    transform: translateY(-2px);
+  }
 
-html.light .neon-card:hover {
-  background: rgba(255, 255, 255, 0.7);
+  html.light .neon-card:hover {
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  /* ===== BADGES ===== */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-size: var(--text-micro);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ===== TECH PILL ===== */
+  .tech-pill {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: var(--text-label);
+    background: rgba(18, 18, 26, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--text-secondary);
+    border: 1px solid rgba(0, 255, 255, 0.1);
+    letter-spacing: 0.5px;
+  }
+
+  html.light .tech-pill {
+    background: rgba(245, 245, 250, 0.5);
+    border-color: rgba(0, 100, 100, 0.12);
+  }
+
+  /* ===== SKILL BAR ===== */
+  .skill-bar-track {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-surface);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .skill-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1.5s ease;
+    box-shadow: 0 0 8px var(--glow-cyan);
+  }
 }
 
 /* ===== NEON TEXT ===== */
 .neon-text {
   text-shadow: 0 0 10px var(--glow-cyan), 0 0 20px var(--glow-cyan);
+}
+
+html.light .neon-text {
+  text-shadow: none;
 }
 
 /* ===== SECTION ===== */
@@ -205,7 +256,7 @@ section + section {
   border-top: none;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   section {
     padding: 7rem 2rem;
   }
@@ -222,33 +273,7 @@ section + section {
   font-weight: 700;
 }
 
-/* ===== SKILL BAR ===== */
-.skill-bar-track {
-  width: 100%;
-  height: 8px;
-  background: var(--bg-surface);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.skill-bar-fill {
-  height: 100%;
-  border-radius: 4px;
-  transition: width 1.5s ease;
-  box-shadow: 0 0 8px var(--glow-cyan);
-}
-
-/* ===== BADGES ===== */
-.badge {
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: 9999px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
+/* ===== BADGE VARIANTS ===== */
 .badge-live {
   background: rgba(57, 255, 20, 0.2);
   color: var(--neon-green);
@@ -265,23 +290,4 @@ section + section {
   background: rgba(255, 0, 128, 0.15);
   color: var(--neon-pink);
   border: 1px solid var(--neon-pink);
-}
-
-/* ===== TECH PILL ===== */
-.tech-pill {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 9999px;
-  font-size: 0.7rem;
-  background: rgba(18, 18, 26, 0.5);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: var(--text-secondary);
-  border: 1px solid rgba(0, 255, 255, 0.1);
-  letter-spacing: 0.5px;
-}
-
-html.light .tech-pill {
-  background: rgba(245, 245, 250, 0.5);
-  border-color: rgba(0, 100, 100, 0.12);
 }

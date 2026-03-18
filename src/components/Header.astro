@@ -1,5 +1,6 @@
 ---
 import type { Strings } from '../i18n/es';
+import { contact } from '../data/contact';
 
 interface Props {
   strings: Strings;
@@ -15,14 +16,14 @@ const altPath = lang === 'es' ? '/en/' : '/';
   <!-- Banner -->
   <div id="top-banner" class="absolute top-0 left-0 right-0 bg-[var(--bg-surface)] border-b border-[var(--grid-lines)] py-2 px-4 text-xs text-[var(--text-secondary)] text-center z-50">
     <span>{strings.bannerText}</span>
-    <a href="mailto:alvaroquintanapalacios@gmail.com" class="text-[var(--neon-cyan)] hover:underline">{strings.bannerEmail}</a>
+    <a href={`mailto:${contact.email}`} class="text-[var(--neon-cyan)] hover:underline">{strings.bannerEmail}</a>
   </div>
 
   <!-- Controls -->
   <div class="absolute top-12 right-4 flex gap-3 z-10">
     <button
       id="theme-toggle"
-      class="header-control px-4 py-1.5 text-xs font-mono border border-[rgba(0,255,255,0.2)] rounded-lg backdrop-blur-md hover:border-[var(--neon-cyan)] text-[var(--text-secondary)] hover:text-[var(--neon-cyan)] transition-all"
+      class="header-control px-4 py-2.5 min-h-[44px] min-w-[44px] text-xs font-mono border border-[var(--neon-cyan-border)] rounded-lg backdrop-blur-md hover:border-[var(--neon-cyan-border-hover)] text-[var(--text-secondary)] hover:text-[var(--neon-cyan)] transition-all"
       aria-label={strings.a11yThemeToggle}
     >
       <span class="dark-label">{strings.lightMode}</span>
@@ -30,7 +31,7 @@ const altPath = lang === 'es' ? '/en/' : '/';
     </button>
     <a
       href={altPath}
-      class="header-control px-4 py-1.5 text-xs font-mono border border-[rgba(0,255,255,0.2)] rounded-lg backdrop-blur-md hover:border-[var(--neon-cyan)] text-[var(--text-secondary)] hover:text-[var(--neon-cyan)] transition-all uppercase"
+      class="header-control px-4 py-2.5 min-h-[44px] min-w-[44px] flex items-center text-xs font-mono border border-[var(--neon-cyan-border)] rounded-lg backdrop-blur-md hover:border-[var(--neon-cyan-border-hover)] text-[var(--text-secondary)] hover:text-[var(--neon-cyan)] transition-all uppercase"
       aria-label={strings.a11yLanguageToggle}
     >
       [ {altLang} ]

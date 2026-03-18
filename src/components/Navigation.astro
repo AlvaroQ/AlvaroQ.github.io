@@ -19,25 +19,16 @@ const sections = [
 ---
 
 <nav id="main-nav" class="fixed top-10 left-1/2 -translate-x-1/2 z-50 transition-[top] duration-300" aria-label={strings.a11yNavigation}>
-  <div class="flex gap-1 px-4 py-2.5 rounded-full backdrop-blur-xl border border-[rgba(0,255,255,0.15)]" style="background: rgba(10, 10, 15, 0.7);">
+  <div class="flex gap-1 px-4 py-2.5 rounded-full backdrop-blur-xl border border-[var(--neon-cyan-border)]" style="background: rgba(10, 10, 15, 0.7);">
     {sections.map(({ id, label }) => (
       <a
         href={`#${id}`}
-        class="nav-link px-3 py-1.5 rounded-full text-xs uppercase tracking-wider text-[var(--text-secondary)] hover:text-[var(--neon-cyan)] transition-colors duration-200 whitespace-nowrap hidden md:inline-block"
+        class="nav-link px-2 md:px-3 py-3 min-h-[44px] flex items-center rounded-full text-[0.65rem] md:text-xs uppercase tracking-wider text-[var(--text-secondary)] hover:text-[var(--neon-cyan)] transition-colors duration-200 whitespace-nowrap"
         data-section={id}
       >
-        {label}
-      </a>
-    ))}
-    {/* Mobile: abbreviated */}
-    {sections.map(({ id, label }) => (
-      <a
-        href={`#${id}`}
-        class="nav-link px-2 py-1.5 rounded-full text-[0.6rem] uppercase tracking-wider text-[var(--text-secondary)] hover:text-[var(--neon-cyan)] transition-colors duration-200 md:hidden"
-        data-section={id}
-        aria-label={label}
-      >
-        <span aria-hidden="true">{label.slice(0, 3)}</span>
+        <span class="sr-only">{label}</span>
+        <span class="hidden md:inline" aria-hidden="true">{label}</span>
+        <span class="md:hidden" aria-hidden="true">{label.slice(0, 3)}</span>
       </a>
     ))}
   </div>
@@ -51,7 +42,7 @@ const sections = [
 
   .nav-link.active {
     color: var(--neon-cyan);
-    background: rgba(0, 255, 255, 0.1);
+    background: var(--neon-cyan-border);
     font-weight: 700;
   }
 

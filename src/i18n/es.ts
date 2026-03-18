@@ -43,7 +43,7 @@ export const es = {
   viewOnGithub: "> Ver en GitHub",
   liveBadge: "LIVE",
   tryIt: "Pruébalo",
-  privateRepository: "Descontinuado",
+  discontinuedBadge: "Descontinuado",
   featured: "DESTACADO",
   viewDetails: "Ver Detalles",
   clickToExpand: "Click para expandir",

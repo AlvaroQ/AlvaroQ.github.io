@@ -42,7 +42,7 @@ const { strings, lang } = Astro.props;
           <!-- Badges -->
           <div class="flex gap-2 mb-3 flex-wrap">
             {project.isLive && <span class="badge badge-live">{strings.liveBadge}</span>}
-            {project.isDiscontinued && <span class="badge badge-discontinued">{strings.privateRepository}</span>}
+            {project.isDiscontinued && <span class="badge badge-discontinued">{strings.discontinuedBadge}</span>}
           </div>
 
           <!-- Title -->
@@ -56,10 +56,10 @@ const { strings, lang } = Astro.props;
 
           <!-- Features -->
           <div class="mb-4">
-            <p class="text-[0.6rem] text-[var(--text-secondary)] tracking-wider mb-2 uppercase">{strings.keyFeatures}</p>
+            <p class="text-[0.7rem] text-[var(--text-secondary)] tracking-wider mb-2 uppercase">{strings.keyFeatures}</p>
             <div class="flex flex-wrap gap-1.5">
               {project.features.map((f) => (
-                <span class="text-[0.6rem] px-2 py-0.5 rounded border text-[var(--text-primary)]"
+                <span class="text-[0.7rem] px-2 py-0.5 rounded border text-[var(--text-primary)]"
                       style={`border-color: ${project.accentColor}30; background: ${project.accentColor}10;`}>
                   {f[lang]}
                 </span>
@@ -69,7 +69,7 @@ const { strings, lang } = Astro.props;
 
           <!-- Tech Stack -->
           <div class="mb-4">
-            <p class="text-[0.6rem] text-[var(--text-secondary)] tracking-wider mb-2 uppercase">{strings.techStack}</p>
+            <p class="text-[0.7rem] text-[var(--text-secondary)] tracking-wider mb-2 uppercase">{strings.techStack}</p>
             <div class="flex flex-wrap gap-1">
               {project.techStack.map((tech) => (
                 <span class="tech-pill">{tech}</span>
@@ -101,7 +101,7 @@ const { strings, lang } = Astro.props;
               </button>
             )}
             {project.detailedInfo && (
-              <span class="text-[0.6rem] text-[var(--text-secondary)] ml-auto opacity-60 group-hover:opacity-100 transition-opacity">
+              <span class="text-[0.7rem] text-[var(--text-secondary)] ml-auto opacity-60 group-hover:opacity-100 transition-opacity">
                 {strings.clickToExpand} →
               </span>
             )}

@@ -31,6 +31,7 @@ const { strings } = Astro.props;
             id="copy-email"
             class="text-[var(--neon-cyan)] hover:underline cursor-pointer border-none bg-transparent font-mono text-sm"
             aria-label={strings.a11yCopyEmail}
+            data-email={contact.email}
           >
             {contact.email}
           </button>
@@ -77,15 +78,13 @@ const { strings } = Astro.props;
   </div>
 </section>
 
-<!-- Footer -->
-<footer class="py-6 text-center text-xs text-[var(--text-secondary)] opacity-50 relative z-10">
-  <p>© {new Date().getFullYear()} Alvaro Quintana</p>
-</footer>
-
 <script is:inline>
-  document.getElementById('copy-email')?.addEventListener('click', async () => {
+  document.getElementById('copy-email')?.addEventListener('click', async function() {
+    var btn = document.getElementById('copy-email');
+    var email = btn && btn.dataset.email;
+    if (!email) return;
     try {
-      await navigator.clipboard.writeText('alvaroquintanapalacios@gmail.com');
+      await navigator.clipboard.writeText(email);
       const indicator = document.getElementById('email-copied');
       indicator.style.opacity = '1';
       setTimeout(() => { indicator.style.opacity = '0'; }, 2000);

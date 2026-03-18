@@ -274,12 +274,18 @@ class ProjectDetailModal {
       .modal-close {
         background: none;
         border: none;
-        font-size: 28px;
+        font-size: 24px;
         cursor: pointer;
-        padding: 0;
+        padding: 10px;
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         line-height: 1;
         transition: transform 0.2s, color 0.2s;
         color: var(--accent-color-border);
+        border-radius: 6px;
       }
 
       .modal-close:hover {
@@ -768,6 +774,19 @@ class ProjectDetailModal {
           padding: 20px;
         }
       }
+
+      @media (prefers-reduced-motion: reduce) {
+        @keyframes modalSlideIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes shimmer {
+          from, to { background-position: 0 0; }
+        }
+        .modal-content {
+          transition: none;
+        }
+      }
     `;
     document.head.appendChild(styles);
   }
@@ -874,6 +893,9 @@ class ProjectDetailModal {
     const overlay = document.createElement('div');
     overlay.id = 'project-modal-overlay';
     overlay.className = this.theme;
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-labelledby', 'project-modal-title');
 
     overlay.innerHTML = `
       <div id="project-modal-backdrop"></div>
@@ -883,7 +905,7 @@ class ProjectDetailModal {
             <div class="modal-badges">
               ${data.isFeatured ? `<span class="badge-featured">${this.t.featured}</span>` : ''}
             </div>
-            <h2 class="modal-title">${this.escapeHtml(data.title)}</h2>
+            <h2 class="modal-title" id="project-modal-title">${this.escapeHtml(data.title)}</h2>
             <div class="modal-subtitle-row">
               <p class="modal-subtitle">${this.escapeHtml(data.subtitle)}</p>
               ${data.demoUrl ? `<a href="${data.demoUrl}" target="_blank" rel="noopener noreferrer" class="modal-demo-btn">▶ ${this.t.openDemo}</a>` : ''}

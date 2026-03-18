@@ -24,11 +24,11 @@ const { strings, lang } = Astro.props;
       <!-- Connection line (desktop) -->
       <div class="hidden md:block timeline-line"></div>
 
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
         {career.map((node, i) => (
           <div
             class="animate-on-scroll slide-up neon-card text-center group flex flex-col"
-            style={`animation-delay: ${i * 100}ms; border-color: ${node.color.replace('var(--', '').replace(')', '')};`}
+            style={`animation-delay: ${i * 100}ms; border-color: ${node.color};`}
           >
             <!-- Icon -->
             <div class="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center text-sm font-bold overflow-hidden"
@@ -42,19 +42,19 @@ const { strings, lang } = Astro.props;
 
             <!-- Info -->
             <h3 class="text-sm font-bold mb-1" style={`color: ${node.color};`}>{node.company}</h3>
-            <p class="text-[0.6rem] text-[var(--text-secondary)] mb-1">{node.period}</p>
+            <p class="text-[0.65rem] text-[var(--text-secondary)] mb-1">{node.period}</p>
             <p class="text-xs font-medium text-[var(--text-primary)] mb-2">{node.role}</p>
             <p class="text-[0.65rem] text-[var(--text-secondary)] mb-3 leading-relaxed">{node.description[lang]}</p>
 
             <!-- Skills -->
             <div class="flex flex-wrap justify-center gap-1">
               {node.skills.map((skill) => (
-                <span class="tech-pill text-[0.55rem]">{skill}</span>
+                <span class="tech-pill text-[0.65rem]">{skill}</span>
               ))}
             </div>
 
             <!-- Type badge -->
-            <span class="inline-block mt-auto pt-3 text-[0.5rem] tracking-widest opacity-50 uppercase">{node.type}</span>
+            <span class="inline-block mt-auto pt-3 text-[0.65rem] tracking-widest opacity-50 uppercase">{node.type}</span>
           </div>
         ))}
       </div>
@@ -64,15 +64,15 @@ const { strings, lang } = Astro.props;
     <div class="grid grid-cols-3 gap-4 mt-14 animate-on-scroll fade-in">
       <div class="neon-card text-center">
         <p class="text-2xl font-bold text-[var(--neon-cyan)]">+12</p>
-        <p class="text-[0.6rem] text-[var(--text-secondary)] tracking-wider">{strings.yearsInTechLabel}</p>
+        <p class="text-[0.7rem] text-[var(--text-secondary)] tracking-wider">{strings.yearsInTechLabel}</p>
       </div>
       <div class="neon-card text-center">
         <p class="text-2xl font-bold text-[var(--neon-magenta)]">+7</p>
-        <p class="text-[0.6rem] text-[var(--text-secondary)] tracking-wider">{strings.yearsAtBfyLabel}</p>
+        <p class="text-[0.7rem] text-[var(--text-secondary)] tracking-wider">{strings.yearsAtBfyLabel}</p>
       </div>
       <div class="neon-card text-center">
         <p class="text-2xl font-bold text-[var(--neon-green)]">5</p>
-        <p class="text-[0.6rem] text-[var(--text-secondary)] tracking-wider">{strings.companiesLabel}</p>
+        <p class="text-[0.7rem] text-[var(--text-secondary)] tracking-wider">{strings.companiesLabel}</p>
       </div>
     </div>
   </div>

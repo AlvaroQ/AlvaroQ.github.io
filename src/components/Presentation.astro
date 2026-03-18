@@ -23,10 +23,11 @@ const stats = [
         <div class="profile-glow w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden">
           <img
             src="/images/profile/business_front.png"
-            alt="Alvaro Quintana"
+            alt="Alvaro Quintana — Senior Full-Stack Engineer, Madrid"
             class="w-full h-full object-cover object-top"
             loading="eager"
             decoding="async"
+            fetchpriority="high"
             width="224"
             height="224"
           />
@@ -56,7 +57,7 @@ const stats = [
             href={contact.linkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
-            class="social-btn px-8 py-3 text-xs font-bold tracking-wider border border-[rgba(0,255,255,0.2)] text-[var(--text-secondary)] rounded-lg backdrop-blur-md hover:border-[var(--neon-cyan)] hover:text-[var(--neon-cyan)] transition-all hover:shadow-[0_0_20px_rgba(0,255,255,0.3)]"
+            class="social-btn px-8 py-3 text-xs font-bold tracking-wider border border-[var(--neon-cyan-border)] text-[var(--text-secondary)] rounded-lg backdrop-blur-md hover:border-[var(--neon-cyan-border-hover)] hover:text-[var(--neon-cyan)] transition-all hover:shadow-[0_0_20px_var(--glow-cyan)]"
             aria-label={strings.a11yOpenLinkedIn}
           >
             {strings.linkedIn}
@@ -65,7 +66,7 @@ const stats = [
             href={contact.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            class="social-btn px-8 py-3 text-xs font-bold tracking-wider border border-[rgba(0,255,255,0.2)] text-[var(--text-secondary)] rounded-lg backdrop-blur-md hover:border-[var(--neon-cyan)] hover:text-[var(--neon-cyan)] transition-all hover:shadow-[0_0_20px_rgba(0,255,255,0.3)]"
+            class="social-btn px-8 py-3 text-xs font-bold tracking-wider border border-[var(--neon-cyan-border)] text-[var(--text-secondary)] rounded-lg backdrop-blur-md hover:border-[var(--neon-cyan-border-hover)] hover:text-[var(--neon-cyan)] transition-all hover:shadow-[0_0_20px_var(--glow-cyan)]"
             aria-label={strings.a11yOpenGitHub}
           >
             {strings.github}
@@ -79,7 +80,7 @@ const stats = [
       {stats.map(({ num, label }) => (
         <div class="neon-card text-center">
           <p class="text-2xl md:text-4xl font-bold text-[var(--neon-cyan)] neon-text">{num}</p>
-          <p class="text-[0.6rem] md:text-xs text-[var(--text-secondary)] tracking-wider mt-1">{label}</p>
+          <p class="text-[0.7rem] md:text-xs text-[var(--text-secondary)] tracking-wider mt-1">{label}</p>
         </div>
       ))}
     </div>

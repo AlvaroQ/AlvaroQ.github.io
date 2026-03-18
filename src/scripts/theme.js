@@ -29,8 +29,9 @@
     return next;
   }
 
-  // Apply on load (before paint)
-  applyTheme(getStoredTheme());
+  // Theme is already applied in Layout.astro via is:inline script in <head>.
+  // Calling applyTheme here again would be redundant and could cause a flash.
+  // applyTheme(getStoredTheme());
 
   // Expose globally
   window.getTheme = getStoredTheme;

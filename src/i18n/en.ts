@@ -45,7 +45,7 @@ export const en: Strings = {
   viewOnGithub: "> View on GitHub",
   liveBadge: "LIVE",
   tryIt: "Try it",
-  privateRepository: "Discontinued",
+  discontinuedBadge: "Discontinued",
   featured: "FEATURED",
   viewDetails: "View Details",
   clickToExpand: "Click to expand",

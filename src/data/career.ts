@@ -5,8 +5,8 @@ export interface CareerNode {
   description: { es: string; en: string };
   skills: string[];
   color: string;
-  icon: string;
-  type: string;
+  icon?: string;
+  type: 'STARTUP' | 'CONSULTANT' | 'CORPORATE' | 'SPECIALIST';
   logo?: string;
 }
 
