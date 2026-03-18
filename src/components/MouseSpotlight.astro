@@ -1,0 +1,364 @@
+---
+// WaterRipple - WebGL GPU-accelerated 2D wave simulation
+// Heightfield ping-pong simulation with caustics, specular & Fresnel rendering
+// Solo visible en desktop, respeta prefers-reduced-motion
+---
+
+<canvas id="water-ripple" aria-hidden="true"></canvas>
+
+<style>
+  #water-ripple {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+
+  @media (pointer: coarse) {
+    #water-ripple { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #water-ripple { display: none; }
+  }
+</style>
+
+<script is:inline>
+(function() {
+  var canvas = document.getElementById('water-ripple');
+  if (!canvas) return;
+  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    canvas.style.display = 'none';
+    return;
+  }
+
+  var gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: false });
+  if (!gl) { canvas.style.display = 'none'; return; }
+
+  var floatExt = gl.getExtension('OES_texture_float');
+  if (!floatExt) { canvas.style.display = 'none'; return; }
+  gl.getExtension('OES_texture_float_linear');
+
+  var SIM_SCALE = 3;
+  var simW, simH;
+  var isVisible = false;
+  var rafId = null;
+  var mouseX = -1, mouseY = -1;
+  var prevMX = -1, prevMY = -1;
+  var frameCount = 0;
+
+  // ── Shader sources ──────────────────────────────────
+
+  var VS = 'attribute vec2 a;varying vec2 v;void main(){v=a*.5+.5;gl_Position=vec4(a,0,1);}';
+
+  var WAVE_FS = [
+    'precision highp float;',
+    'uniform sampler2D uP,uC;',
+    'uniform vec2 uT;',
+    'uniform float uD;',
+    'varying vec2 v;',
+    'void main(){',
+    '  float p=texture2D(uP,v).r,c=texture2D(uC,v).r;',
+    '  float l=texture2D(uC,v+vec2(-uT.x,0)).r;',
+    '  float r=texture2D(uC,v+vec2(uT.x,0)).r;',
+    '  float u=texture2D(uC,v+vec2(0,uT.y)).r;',
+    '  float d=texture2D(uC,v+vec2(0,-uT.y)).r;',
+    '  float n=2.*c-p+.45*(l+r+u+d-4.*c);',
+    '  gl_FragColor=vec4(n*uD,0,0,1);',
+    '}'
+  ].join('\n');
+
+  var DROP_FS = [
+    'precision highp float;',
+    'uniform sampler2D uS;',
+    'uniform vec2 uC,uR;',
+    'uniform float uRad,uStr;',
+    'varying vec2 v;',
+    'void main(){',
+    '  float h=texture2D(uS,v).r;',
+    '  float dist=distance(v*uR,uC);',
+    '  if(dist<uRad){float f=1.-dist/uRad;h+=uStr*f*f;}',
+    '  gl_FragColor=vec4(h,0,0,1);',
+    '}'
+  ].join('\n');
+
+  var RENDER_FS = [
+    'precision highp float;',
+    'uniform sampler2D uH;',
+    'uniform vec2 uT;',
+    'uniform float uL;',
+    'varying vec2 v;',
+    'void main(){',
+    '  float h=texture2D(uH,v).r;',
+    '  float l=texture2D(uH,v+vec2(-uT.x,0)).r;',
+    '  float r=texture2D(uH,v+vec2(uT.x,0)).r;',
+    '  float u=texture2D(uH,v+vec2(0,uT.y)).r;',
+    '  float d=texture2D(uH,v+vec2(0,-uT.y)).r;',
+    '  float dx=(r-l)*.5,dy=(u-d)*.5;',
+    '  vec3 N=normalize(vec3(-dx*10.,-dy*10.,1.));',
+    '  vec3 L=normalize(vec3(.3,.5,1.));',
+    '  vec3 V=vec3(0,0,1);',
+    '  vec3 H=normalize(L+V);',
+    '  float diff=max(dot(N,L),0.);',
+    '  float spec=pow(max(dot(N,H),0.),96.);',
+    '  float caust=pow(diff,4.)*.8;',
+    '  float fres=pow(1.-max(dot(N,V),0.),3.)*.3;',
+    '  float i=abs(h);',
+    '  vec3 c;float a;',
+    '  if(uL>.5){',
+    '    c=vec3(0,.4,.45)*(caust+fres)+vec3(.7,.9,1.)*spec*.6;',
+    '    a=(i*.25+caust*.15+spec*.4+fres*.1)*.55;',
+    '  }else{',
+    '    c=vec3(0,.75,.85)*(caust+fres)+vec3(.4,1.,1.)*spec;',
+    '    a=(i*.2+caust*.2+spec*.65+fres*.15)*.7;',
+    '  }',
+    '  gl_FragColor=vec4(c,a);',
+    '}'
+  ].join('\n');
+
+  // ── WebGL helpers ───────────────────────────────────
+
+  function mkShader(type, src) {
+    var s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+      console.error(gl.getShaderInfoLog(s));
+      return null;
+    }
+    return s;
+  }
+
+  function mkProg(vs, fs) {
+    var v = mkShader(gl.VERTEX_SHADER, vs);
+    var f = mkShader(gl.FRAGMENT_SHADER, fs);
+    if (!v || !f) return null;
+    var p = gl.createProgram();
+    gl.attachShader(p, v);
+    gl.attachShader(p, f);
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
+      console.error(gl.getProgramInfoLog(p));
+      return null;
+    }
+    return p;
+  }
+
+  function mkTex(w, h) {
+    var t = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.FLOAT, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    return t;
+  }
+
+  function mkFB(t) {
+    var fb = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, t, 0);
+    return fb;
+  }
+
+  // ── Programs ────────────────────────────────────────
+
+  var waveProg = mkProg(VS, WAVE_FS);
+  var dropProg = mkProg(VS, DROP_FS);
+  var renderProg = mkProg(VS, RENDER_FS);
+  if (!waveProg || !dropProg || !renderProg) { canvas.style.display = 'none'; return; }
+
+  // Uniform locations
+  var wU = {
+    P: gl.getUniformLocation(waveProg, 'uP'),
+    C: gl.getUniformLocation(waveProg, 'uC'),
+    T: gl.getUniformLocation(waveProg, 'uT'),
+    D: gl.getUniformLocation(waveProg, 'uD')
+  };
+  var dU = {
+    S: gl.getUniformLocation(dropProg, 'uS'),
+    C: gl.getUniformLocation(dropProg, 'uC'),
+    R: gl.getUniformLocation(dropProg, 'uR'),
+    Rad: gl.getUniformLocation(dropProg, 'uRad'),
+    Str: gl.getUniformLocation(dropProg, 'uStr')
+  };
+  var rU = {
+    H: gl.getUniformLocation(renderProg, 'uH'),
+    T: gl.getUniformLocation(renderProg, 'uT'),
+    L: gl.getUniformLocation(renderProg, 'uL')
+  };
+
+  // Quad buffer
+  var quad = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+
+  // ── Simulation state ────────────────────────────────
+
+  var tex = [], fb = [];
+  var bi = [0, 1, 2]; // buffer indices: [prev, curr, next]
+
+  function initSim() {
+    simW = Math.ceil(window.innerWidth / SIM_SCALE);
+    simH = Math.ceil(window.innerHeight / SIM_SCALE);
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    for (var i = 0; i < tex.length; i++) {
+      gl.deleteTexture(tex[i]);
+      gl.deleteFramebuffer(fb[i]);
+    }
+    tex = []; fb = [];
+    for (var i = 0; i < 3; i++) {
+      var t = mkTex(simW, simH);
+      tex.push(t);
+      fb.push(mkFB(t));
+    }
+    bi = [0, 1, 2];
+  }
+
+  initSim();
+  window.addEventListener('resize', initSim);
+
+  function drawQ(prog) {
+    var loc = gl.getAttribLocation(prog, 'a');
+    gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  }
+
+  // ── Drop ────────────────────────────────────────────
+
+  function addDrop(sx, sy, radius, strength) {
+    var cx = sx / window.innerWidth;
+    var cy = 1.0 - sy / window.innerHeight; // flip Y
+
+    gl.useProgram(dropProg);
+    gl.viewport(0, 0, simW, simH);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, tex[bi[1]]);
+    gl.uniform1i(dU.S, 0);
+    gl.uniform2f(dU.C, cx * simW, cy * simH);
+    gl.uniform2f(dU.R, simW, simH);
+    gl.uniform1f(dU.Rad, radius / SIM_SCALE);
+    gl.uniform1f(dU.Str, strength);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb[bi[2]]);
+    drawQ(dropProg);
+
+    // swap curr ↔ next
+    var t = bi[1]; bi[1] = bi[2]; bi[2] = t;
+  }
+
+  // ── Simulate ────────────────────────────────────────
+
+  function simulate() {
+    gl.useProgram(waveProg);
+    gl.viewport(0, 0, simW, simH);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, tex[bi[0]]);
+    gl.uniform1i(wU.P, 0);
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, tex[bi[1]]);
+    gl.uniform1i(wU.C, 1);
+    gl.uniform2f(wU.T, 1.0 / simW, 1.0 / simH);
+    gl.uniform1f(wU.D, 0.955);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb[bi[2]]);
+    drawQ(waveProg);
+
+    // rotate: prev←curr, curr←next, next←prev
+    var old = bi[0]; bi[0] = bi[1]; bi[1] = bi[2]; bi[2] = old;
+  }
+
+  // ── Render ──────────────────────────────────────────
+
+  function render() {
+    gl.useProgram(renderProg);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, tex[bi[1]]);
+    gl.uniform1i(rU.H, 0);
+    gl.uniform2f(rU.T, 1.0 / simW, 1.0 / simH);
+    gl.uniform1f(rU.L, document.documentElement.classList.contains('light') ? 1.0 : 0.0);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    drawQ(renderProg);
+    gl.disable(gl.BLEND);
+  }
+
+  // ── Mouse trail ─────────────────────────────────────
+
+  function mouseTrail() {
+    if (mouseX < 0 || prevMX < 0) return;
+    var dx = mouseX - prevMX;
+    var dy = mouseY - prevMY;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < 4) {
+      addDrop(mouseX, mouseY, 14, 0.6);
+      return;
+    }
+
+    var steps = Math.min(Math.ceil(dist / 16), 3);
+    for (var i = 0; i < steps; i++) {
+      var t = (i + 0.5) / steps;
+      addDrop(prevMX + dx * t, prevMY + dy * t, 12, 0.5);
+    }
+  }
+
+  // ── Animation loop ──────────────────────────────────
+
+  function animate() {
+    frameCount++;
+
+    if (frameCount % 3 === 0) {
+      mouseTrail();
+      prevMX = mouseX;
+      prevMY = mouseY;
+    }
+
+    simulate();
+    render();
+    rafId = requestAnimationFrame(animate);
+  }
+
+  // ── Events ──────────────────────────────────────────
+
+  document.addEventListener('mousemove', function(e) {
+    prevMX = mouseX;
+    prevMY = mouseY;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    if (!isVisible) {
+      isVisible = true;
+      canvas.style.opacity = '1';
+      rafId = requestAnimationFrame(animate);
+    }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (isVisible) addDrop(e.clientX, e.clientY, 30, 3.0);
+  });
+
+  document.addEventListener('mouseleave', function() {
+    mouseX = -1; mouseY = -1;
+    prevMX = -1; prevMY = -1;
+    setTimeout(function() {
+      if (mouseX < 0) {
+        isVisible = false;
+        canvas.style.opacity = '0';
+        if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+      }
+    }, 3000);
+  });
+})();
+</script>

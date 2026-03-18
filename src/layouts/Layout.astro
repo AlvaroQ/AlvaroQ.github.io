@@ -1,0 +1,104 @@
+---
+import '../styles/global.css';
+import '../styles/animations.css';
+import MouseSpotlight from '../components/MouseSpotlight.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  lang?: 'es' | 'en';
+}
+
+const {
+  title = 'Alvaro Quintana | Mobile & AI Developer',
+  description = 'Senior Mobile Developer & AI Specialist. +12 years building Android, iOS, and KMP apps. Expert in Kotlin Multiplatform and AI Agents.',
+  lang = 'es'
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const altLang = lang === 'es' ? 'en' : 'es';
+const altPath = lang === 'es' ? '/en/' : '/';
+const altURL = new URL(altPath, Astro.site);
+---
+
+<!DOCTYPE html>
+<html lang={lang} class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- SEO -->
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta name="author" content="Alvaro Quintana" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href={canonicalURL} />
+
+  <!-- i18n alternates -->
+  <link rel="alternate" hreflang={lang} href={canonicalURL} />
+  <link rel="alternate" hreflang={altLang} href={altURL} />
+  <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site)} />
+
+  <!-- Theme color -->
+  <meta name="theme-color" content="#00FFFF" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:site_name" content="Alvaro Quintana Portfolio" />
+  <meta property="og:locale" content={lang === 'es' ? 'es_ES' : 'en_US'} />
+  <meta property="og:locale:alternate" content={lang === 'es' ? 'en_US' : 'es_ES'} />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+
+  <!-- Preload critical assets -->
+  <link rel="preload" href="/fonts/JetBrainsMono-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/JetBrainsMono-latin-ext.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/images/profile/business_front.png" as="image" />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Alvaro Quintana",
+    "url": "https://alvaroq.github.io",
+    "jobTitle": "Senior Mobile Developer & AI Specialist",
+    "worksFor": { "@type": "Organization", "name": "B-FY" },
+    "knowsAbout": ["Kotlin", "KMP", "Android", "iOS", "AI Agents", "Jetpack Compose"],
+    "sameAs": [
+      "https://www.linkedin.com/in/alvaroquintanapalacios/",
+      "https://github.com/AlvaroQ"
+    ]
+  })} />
+
+  <!-- Theme script (inline to prevent FOUC) -->
+  <script is:inline>
+    (function(){
+      var t;
+      try { t = localStorage.getItem('portfolio_theme'); } catch(e) {}
+      if (t === 'light') document.documentElement.classList.replace('dark','light');
+    })();
+  </script>
+</head>
+<body>
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--neon-cyan)] focus:text-[var(--bg-primary)] focus:rounded focus:font-bold focus:text-sm">
+    Skip to content
+  </a>
+
+  <div class="cyberpunk-grid" aria-hidden="true"></div>
+  <MouseSpotlight />
+
+  <main id="main-content">
+    <slot />
+  </main>
+
+  <script src="../scripts/theme.js"></script>
+  <script src="../scripts/scroll-animations.js"></script>
+</body>
+</html>

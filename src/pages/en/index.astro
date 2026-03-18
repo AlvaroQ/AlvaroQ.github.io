@@ -1,0 +1,46 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navigation from '../../components/Navigation.astro';
+import Header from '../../components/Header.astro';
+import Presentation from '../../components/Presentation.astro';
+import Career from '../../components/Career.astro';
+import Projects from '../../components/Projects.astro';
+import Skills from '../../components/Skills.astro';
+import Contact from '../../components/Contact.astro';
+import { t } from '../../i18n';
+
+const lang = 'en';
+const strings = t(lang);
+---
+
+<Layout lang={lang} title="Alvaro Quintana | Mobile & AI Developer" description="Senior Mobile Developer & AI Specialist. +12 years building Android, iOS, and KMP apps. Expert in Kotlin Multiplatform and AI Agents.">
+  <Navigation strings={strings} lang={lang} />
+  <Header strings={strings} lang={lang} />
+  <Presentation strings={strings} />
+  <Career strings={strings} lang={lang} />
+  <Projects strings={strings} lang={lang} />
+  <Skills strings={strings} />
+  <Contact strings={strings} />
+
+  <!-- Chat Widget -->
+  <script is:inline src="/scripts/chat-widget.js" defer></script>
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      var theme;
+      try { theme = localStorage.getItem('portfolio_theme') || 'dark'; } catch(e) { theme = 'dark'; }
+      window.chatWidget = new PortfolioChatWidget({ lang: 'en', theme: theme });
+    });
+  </script>
+
+  <!-- Project Modal -->
+  <script is:inline src="/scripts/project-modal.js" defer></script>
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      var theme;
+      try { theme = localStorage.getItem('portfolio_theme') || 'dark'; } catch(e) { theme = 'dark'; }
+      window.projectModal = new ProjectDetailModal();
+      window.projectModal.setTheme(theme);
+      window.projectModal.setLang('en');
+    });
+  </script>
+</Layout>

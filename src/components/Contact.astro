@@ -1,0 +1,94 @@
+---
+import type { Strings } from '../i18n/es';
+import { contact } from '../data/contact';
+
+interface Props {
+  strings: Strings;
+}
+
+const { strings } = Astro.props;
+---
+
+<section id="contact" class="py-20">
+  <div class="section-container max-w-2xl">
+    <div class="text-center mb-12 animate-on-scroll slide-up">
+      <h2 class="text-2xl md:text-4xl font-bold text-[var(--neon-cyan)] tracking-[2px] neon-text">
+        {strings.connect}
+      </h2>
+    </div>
+
+    <div class="animate-on-scroll slide-up neon-card font-mono text-sm">
+      <!-- whoami -->
+      <p class="text-[var(--neon-green)] mb-1">{strings.whoami}</p>
+      <p class="text-[var(--text-primary)] mb-4 pl-4">{strings.whoamiResult}</p>
+
+      <!-- contact.txt -->
+      <p class="text-[var(--neon-green)] mb-1">{strings.catContact}</p>
+      <div class="pl-4 mb-4 space-y-1">
+        <p class="text-[var(--text-secondary)]">
+          {strings.emailLabel}
+          <button
+            id="copy-email"
+            class="text-[var(--neon-cyan)] hover:underline cursor-pointer border-none bg-transparent font-mono text-sm"
+            aria-label={strings.a11yCopyEmail}
+          >
+            {contact.email}
+          </button>
+          <span id="email-copied" class="text-[var(--neon-green)] text-xs ml-2 opacity-0 transition-opacity" aria-live="polite" aria-atomic="true">{strings.a11yEmailCopied}</span>
+        </p>
+        <p class="text-[var(--text-secondary)]">
+          {strings.locationLabel}
+          <span class="text-[var(--text-primary)]">{contact.location}</span>
+        </p>
+      </div>
+
+      <!-- links.txt -->
+      <p class="text-[var(--neon-green)] mb-1">{strings.catLinks}</p>
+      <div class="pl-4 mb-4 space-y-1">
+        <p>
+          <a
+            href={contact.linkedinUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-[var(--neon-cyan)] hover:underline"
+            aria-label={strings.a11yOpenLinkedIn}
+          >
+            {contact.linkedinDisplay}
+          </a>
+        </p>
+        <p>
+          <a
+            href={contact.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-[var(--neon-cyan)] hover:underline"
+            aria-label={strings.a11yOpenGitHub}
+          >
+            {contact.githubDisplay}
+          </a>
+        </p>
+      </div>
+
+      <!-- Available -->
+      <div class="border-t border-[var(--grid-lines)] pt-4 mt-4">
+        <p class="text-xs text-[var(--text-secondary)] text-center tracking-wider">{strings.availableFor}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-6 text-center text-xs text-[var(--text-secondary)] opacity-50 relative z-10">
+  <p>© {new Date().getFullYear()} Alvaro Quintana</p>
+</footer>
+
+<script is:inline>
+  document.getElementById('copy-email')?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText('alvaroquintanapalacios@gmail.com');
+      const indicator = document.getElementById('email-copied');
+      indicator.style.opacity = '1';
+      setTimeout(() => { indicator.style.opacity = '0'; }, 2000);
+    } catch { /* ignore */ }
+  });
+</script>

@@ -1,0 +1,219 @@
+/* ===== SCROLL ANIMATIONS ===== */
+.animate-on-scroll {
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: none !important;
+}
+
+.fade-in {
+  opacity: 0;
+}
+
+.slide-up {
+  transform: translateY(60px);
+}
+
+.slide-left {
+  transform: translateX(-60px);
+}
+
+.slide-right {
+  transform: translateX(60px);
+}
+
+.scale-in {
+  transform: scale(0.9);
+}
+
+/* ===== GLITCH TEXT ===== */
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch::before {
+  color: var(--neon-cyan);
+  z-index: -1;
+  animation: glitch-1 3s infinite;
+}
+
+.glitch::after {
+  color: var(--neon-magenta);
+  z-index: -2;
+  animation: glitch-2 3s infinite;
+}
+
+@keyframes glitch-1 {
+  0%, 90% { clip-path: inset(0 0 0 0); transform: translate(0); }
+  91% { clip-path: inset(30% 0 20% 0); transform: translate(-3px, 1px); }
+  93% { clip-path: inset(10% 0 60% 0); transform: translate(2px, -1px); }
+  95% { clip-path: inset(50% 0 10% 0); transform: translate(-1px, 2px); }
+  97% { clip-path: inset(0 0 0 0); transform: translate(0); }
+  100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+}
+
+@keyframes glitch-2 {
+  0%, 90% { clip-path: inset(0 0 0 0); transform: translate(0); }
+  92% { clip-path: inset(40% 0 30% 0); transform: translate(3px, -1px); }
+  94% { clip-path: inset(20% 0 50% 0); transform: translate(-2px, 1px); }
+  96% { clip-path: inset(60% 0 5% 0); transform: translate(1px, -2px); }
+  98% { clip-path: inset(0 0 0 0); transform: translate(0); }
+  100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+}
+
+/* ===== TYPEWRITER ===== */
+.typewriter {
+  overflow: hidden;
+  border-right: 2px solid var(--neon-cyan);
+  white-space: nowrap;
+  animation:
+    typing 3s steps(40, end) forwards,
+    cursor-blink 0.5s step-end infinite;
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes cursor-blink {
+  50% { border-color: transparent; }
+}
+
+/* ===== NEON BORDER PULSE ===== */
+.neon-pulse {
+  animation: neon-border-pulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes neon-border-pulse {
+  from { box-shadow: 0 0 10px var(--glow-cyan); }
+  to { box-shadow: 0 0 25px var(--glow-cyan), 0 0 40px var(--glow-cyan); }
+}
+
+/* ===== GRADIENT ANIMATION ===== */
+.gradient-animate {
+  background-size: 200% 200%;
+  animation: gradient-shift 10s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===== FADE IN UP (for staggered animations) ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+/* ===== PROFILE IMAGE GLOW ===== */
+.profile-glow {
+  position: relative;
+}
+
+.profile-glow::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+  z-index: -1;
+  opacity: 0.6;
+  animation: profile-pulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes profile-pulse {
+  from { opacity: 0.4; filter: blur(8px); }
+  to { opacity: 0.8; filter: blur(12px); }
+}
+
+/* ===== TIMELINE CONNECTION LINE ===== */
+.timeline-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--neon-purple));
+  opacity: 0.3;
+}
+
+/* ===== SPIN (for loading) ===== */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  .animate-on-scroll {
+    opacity: 1;
+    transform: none !important;
+    transition: none;
+  }
+
+  .glitch::before,
+  .glitch::after {
+    animation: none;
+  }
+
+  .typewriter {
+    animation: none;
+    width: auto;
+    border-right: none;
+  }
+
+  .neon-pulse {
+    animation: none;
+  }
+
+  .gradient-animate {
+    animation: none;
+  }
+
+  .animate-fade-in-up {
+    animation: none;
+    opacity: 1;
+  }
+
+  .profile-glow::after {
+    animation: none;
+  }
+
+  .animate-spin {
+    animation: none;
+  }
+
+  .skill-bar-fill {
+    transition: none;
+  }
+}

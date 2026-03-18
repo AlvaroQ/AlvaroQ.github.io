@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Read(*)",
+      "Edit(*)",
+      "Write(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "Bash(git commit *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add *)",
+      "Bash(git branch*)",
+      "Bash(git push *)",
+      "Bash(git show*)",
+      "Bash(npm run build*)",
+      "Bash(npm run dev*)",
+      "Bash(npm run preview*)",
+      "Bash(npm install*)",
+      "Bash(npx astro*)",
+      "Bash(npx tsc*)",
+      "Bash(ls *)",
+      "Bash(cd *)",
+      "Bash(wc *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(cat *)",
+      "Bash(mkdir *)",
+      "Bash(tree *)",
+      "WebFetch",
+      "WebSearch",
+      "mcp__plugin_engram_engram__*"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Edit(./.env)",
+      "Edit(./.env.*)",
+      "Write(./.env)",
+      "Write(./.env.*)",
+      "Bash(git push * main)",
+      "Bash(git push * main *)",
+      "Bash(git push * master)",
+      "Bash(git push * master *)",
+      "Bash(git merge*)",
+      "Bash(git rebase*)",
+      "Bash(git reset --hard*)",
+      "Bash(git checkout main*)",
+      "Bash(git checkout master*)",
+      "Bash(git checkout .)",
+      "Bash(git restore *)",
+      "Bash(git clean -f*)",
+      "Bash(git branch -D*)",
+      "Bash(git stash drop*)",
+      "Bash(git stash clear*)",
+      "Bash(rm -rf*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/git-safety.js",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/engram-stop.js",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "language": "spanish"
+}

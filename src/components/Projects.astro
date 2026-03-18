@@ -1,0 +1,145 @@
+---
+import type { Strings } from '../i18n/es';
+import { projects } from '../data/projects';
+
+interface Props {
+  strings: Strings;
+  lang: 'es' | 'en';
+}
+
+const { strings, lang } = Astro.props;
+---
+
+<section id="projects" class="py-20">
+  <div class="section-container">
+    <div class="text-center mb-12 animate-on-scroll slide-up">
+      <h2 class="text-2xl md:text-4xl font-bold text-[var(--neon-cyan)] tracking-[2px] neon-text">
+        {strings.latestAiProjects}
+      </h2>
+      <p class="text-sm text-[var(--text-secondary)] mt-2">{strings.showcasingProjects}</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {projects.map((project, i) => (
+        <div
+          class={`animate-on-scroll slide-up neon-card group ${project.detailedInfo ? 'cursor-pointer' : ''}`}
+          style={`animation-delay: ${i * 100}ms;`}
+          data-project-index={i}
+          data-featured={project.detailedInfo ? 'true' : 'false'}
+          {...(project.detailedInfo ? { role: 'button', tabindex: '0', 'aria-label': `${strings.viewDetails}: ${project.title}` } : {})}
+          data-project-title={project.title}
+          data-project-subtitle={project.subtitle[lang]}
+          data-project-description={project.description[lang]}
+          data-project-accent={project.accentColor}
+          data-project-long-desc={project.detailedInfo?.longDescription[lang] || ''}
+          data-project-architecture={project.detailedInfo?.architecture[lang] || ''}
+          data-project-screenshots={JSON.stringify(project.detailedInfo?.screenshots || [])}
+          data-project-highlights={JSON.stringify(project.detailedInfo?.keyHighlights.map(h => h[lang]) || [])}
+          data-project-demo={project.detailedInfo?.demoUrl || ''}
+          data-project-tech={JSON.stringify(project.techStack)}
+          data-project-featured={project.isFeatured ? 'true' : 'false'}
+        >
+          <!-- Badges -->
+          <div class="flex gap-2 mb-3 flex-wrap">
+            {project.isLive && <span class="badge badge-live">{strings.liveBadge}</span>}
+            {project.isDiscontinued && <span class="badge badge-discontinued">{strings.privateRepository}</span>}
+          </div>
+
+          <!-- Title -->
+          <h3 class="text-lg font-bold mb-1" style={`color: ${project.accentColor};`}>
+            {project.title}
+          </h3>
+          <p class="text-xs text-[var(--text-secondary)] mb-3">{project.subtitle[lang]}</p>
+
+          <!-- Description -->
+          <p class="text-xs text-[var(--text-secondary)] leading-relaxed mb-4">{project.description[lang]}</p>
+
+          <!-- Features -->
+          <div class="mb-4">
+            <p class="text-[0.6rem] text-[var(--text-secondary)] tracking-wider mb-2 uppercase">{strings.keyFeatures}</p>
+            <div class="flex flex-wrap gap-1.5">
+              {project.features.map((f) => (
+                <span class="text-[0.6rem] px-2 py-0.5 rounded border text-[var(--text-primary)]"
+                      style={`border-color: ${project.accentColor}30; background: ${project.accentColor}10;`}>
+                  {f[lang]}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <!-- Tech Stack -->
+          <div class="mb-4">
+            <p class="text-[0.6rem] text-[var(--text-secondary)] tracking-wider mb-2 uppercase">{strings.techStack}</p>
+            <div class="flex flex-wrap gap-1">
+              {project.techStack.map((tech) => (
+                <span class="tech-pill">{tech}</span>
+              ))}
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-3 mt-auto pt-3 border-t border-[var(--grid-lines)]">
+            {project.githubUrl && (
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-xs text-[var(--neon-cyan)] hover:underline"
+                aria-label={`${strings.a11yOpenProject}: ${project.title}`}
+                onclick="event.stopPropagation()"
+              >
+                {strings.viewOnGithub}
+              </a>
+            )}
+            {project.isLive && (
+              <button
+                class="text-xs text-[var(--neon-green)] hover:underline open-chat-btn"
+                onclick="event.stopPropagation(); window.openChatWidget && window.openChatWidget();"
+                aria-label={`${strings.tryIt}: ${project.title}`}
+              >
+                {strings.tryIt}
+              </button>
+            )}
+            {project.detailedInfo && (
+              <span class="text-[0.6rem] text-[var(--text-secondary)] ml-auto opacity-60 group-hover:opacity-100 transition-opacity">
+                {strings.clickToExpand} →
+              </span>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    function openModal(card) {
+      if (!window.projectModal) return;
+      var data = {
+        title: card.dataset.projectTitle,
+        subtitle: card.dataset.projectSubtitle,
+        description: card.dataset.projectDescription,
+        longDescription: card.dataset.projectLongDesc,
+        architecture: card.dataset.projectArchitecture,
+        accentColor: card.dataset.projectAccent,
+        screenshots: JSON.parse(card.dataset.projectScreenshots || '[]'),
+        keyHighlights: JSON.parse(card.dataset.projectHighlights || '[]'),
+        demoUrl: card.dataset.projectDemo || null,
+        techStack: JSON.parse(card.dataset.projectTech || '[]'),
+        isFeatured: card.dataset.projectFeatured === 'true'
+      };
+      window.projectModal.open(data);
+    }
+
+    document.querySelectorAll('[data-featured="true"]').forEach(function(card) {
+      card.addEventListener('click', function() { openModal(card); });
+      card.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(card);
+        }
+      });
+    });
+  });
+</script>

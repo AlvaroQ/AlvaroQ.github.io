@@ -1,0 +1,105 @@
+---
+import type { Strings } from '../i18n/es';
+import { contact } from '../data/contact';
+
+interface Props {
+  strings: Strings;
+}
+
+const { strings } = Astro.props;
+
+const stats = [
+  { num: strings.yearsExperienceNum, label: strings.yearsExperienceLabel },
+  { num: strings.yearsLeadingNum, label: strings.yearsLeadingLabel },
+  { num: strings.platformsNum, label: strings.platformsLabel },
+];
+---
+
+<section id="about" class="py-20">
+  <div class="section-container">
+    <div class="flex flex-col lg:flex-row gap-12 items-center">
+      <!-- Profile Image -->
+      <div class="animate-on-scroll scale-in flex-shrink-0">
+        <div class="profile-glow w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden">
+          <img
+            src="/images/profile/business_front.png"
+            alt="Alvaro Quintana"
+            class="w-full h-full object-cover object-top"
+            loading="eager"
+            decoding="async"
+            width="224"
+            height="224"
+          />
+        </div>
+      </div>
+
+      <!-- Bio -->
+      <div class="flex-1">
+        <h2 class="text-2xl md:text-4xl font-bold text-[var(--neon-cyan)] tracking-[2px] mb-2 animate-on-scroll slide-up">
+          {strings.hiImAlvaro}
+        </h2>
+        <p class="text-sm text-[var(--neon-magenta)] mb-6 tracking-wider animate-on-scroll slide-up">
+          {strings.jobTitle}
+        </p>
+
+        <div class="space-y-4 text-sm leading-relaxed text-[var(--text-secondary)] animate-on-scroll slide-up">
+          <p class="bio-text" set:html={strings.bioP1} />
+          <p class="bio-text" set:html={strings.bioP2} />
+          <p class="bio-text" set:html={strings.bioP3} />
+          <p class="bio-text" set:html={strings.bioP4} />
+          <p class="bio-text" set:html={strings.bioP5} />
+        </div>
+
+        <!-- Social buttons -->
+        <div class="flex gap-6 mt-10 animate-on-scroll slide-up">
+          <a
+            href={contact.linkedinUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-btn px-8 py-3 text-xs font-bold tracking-wider border border-[rgba(0,255,255,0.2)] text-[var(--text-secondary)] rounded-lg backdrop-blur-md hover:border-[var(--neon-cyan)] hover:text-[var(--neon-cyan)] transition-all hover:shadow-[0_0_20px_rgba(0,255,255,0.3)]"
+            aria-label={strings.a11yOpenLinkedIn}
+          >
+            {strings.linkedIn}
+          </a>
+          <a
+            href={contact.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-btn px-8 py-3 text-xs font-bold tracking-wider border border-[rgba(0,255,255,0.2)] text-[var(--text-secondary)] rounded-lg backdrop-blur-md hover:border-[var(--neon-cyan)] hover:text-[var(--neon-cyan)] transition-all hover:shadow-[0_0_20px_rgba(0,255,255,0.3)]"
+            aria-label={strings.a11yOpenGitHub}
+          >
+            {strings.github}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-3 gap-6 mt-20 animate-on-scroll fade-in">
+      {stats.map(({ num, label }) => (
+        <div class="neon-card text-center">
+          <p class="text-2xl md:text-4xl font-bold text-[var(--neon-cyan)] neon-text">{num}</p>
+          <p class="text-[0.6rem] md:text-xs text-[var(--text-secondary)] tracking-wider mt-1">{label}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Built with -->
+    <div class="text-center mt-16 animate-on-scroll fade-in">
+      <p class="text-xs text-[var(--text-secondary)] opacity-50">{strings.builtWithTech}</p>
+      <p class="text-sm text-[var(--neon-cyan)] font-bold tracking-wider">{strings.techName}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .social-btn {
+    background: rgba(10, 10, 15, 0.4);
+  }
+
+  :global(html.light) .social-btn {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(0, 100, 100, 0.2) !important;
+  }
+
+</style>

@@ -1,0 +1,95 @@
+---
+import type { Strings } from '../i18n/es';
+
+interface Props {
+  strings: Strings;
+  lang: 'es' | 'en';
+}
+
+const { strings, lang } = Astro.props;
+const altLang = lang === 'es' ? 'en' : 'es';
+const altPath = lang === 'es' ? '/en/' : '/';
+---
+
+<section id="header" class="min-h-screen flex flex-col items-center justify-center text-center relative">
+  <!-- Banner -->
+  <div id="top-banner" class="absolute top-0 left-0 right-0 bg-[var(--bg-surface)] border-b border-[var(--grid-lines)] py-2 px-4 text-xs text-[var(--text-secondary)] text-center z-50">
+    <span>{strings.bannerText}</span>
+    <a href="mailto:alvaroquintanapalacios@gmail.com" class="text-[var(--neon-cyan)] hover:underline">{strings.bannerEmail}</a>
+  </div>
+
+  <!-- Controls -->
+  <div class="absolute top-12 right-4 flex gap-3 z-10">
+    <button
+      id="theme-toggle"
+      class="header-control px-4 py-1.5 text-xs font-mono border border-[rgba(0,255,255,0.2)] rounded-lg backdrop-blur-md hover:border-[var(--neon-cyan)] text-[var(--text-secondary)] hover:text-[var(--neon-cyan)] transition-all"
+      aria-label={strings.a11yThemeToggle}
+    >
+      <span class="dark-label">{strings.lightMode}</span>
+      <span class="light-label" style="display:none">{strings.darkMode}</span>
+    </button>
+    <a
+      href={altPath}
+      class="header-control px-4 py-1.5 text-xs font-mono border border-[rgba(0,255,255,0.2)] rounded-lg backdrop-blur-md hover:border-[var(--neon-cyan)] text-[var(--text-secondary)] hover:text-[var(--neon-cyan)] transition-all uppercase"
+      aria-label={strings.a11yLanguageToggle}
+    >
+      [ {altLang} ]
+    </a>
+  </div>
+
+  <!-- Content -->
+  <div class="animate-on-scroll fade-in">
+    <p class="text-xs text-[var(--neon-green)] tracking-[4px] mb-6 font-semibold">{strings.systemInitialized}</p>
+
+    <h1 class="font-bold tracking-[4px] mb-4">
+      <span class="block text-4xl md:text-7xl glitch neon-text" data-text={strings.name}>{strings.name}</span>
+      <span class="block text-lg md:text-2xl text-[var(--neon-magenta)] tracking-[2px] mt-4 typewriter overflow-hidden max-w-fit mx-auto">
+        {strings.subtitle}
+      </span>
+    </h1>
+
+    <p class="text-sm text-[var(--text-secondary)] mt-6 tracking-wider">{strings.platforms}</p>
+
+    <p class="text-xs text-[var(--text-secondary)] mt-8 opacity-60">
+      {strings.builtWith}<span aria-hidden="true">❤️</span>{strings.usingTech}
+    </p>
+  </div>
+</section>
+
+<style>
+  .header-control {
+    background: rgba(10, 10, 15, 0.5);
+  }
+
+  :global(html.light) .header-control {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(0, 100, 100, 0.2) !important;
+  }
+</style>
+
+<script is:inline>
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const next = window.toggleTheme();
+    const darkLabel = document.querySelector('.dark-label');
+    const lightLabel = document.querySelector('.light-label');
+    if (next === 'light') {
+      darkLabel.style.display = 'none';
+      lightLabel.style.display = 'inline';
+    } else {
+      darkLabel.style.display = 'inline';
+      lightLabel.style.display = 'none';
+    }
+  });
+
+  // Init label state
+  (function() {
+    var t;
+    try { t = localStorage.getItem('portfolio_theme'); } catch(e) {}
+    if (t === 'light') {
+      var d = document.querySelector('.dark-label');
+      var l = document.querySelector('.light-label');
+      if (d) d.style.display = 'none';
+      if (l) l.style.display = 'inline';
+    }
+  })();
+</script>
