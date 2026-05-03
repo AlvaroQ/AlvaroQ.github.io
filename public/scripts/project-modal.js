@@ -56,6 +56,7 @@ class ProjectDetailModal {
         videoPlaceholder: 'Grabacion en progreso...',
         close: 'Cerrar',
         openDemo: 'Abrir Demo',
+        viewOnGithub: 'Ver en GitHub',
         swipeToClose: 'Desliza para cerrar',
         previousImage: 'Imagen anterior',
         nextImage: 'Siguiente imagen',
@@ -73,6 +74,7 @@ class ProjectDetailModal {
         videoPlaceholder: 'Recording in progress...',
         close: 'Close',
         openDemo: 'Open Demo',
+        viewOnGithub: 'View on GitHub',
         swipeToClose: 'Swipe to close',
         previousImage: 'Previous image',
         nextImage: 'Next image',
@@ -268,6 +270,26 @@ class ProjectDetailModal {
 
       .modal-demo-btn:hover {
         opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      .modal-github-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        background: transparent;
+        color: var(--accent-color);
+        border: 1px solid var(--accent-color-border);
+        transition: background 0.2s, transform 0.2s;
+      }
+
+      .modal-github-btn:hover {
+        background: var(--accent-color-dim);
         transform: translateY(-1px);
       }
 
@@ -909,6 +931,7 @@ class ProjectDetailModal {
             <div class="modal-subtitle-row">
               <p class="modal-subtitle">${this.escapeHtml(data.subtitle)}</p>
               ${data.demoUrl ? `<a href="${data.demoUrl}" target="_blank" rel="noopener noreferrer" class="modal-demo-btn">▶ ${this.t.openDemo}</a>` : ''}
+              ${data.githubUrl ? `<a href="${data.githubUrl}" target="_blank" rel="noopener noreferrer" class="modal-github-btn" aria-label="${this.t.viewOnGithub}">&lt;/&gt; ${this.t.viewOnGithub}</a>` : ''}
             </div>
           </div>
           <button class="modal-close" id="project-modal-close" aria-label="${this.t.close}">&times;</button>

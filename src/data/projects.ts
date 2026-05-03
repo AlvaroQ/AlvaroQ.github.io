@@ -4,6 +4,7 @@ export interface ProjectDetails {
   screenshots: string[];
   keyHighlights: { es: string; en: string }[];
   demoUrl?: string;
+  githubUrl?: string;
 }
 
 export interface AIProject {
@@ -21,7 +22,53 @@ export interface AIProject {
 }
 
 export const projects: AIProject[] = [
-  // Fila 1: Cartera Investing, RAG Chatbot, Translation & Voice AI
+  // Fila 1: Adivina Perro, Cartera Investing, RAG Chatbot
+  {
+    title: "Adivina Perro",
+    subtitle: {
+      es: "Reconocimiento de Razas con IA On-Device",
+      en: "On-Device AI Breed Recognition"
+    },
+    description: {
+      es: "App Kotlin Multiplatform (Android + iOS) que combina un quiz de razas de perros con reconocimiento de raza por IA on-device en Android usando un modelo TFLite. Apunta la cámara a un perro y obtén la raza identificada en milisegundos, 100% offline.",
+      en: "Kotlin Multiplatform app (Android + iOS) that combines a dog breed quiz with on-device AI breed recognition on Android using a TFLite model. Point the camera at a dog and get the breed identified in milliseconds, 100% offline."
+    },
+    features: [
+      { es: "TFLite On-Device", en: "On-Device TFLite" },
+      { es: "120 Razas Reconocibles", en: "120 Recognizable Breeds" },
+      { es: "4 Modos de Juego", en: "4 Game Modes" },
+      { es: "200+ Razas Catalogadas", en: "200+ Breed Catalogue" }
+    ],
+    techStack: ["Kotlin Multiplatform", "Compose Multiplatform", "TensorFlow Lite", "MobileNet V2", "CameraX", "Koin", "SQLDelight", "Firebase"],
+    accentColor: "#EC9553",
+    isLive: true,
+    isFeatured: true,
+    detailedInfo: {
+      githubUrl: "https://github.com/AlvaroQ/AdivinaRaza",
+      longDescription: {
+        es: "App KMP para Android y iOS que combina un juego de razas de perros con reconocimiento por IA en el dispositivo, sin servidor y sin coste por petición.\n\n## Edge AI: Reconocimiento de Razas\nUn modelo MobileNet V2 optimizado y compilado a TensorFlow Lite ejecuta inferencia 100% on-device. La cámara captura la foto vía CameraX, la imagen se escala a 224×224 y se normaliza a [0, 1], el intérprete TFLite clasifica entre 120 razas y se muestran las top 5 predicciones con porcentaje de confianza. Tap en cualquier resultado abre la ficha completa de la raza.\n\n## Catálogo y Gameplay\n200+ razas con info detallada (origen, temperamento, tamaño, pelaje, ejercicio, cuidados, entrenabilidad, ladrido, datos curiosos), clasificación FCI, guías de nutrición e higiene, enfermedades comunes y nombres alternativos. Cuatro modos de juego: quiz clásico de raza, comparativa de peso/altura, adivinar por descripción y trivia FCI. Sistema de vidas, progresión por etapas y tracking de rachas.\n\n## Arquitectura Multiplataforma\nClean Architecture en 4 módulos KMP: `app` (Compose Multiplatform + plataformas), `usecases` (Pure Kotlin), `data` (repos + SQLDelight + mappers) y `core` (entidades). El interfaz `BreedClassifier` vive en `commonMain`; Android aporta la implementación TFLite, dejando el ViewModel agnóstico de plataforma y listo para una futura implementación iOS.\n\n## Decisiones de Diseño\nSQLDelight como source of truth y Firebase como semilla: una sincronización inicial alimenta SQLite y todas las queries posteriores son locales. MVVM con StateFlow granular en lugar de MVI (los formularios son pequeños y ortogonales). Koin sobre Hilt por compatibilidad KMP nativa sin kapt/ksp.",
+        en: "KMP app for Android and iOS combining a dog breed quiz with on-device AI recognition — no server, no per-request cost.\n\n## Edge AI: Breed Recognition\nA MobileNet V2 model optimised and compiled to TensorFlow Lite runs inference 100% on-device. CameraX captures the photo, the image is scaled to 224×224 and normalised to [0, 1], the TFLite interpreter classifies across 120 breeds and the top 5 predictions are displayed with confidence percentages. Tap any result to open the full breed details.\n\n## Catalogue and Gameplay\n200+ breeds with detailed info (origin, temperament, size, coat, exercise needs, grooming, trainability, barking level, fun facts), FCI classification, nutrition and hygiene guides, common diseases and alternative names. Four game modes: classic breed quiz, weight/height comparison, description guessing and FCI trivia. Lives system, stage progression and streak tracking.\n\n## Multiplatform Architecture\nClean Architecture across 4 KMP modules: `app` (Compose Multiplatform + platforms), `usecases` (Pure Kotlin), `data` (repos + SQLDelight + mappers) and `core` (entities). The `BreedClassifier` interface lives in `commonMain`; Android provides the TFLite implementation, keeping the ViewModel platform-agnostic and ready for a future iOS implementation.\n\n## Design Decisions\nSQLDelight as source of truth and Firebase as the seed: an initial sync feeds SQLite and every subsequent query stays local. MVVM with granular StateFlow over MVI (forms are small and orthogonal). Koin over Hilt for native KMP compatibility without kapt/ksp."
+      },
+      architecture: {
+        es: "Lenguaje: Kotlin Multiplatform 2.3.20\nUI: Compose Multiplatform (BOM 2026.03.01) + Material3\nPlataformas: Android (API 23+) + iOS (iosArm64 + iosSimulatorArm64)\nArquitectura: Clean Architecture, 4 módulos KMP (app, usecases, data, core) + MVVM\nEstado: StateFlow + SharedFlow (Coroutines 1.10.2)\nNavegación: Navigation Compose KMP type-safe 2.9.2\nDI: Koin Multiplatform 4.2.1\nIA on-device: TensorFlow Lite 2.17.0 (MobileNet V2 — 120 razas)\nCámara: CameraX (Android)\nPersistencia: SQLDelight 2.0.2 (Multiplatform)\nBackend: Firebase BOM 34.12.0 (Firestore, Realtime DB, Auth, Analytics, Crashlytics)\nMonetización: AdMob 25.2.0 (banner + rewarded + interstitial) + UMP 4.0.0\nTesting: 59 unit tests JVM (JUnit 4 + MockK + Turbine)",
+        en: "Language: Kotlin Multiplatform 2.3.20\nUI: Compose Multiplatform (BOM 2026.03.01) + Material3\nPlatforms: Android (API 23+) + iOS (iosArm64 + iosSimulatorArm64)\nArchitecture: Clean Architecture, 4 KMP modules (app, usecases, data, core) + MVVM\nState: StateFlow + SharedFlow (Coroutines 1.10.2)\nNavigation: Navigation Compose KMP type-safe 2.9.2\nDI: Koin Multiplatform 4.2.1\nOn-device AI: TensorFlow Lite 2.17.0 (MobileNet V2 — 120 breeds)\nCamera: CameraX (Android)\nPersistence: SQLDelight 2.0.2 (Multiplatform)\nBackend: Firebase BOM 34.12.0 (Firestore, Realtime DB, Auth, Analytics, Crashlytics)\nMonetisation: AdMob 25.2.0 (banner + rewarded + interstitial) + UMP 4.0.0\nTesting: 59 unit tests JVM (JUnit 4 + MockK + Turbine)"
+      },
+      screenshots: [
+        "/images/projects/adivina-perro-banner.png"
+      ],
+      keyHighlights: [
+        { es: "Reconocimiento de raza 100% on-device con TFLite — sin red, sin coste por petición", en: "100% on-device breed recognition with TFLite — no network, no per-request cost" },
+        { es: "MobileNet V2 optimizado: 224×224 RGB, 120 clases, latencia en milisegundos", en: "Optimised MobileNet V2: 224×224 RGB, 120 classes, millisecond latency" },
+        { es: "Top 5 predicciones con porcentaje de confianza y navegación directa al detalle", en: "Top 5 predictions with confidence percentages and direct navigation to detail" },
+        { es: "Catálogo de 200+ razas con info de cuidados, FCI, dieta y enfermedades", en: "Catalogue of 200+ breeds with care info, FCI, diet and diseases" },
+        { es: "4 modos de juego: quiz clásico, peso/altura, descripción y trivia FCI", en: "4 game modes: classic quiz, weight/height, description and FCI trivia" },
+        { es: "Clean Architecture en 4 módulos KMP con interfaz BreedClassifier en commonMain", en: "Clean Architecture across 4 KMP modules with BreedClassifier interface in commonMain" },
+        { es: "59 unit tests pasando en CI (32 ViewModels + 14 use cases + 13 data)", en: "59 unit tests passing in CI (32 ViewModels + 14 use cases + 13 data)" },
+        { es: "SQLDelight como source of truth, Firebase como semilla — playable offline", en: "SQLDelight as source of truth, Firebase as seed — playable offline" }
+      ],
+      demoUrl: "https://play.google.com/store/apps/details?id=com.alvaroquintana.adivinaperro"
+    }
+  },
   {
     title: "Cartera Investing",
     subtitle: {
@@ -84,7 +131,6 @@ export const projects: AIProject[] = [
     ],
     techStack: ["Cloudflare Workers", "Vectorize", "Llama 3.1", "BGE Embeddings"],
     accentColor: "#FF00FF",
-    githubUrl: "https://github.com/AlvaroQ/portfolio-chatbot",
     isLive: true,
     isFeatured: true,
     detailedInfo: {
