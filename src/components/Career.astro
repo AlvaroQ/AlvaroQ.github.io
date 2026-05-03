@@ -27,7 +27,7 @@ const { strings, lang } = Astro.props;
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
         {career.map((node, i) => (
           <div
-            class="animate-on-scroll slide-up neon-card text-center group flex flex-col"
+            class="animate-on-scroll slide-up neon-card timeline-card text-center group flex flex-col relative z-10"
             style={`animation-delay: ${i * 100}ms; border-color: ${node.color};`}
           >
             <!-- Icon -->
@@ -63,7 +63,7 @@ const { strings, lang } = Astro.props;
     <!-- Stats -->
     <div class="grid grid-cols-3 gap-4 mt-14 animate-on-scroll fade-in">
       <div class="neon-card text-center">
-        <p class="text-2xl font-bold text-[var(--neon-cyan)]">+12</p>
+        <p class="text-2xl font-bold text-[var(--neon-cyan)]">+15</p>
         <p class="text-[0.7rem] text-[var(--text-secondary)] tracking-wider">{strings.yearsInTechLabel}</p>
       </div>
       <div class="neon-card text-center">
@@ -71,9 +71,19 @@ const { strings, lang } = Astro.props;
         <p class="text-[0.7rem] text-[var(--text-secondary)] tracking-wider">{strings.yearsAtBfyLabel}</p>
       </div>
       <div class="neon-card text-center">
-        <p class="text-2xl font-bold text-[var(--neon-green)]">5</p>
-        <p class="text-[0.7rem] text-[var(--text-secondary)] tracking-wider">{strings.companiesLabel}</p>
+        <p class="text-2xl font-bold text-[var(--neon-green)]">{strings.platformsNum}</p>
+        <p class="text-[0.7rem] text-[var(--text-secondary)] tracking-wider">{strings.platformsLabel}</p>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+  .timeline-card {
+    background: rgba(26, 26, 46, 0.92);
+  }
+
+  :global(html.light) .timeline-card {
+    background: rgba(255, 255, 255, 0.95);
+  }
+</style>
