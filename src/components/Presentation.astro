@@ -7,12 +7,6 @@ interface Props {
 }
 
 const { strings } = Astro.props;
-
-const stats = [
-  { num: strings.yearsExperienceNum, label: strings.yearsExperienceLabel },
-  { num: strings.yearsLeadingNum, label: strings.yearsLeadingLabel },
-  { num: strings.platformsNum, label: strings.platformsLabel },
-];
 ---
 
 <section id="about" class="py-20">
@@ -75,18 +69,8 @@ const stats = [
       </div>
     </div>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-3 gap-6 mt-20 animate-on-scroll fade-in">
-      {stats.map(({ num, label }) => (
-        <div class="neon-card text-center">
-          <p class="text-2xl md:text-4xl font-bold text-[var(--neon-cyan)] neon-text">{num}</p>
-          <p class="text-[0.7rem] md:text-xs text-[var(--text-secondary)] tracking-wider mt-1">{label}</p>
-        </div>
-      ))}
-    </div>
-
     <!-- Built with -->
-    <div class="text-center mt-16 animate-on-scroll fade-in">
+    <div class="text-right mt-16 animate-on-scroll fade-in">
       <p class="text-xs text-[var(--text-secondary)] opacity-50">{strings.builtWithTech}</p>
       <p class="text-sm text-[var(--neon-cyan)] font-bold tracking-wider">{strings.techName}</p>
     </div>
