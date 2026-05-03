@@ -22,7 +22,7 @@ const { strings, lang } = Astro.props;
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {projects.map((project, i) => (
         <div
-          class={`animate-on-scroll slide-up neon-card group ${project.detailedInfo ? 'cursor-pointer' : ''}`}
+          class={`animate-on-scroll slide-up neon-card group flex flex-col h-full ${project.detailedInfo ? 'cursor-pointer' : ''}`}
           style={`animation-delay: ${i * 100}ms;`}
           data-project-index={i}
           data-featured={project.detailedInfo ? 'true' : 'false'}
@@ -36,6 +36,7 @@ const { strings, lang } = Astro.props;
           data-project-screenshots={JSON.stringify(project.detailedInfo?.screenshots || [])}
           data-project-highlights={JSON.stringify(project.detailedInfo?.keyHighlights.map(h => h[lang]) || [])}
           data-project-demo={project.detailedInfo?.demoUrl || ''}
+          data-project-github={project.detailedInfo?.githubUrl || ''}
           data-project-tech={JSON.stringify(project.techStack)}
           data-project-featured={project.isFeatured ? 'true' : 'false'}
         >
@@ -126,6 +127,7 @@ const { strings, lang } = Astro.props;
         screenshots: JSON.parse(card.dataset.projectScreenshots || '[]'),
         keyHighlights: JSON.parse(card.dataset.projectHighlights || '[]'),
         demoUrl: card.dataset.projectDemo || null,
+        githubUrl: card.dataset.projectGithub || null,
         techStack: JSON.parse(card.dataset.projectTech || '[]'),
         isFeatured: card.dataset.projectFeatured === 'true'
       };
