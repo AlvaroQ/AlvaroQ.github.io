@@ -335,21 +335,15 @@ section + section {
   }
 }
 
-/* ===== BADGE VARIANTS ===== */
+/* ===== BADGE VARIANTS (outlined on paper) ===== */
 .badge-live {
-  background: rgba(57, 255, 20, 0.2);
-  color: var(--neon-green);
-  border: 1px solid var(--neon-green);
-}
-
-.badge-featured {
-  background: rgba(255, 255, 0, 0.15);
-  color: var(--neon-yellow);
-  border: 1px solid var(--neon-yellow);
+  background: var(--paper);
+  color: var(--accent);
+  border: 1px solid var(--accent);
 }
 
 .badge-discontinued {
-  background: rgba(255, 0, 128, 0.15);
-  color: var(--neon-pink);
-  border: 1px solid var(--neon-pink);
+  background: var(--paper);
+  color: var(--ink-muted);
+  border: 1px solid var(--ink-muted);
 }

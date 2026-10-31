@@ -1,6 +1,7 @@
 ---
 import type { Strings } from '../i18n/es';
 import { projects } from '../data/projects';
+import SectionHeading from './SectionHeading.astro';
 
 interface Props {
   strings: Strings;
@@ -8,110 +9,164 @@ interface Props {
 }
 
 const { strings, lang } = Astro.props;
+const total = String(projects.length).padStart(2, '0');
 ---
 
-<section id="projects" class="py-20">
+<section id="projects">
   <div class="section-container">
-    <div class="text-center mb-12 animate-on-scroll slide-up">
-      <h2 class="text-2xl md:text-4xl font-bold text-[var(--neon-cyan)] tracking-[2px] neon-text">
-        {strings.latestAiProjects}
-      </h2>
-      <p class="text-sm text-[var(--text-secondary)] mt-2">{strings.showcasingProjects}</p>
-    </div>
+    <SectionHeading index="03" title={strings.latestAiProjects} subtitle={strings.showcasingProjects} />
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {projects.map((project, i) => (
-        <div
-          class={`animate-on-scroll slide-up neon-card group flex flex-col h-full ${project.detailedInfo ? 'cursor-pointer' : ''}`}
-          style={`animation-delay: ${i * 100}ms;`}
-          data-project-index={i}
-          data-featured={project.detailedInfo ? 'true' : 'false'}
-          {...(project.detailedInfo ? { role: 'button', tabindex: '0', 'aria-label': `${strings.viewDetails}: ${project.title}` } : {})}
-          data-project-title={project.title}
-          data-project-subtitle={project.subtitle[lang]}
-          data-project-description={project.description[lang]}
-          data-project-accent={project.accentColor}
-          data-project-long-desc={project.detailedInfo?.longDescription[lang] || ''}
-          data-project-architecture={project.detailedInfo?.architecture[lang] || ''}
-          data-project-screenshots={JSON.stringify(project.detailedInfo?.screenshots || [])}
-          data-project-highlights={JSON.stringify(project.detailedInfo?.keyHighlights.map(h => h[lang]) || [])}
-          data-project-demo={project.detailedInfo?.demoUrl || ''}
-          data-project-github={project.detailedInfo?.githubUrl || ''}
-          data-project-tech={JSON.stringify(project.techStack)}
-          data-project-featured={project.isFeatured ? 'true' : 'false'}
-        >
-          <!-- Badges -->
-          <div class="flex gap-2 mb-3 flex-wrap">
-            {project.isLive && <span class="badge badge-live">{strings.liveBadge}</span>}
-            {project.isDiscontinued && <span class="badge badge-discontinued">{strings.discontinuedBadge}</span>}
-          </div>
-
-          <!-- Title -->
-          <h3 class="text-lg font-bold mb-1" style={`color: ${project.accentColor};`}>
-            {project.title}
-          </h3>
-          <p class="text-xs text-[var(--text-secondary)] mb-3">{project.subtitle[lang]}</p>
-
-          <!-- Description -->
-          <p class="text-xs text-[var(--text-secondary)] leading-relaxed mb-4">{project.description[lang]}</p>
-
-          <!-- Features -->
-          <div class="mb-4">
-            <p class="text-[0.7rem] text-[var(--text-secondary)] tracking-wider mb-2 uppercase">{strings.keyFeatures}</p>
-            <div class="flex flex-wrap gap-1.5">
-              {project.features.map((f) => (
-                <span class="text-[0.7rem] px-2 py-0.5 rounded border text-[var(--text-primary)]"
-                      style={`border-color: ${project.accentColor}30; background: ${project.accentColor}10;`}>
-                  {f[lang]}
-                </span>
-              ))}
+    <div class="cards grid gap-10 md:grid-cols-2 lg:grid-cols-1 lg:gap-0">
+      {projects.map((project, i) => {
+        const cover = project.detailedInfo?.screenshots[0];
+        const number = String(i + 1).padStart(2, '0');
+        return (
+          <article
+            class={`card media-zoom animate-on-scroll group ${project.detailedInfo ? 'cursor-pointer' : ''}`}
+            style={`--stagger: ${(i % 2) * 80}ms`}
+            data-project-index={i}
+            data-featured={project.detailedInfo ? 'true' : 'false'}
+            {...(project.detailedInfo ? { role: 'button', tabindex: '0', 'aria-label': `${strings.viewDetails}: ${project.title}` } : {})}
+            data-project-title={project.title}
+            data-project-subtitle={project.subtitle[lang]}
+            data-project-description={project.description[lang]}
+            data-project-accent={project.accentColor}
+            data-project-long-desc={project.detailedInfo?.longDescription[lang] || ''}
+            data-project-architecture={project.detailedInfo?.architecture[lang] || ''}
+            data-project-screenshots={JSON.stringify(project.detailedInfo?.screenshots || [])}
+            data-project-highlights={JSON.stringify(project.detailedInfo?.keyHighlights.map(h => h[lang]) || [])}
+            data-project-demo={project.detailedInfo?.demoUrl || ''}
+            data-project-github={project.detailedInfo?.githubUrl || ''}
+            data-project-tech={JSON.stringify(project.techStack)}
+            data-project-featured={project.isFeatured ? 'true' : 'false'}
+          >
+            <div class="media relative overflow-hidden bg-(--paper-2)">
+              {cover ? (
+                <img src={cover} alt="" class="h-full w-full object-cover" loading="lazy" decoding="async" />
+              ) : (
+                <span class="plate font-display text-(--ink-muted)" aria-hidden="true">{project.title.charAt(0)}</span>
+              )}
+              <div class="absolute left-4 top-4 flex gap-2">
+                {project.isLive && <span class="badge badge-live">{strings.liveBadge}</span>}
+                {project.isDiscontinued && <span class="badge badge-discontinued">{strings.discontinuedBadge}</span>}
+              </div>
             </div>
-          </div>
 
-          <!-- Tech Stack -->
-          <div class="mb-4">
-            <p class="text-[0.7rem] text-[var(--text-secondary)] tracking-wider mb-2 uppercase">{strings.techStack}</p>
-            <div class="flex flex-wrap gap-1">
-              {project.techStack.map((tech) => (
-                <span class="tech-pill">{tech}</span>
-              ))}
+            <div class="body grid content-start gap-3.5">
+              <p class="font-mono text-xs tracking-[0.1em] text-(--ink-muted)">{strings.projectLabel} {number} / {total}</p>
+              <h3 class="font-display text-[clamp(28px,3vw,34px)] font-semibold leading-[1.05] tracking-[-0.01em] text-(--ink)">{project.title}</h3>
+              <p class="font-display text-[17px] italic text-(--accent)">{project.subtitle[lang]}</p>
+              <p class="max-w-[48ch] text-[15px] leading-relaxed text-(--ink-muted)">{project.description[lang]}</p>
+              <ul class="feats flex flex-wrap gap-x-4 gap-y-1.5 text-[13px] text-(--ink)">
+                {project.features.map((f) => <li>{f[lang]}</li>)}
+              </ul>
+              <ul class="flex flex-wrap gap-1.5">
+                {project.techStack.map((tech) => <li class="tag">{tech}</li>)}
+              </ul>
+              <div class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+                {project.detailedInfo && <span class="more font-semibold text-(--ink)">{strings.viewCase}</span>}
+                {(project.githubUrl || project.detailedInfo?.githubUrl) && (
+                  <a
+                    href={project.githubUrl || project.detailedInfo?.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="link-grow text-(--ink-muted) hover:text-(--ink)"
+                    aria-label={`${strings.a11yOpenProject}: ${project.title}`}
+                    onclick="event.stopPropagation()"
+                  >
+                    {strings.viewOnGithub}
+                  </a>
+                )}
+                {project.isLive && (
+                  <button
+                    type="button"
+                    class="link-grow open-chat-btn text-(--accent)"
+                    onclick="event.stopPropagation(); window.openChatWidget && window.openChatWidget();"
+                    aria-label={`${strings.tryIt}: ${project.title}`}
+                  >
+                    {strings.tryIt}
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-
-          <!-- Actions -->
-          <div class="flex items-center gap-3 mt-auto pt-3 border-t border-[var(--grid-lines)]">
-            {project.githubUrl && (
-              <a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-xs text-[var(--neon-cyan)] hover:underline"
-                aria-label={`${strings.a11yOpenProject}: ${project.title}`}
-                onclick="event.stopPropagation()"
-              >
-                {strings.viewOnGithub}
-              </a>
-            )}
-            {project.isLive && (
-              <button
-                class="text-xs text-[var(--neon-green)] hover:underline open-chat-btn"
-                onclick="event.stopPropagation(); window.openChatWidget && window.openChatWidget();"
-                aria-label={`${strings.tryIt}: ${project.title}`}
-              >
-                {strings.tryIt}
-              </button>
-            )}
-            {project.detailedInfo && (
-              <span class="text-[0.7rem] text-[var(--text-secondary)] ml-auto opacity-60 group-hover:opacity-100 transition-opacity">
-                {strings.clickToExpand} →
-              </span>
-            )}
-          </div>
-        </div>
-      ))}
+          </article>
+        );
+      })}
     </div>
   </div>
 </section>
+
+<style>
+  .card {
+    display: grid;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .media {
+    aspect-ratio: 16 / 10;
+  }
+
+  .media img {
+    filter: sepia(0.25) contrast(1.05);
+  }
+
+  .plate {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    font-size: 96px;
+    font-weight: 600;
+  }
+
+  .body {
+    padding: 26px 0 30px;
+  }
+
+  .feats li::before {
+    content: "— ";
+    color: var(--accent);
+  }
+
+  .more {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 4px;
+  }
+
+  .card:focus-visible {
+    outline-offset: 6px;
+  }
+
+  /* From lg: one editorial row per project, media at 50%, alternating sides */
+  @media (min-width: 1024px) {
+    .card {
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 0;
+    }
+
+    .card:last-child {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .media {
+      aspect-ratio: auto;
+      min-height: 340px;
+    }
+
+    .body {
+      padding: 40px 0 40px 48px;
+    }
+
+    .card:nth-child(even) .media {
+      order: 2;
+    }
+
+    .card:nth-child(even) .body {
+      padding: 40px 48px 40px 0;
+    }
+  }
+</style>
 
 <script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
@@ -137,6 +192,7 @@ const { strings, lang } = Astro.props;
     document.querySelectorAll('[data-featured="true"]').forEach(function(card) {
       card.addEventListener('click', function() { openModal(card); });
       card.addEventListener('keydown', function(e) {
+        if (e.target !== card) return;
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           openModal(card);

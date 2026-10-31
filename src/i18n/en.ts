@@ -36,17 +36,15 @@ export const en: Strings = {
   yearsAtBfyLabel: "Years at B-FY",
 
   // AI Projects
-  latestAiProjects: "< LATEST AI PROJECTS />",
-  showcasingProjects: "Showcasing my latest AI-powered applications",
-  keyFeatures: "KEY FEATURES",
-  techStack: "TECH STACK",
-  viewOnGithub: "> View on GitHub",
+  latestAiProjects: "Projects",
+  showcasingProjects: "My latest AI-powered applications, from idea to product.",
+  projectLabel: "Project",
+  viewCase: "See the full case",
+  viewOnGithub: "View on GitHub",
   liveBadge: "LIVE",
   tryIt: "Try it",
   discontinuedBadge: "Discontinued",
-  featured: "FEATURED",
   viewDetails: "View Details",
-  clickToExpand: "Click to expand",
 
   // Skills
   skillsMatrix: "Skills",

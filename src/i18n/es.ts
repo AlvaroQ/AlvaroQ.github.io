@@ -34,17 +34,15 @@ export const es = {
   yearsAtBfyLabel: "Años en B-FY",
 
   // AI Projects
-  latestAiProjects: "< ÚLTIMOS PROYECTOS IA />",
-  showcasingProjects: "Mostrando mis últimas aplicaciones potenciadas por IA",
-  keyFeatures: "CARACTERÍSTICAS CLAVE",
-  techStack: "TECNOLOGÍAS",
-  viewOnGithub: "> Ver en GitHub",
+  latestAiProjects: "Proyectos",
+  showcasingProjects: "Mis últimas aplicaciones con IA, de la idea al producto.",
+  projectLabel: "Proyecto",
+  viewCase: "Ver el caso completo",
+  viewOnGithub: "Ver en GitHub",
   liveBadge: "LIVE",
   tryIt: "Pruébalo",
   discontinuedBadge: "Descontinuado",
-  featured: "DESTACADO",
   viewDetails: "Ver Detalles",
-  clickToExpand: "Click para expandir",
 
   // Skills
   skillsMatrix: "Habilidades",
