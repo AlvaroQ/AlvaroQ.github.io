@@ -80,16 +80,6 @@
   transform: scale(1.03);
 }
 
-/* ===== TIMELINE CONNECTION LINE (Career, until restyled) ===== */
-.timeline-line {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--line);
-}
-
 /* ===== REDUCED MOTION ===== */
 @media (prefers-reduced-motion: reduce) {
   .animate-on-scroll {

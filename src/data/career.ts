@@ -21,7 +21,7 @@ export const career: CareerNode[] = [
     skills: ["Titanium", "Java", "REST APIs", "Git"],
     icon: "TR",
     type: "STARTUP",
-    logo: "/images/logos/logo_theranking.png"
+    logo: "/images/logos/logo_theranking.webp"
   },
   {
     company: "TalentoMOBILE",
@@ -34,7 +34,7 @@ export const career: CareerNode[] = [
     skills: ["Android", "Biometrics", "voice commands", "Security"],
     icon: "TM",
     type: "CONSULTANT",
-    logo: "/images/logos/logo_talento.png"
+    logo: "/images/logos/logo_talento.webp"
   },
   {
     company: "Santander UK",
@@ -47,7 +47,7 @@ export const career: CareerNode[] = [
     skills: ["Kotlin", "NFC", "OCR", "MVP"],
     icon: "UK",
     type: "CORPORATE",
-    logo: "/images/logos/logo_santander_uk.png"
+    logo: "/images/logos/logo_santander_uk.webp"
   },
   {
     company: "B-FY",
@@ -60,7 +60,7 @@ export const career: CareerNode[] = [
     skills: ["KMP", "iOS", "Compose", "Ktor"],
     icon: "BF",
     type: "STARTUP",
-    logo: "/images/logos/logo_bfy.png"
+    logo: "/images/logos/logo_bfy.webp"
   },
   {
     company: "AI Specialist",

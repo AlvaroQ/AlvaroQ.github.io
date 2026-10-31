@@ -24,7 +24,7 @@ class ProjectDetailModal {
     this.theme = 'dark';
     this.lang = 'es';
     this.projectData = null;
-    this.accentColor = '#FFFF00'; // Default yellow
+    this.accentColor = 'var(--accent)'; // Single site accent (ink theme token)
 
     // Lightbox navigation state
     this.screenshots = [];

@@ -293,7 +293,8 @@ function setup(hero) {
     hero.addEventListener('pointerdown', (e) => { lastX = -100; onPointer(e); }, { passive: true });
 
     new IntersectionObserver((entries) => {
-      s.visible = entries[entries.length - 1].isIntersecting;
+      const entry = entries[entries.length - 1];
+      s.visible = entry.isIntersecting && entry.intersectionRatio >= 0.05;
       sync();
     }, { threshold: 0.05 }).observe(hero);
     document.addEventListener('visibilitychange', sync);
