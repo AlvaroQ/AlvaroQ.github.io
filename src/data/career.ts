@@ -4,7 +4,6 @@ export interface CareerNode {
   role: string;
   description: { es: string; en: string };
   skills: string[];
-  color: string;
   icon?: string;
   type: 'STARTUP' | 'CONSULTANT' | 'CORPORATE' | 'SPECIALIST';
   logo?: string;
@@ -20,7 +19,6 @@ export const career: CareerNode[] = [
       en: "Cross-platform development with Titanium. Built startup apps with social integrations."
     },
     skills: ["Titanium", "Java", "REST APIs", "Git"],
-    color: "var(--neon-cyan)",
     icon: "TR",
     type: "STARTUP",
     logo: "/images/logos/logo_theranking.png"
@@ -34,7 +32,6 @@ export const career: CareerNode[] = [
       en: "Santander Bank projects: biometric signature, face recognition, voice commands, NFC."
     },
     skills: ["Android", "Biometrics", "voice commands", "Security"],
-    color: "var(--neon-green)",
     icon: "TM",
     type: "CONSULTANT",
     logo: "/images/logos/logo_talento.png"
@@ -48,7 +45,6 @@ export const career: CareerNode[] = [
       en: "On-site in Milton Keynes. Retail & Business apps with Kotlin, NFC, OCR, geolocation."
     },
     skills: ["Kotlin", "NFC", "OCR", "MVP"],
-    color: "var(--santander-blue)",
     icon: "UK",
     type: "CORPORATE",
     logo: "/images/logos/logo_santander_uk.png"
@@ -62,7 +58,6 @@ export const career: CareerNode[] = [
       en: "Passwordless IDaaS platform for identity protection against impersonation. Leading SDK development across Android, iOS and Desktop with KMP."
     },
     skills: ["KMP", "iOS", "Compose", "Ktor"],
-    color: "var(--neon-magenta)",
     icon: "BF",
     type: "STARTUP",
     logo: "/images/logos/logo_bfy.png"
@@ -76,7 +71,6 @@ export const career: CareerNode[] = [
       en: "Building intelligent systems with LLMs, autonomous agents, and AI-powered workflows."
     },
     skills: ["Claude", "LangChain", "MCP", "RAG"],
-    color: "var(--orchid)",
     icon: "AI",
     type: "SPECIALIST"
   }

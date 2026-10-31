@@ -114,8 +114,4 @@
   .media-zoom:hover img {
     transform: none;
   }
-
-  .skill-bar-fill {
-    transition: none;
-  }
 }

@@ -27,7 +27,8 @@ export const es = {
   stackLabel: "Stack principal",
 
   // Evolution
-  careerTimeline: "TRAYECTORIA",
+  careerTimeline: "Trayectoria",
+  present: "hoy",
   careerSubtitle: "De desarrollador a ingeniero full-stack a especialista IA",
   yearsInTechLabel: "Años en Tech",
   yearsAtBfyLabel: "Años en B-FY",
@@ -46,7 +47,11 @@ export const es = {
   clickToExpand: "Click para expandir",
 
   // Skills
-  skillsMatrix: "HABILIDADES",
+  skillsMatrix: "Habilidades",
+  depthCore: "Núcleo",
+  depthSolid: "Sólido",
+  depthFamiliar: "Familiar",
+  yearsShort: "años",
 
   // Contact
   connect: "CONECTAR",
@@ -83,7 +88,6 @@ export const es = {
   a11yOpenLinkedIn: "Abrir perfil de LinkedIn",
   a11yOpenGitHub: "Abrir perfil de GitHub",
   a11yOpenProject: "Abrir proyecto en GitHub",
-  a11ySkillLevel: "Nivel de habilidad",
 } as const;
 
 export type Strings = { readonly [K in keyof typeof es]: string };

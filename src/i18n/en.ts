@@ -29,7 +29,8 @@ export const en: Strings = {
   stackLabel: "Core stack",
 
   // Evolution
-  careerTimeline: "CAREER TIMELINE",
+  careerTimeline: "Career",
+  present: "present",
   careerSubtitle: "From startup developer to full-stack engineer to AI specialist",
   yearsInTechLabel: "Years in Tech",
   yearsAtBfyLabel: "Years at B-FY",
@@ -48,7 +49,11 @@ export const en: Strings = {
   clickToExpand: "Click to expand",
 
   // Skills
-  skillsMatrix: "SKILLS MATRIX",
+  skillsMatrix: "Skills",
+  depthCore: "Core",
+  depthSolid: "Solid",
+  depthFamiliar: "Familiar",
+  yearsShort: "yrs",
 
   // Contact
   connect: "CONNECT",
@@ -85,5 +90,4 @@ export const en: Strings = {
   a11yOpenLinkedIn: "Open LinkedIn profile",
   a11yOpenGitHub: "Open GitHub profile",
   a11yOpenProject: "Open project on GitHub",
-  a11ySkillLevel: "Skill level",
 };

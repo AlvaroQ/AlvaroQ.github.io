@@ -223,6 +223,18 @@ html.light {
     text-transform: uppercase;
   }
 
+  /* ===== HAIRLINE TAG (tech lists) ===== */
+  .tag {
+    display: inline-block;
+    padding: 3px 7px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--ink-muted);
+  }
+
   /* ===== TECH PILL ===== */
   .tech-pill {
     display: inline-block;
@@ -240,22 +252,6 @@ html.light {
   html.light .tech-pill {
     background: rgba(245, 245, 250, 0.5);
     border-color: rgba(0, 100, 100, 0.12);
-  }
-
-  /* ===== SKILL BAR ===== */
-  .skill-bar-track {
-    width: 100%;
-    height: 8px;
-    background: var(--bg-surface);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .skill-bar-fill {
-    height: 100%;
-    border-radius: 4px;
-    transition: width 1.5s ease;
-    box-shadow: 0 0 8px var(--glow-cyan);
   }
 }
 
