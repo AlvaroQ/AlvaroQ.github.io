@@ -71,43 +71,42 @@ class PortfolioChatWidget {
         bottom: 20px;
         right: 20px;
         z-index: 10000;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-family: var(--font-ui);
       }
 
       #chat-toggle-btn {
         width: 60px;
         height: 60px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #00FFFF 0%, #FF0080 100%);
+        background: var(--ink);
         border: none;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 20px rgba(0, 255, 255, 0.4);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
         transition: transform 0.3s, box-shadow 0.3s;
-        animation: pulse 2s ease-in-out infinite;
       }
 
       @keyframes pulse {
         0%, 100% {
-          box-shadow: 0 4px 20px rgba(0, 255, 255, 0.4);
+          box-shadow: 0 4px 20px color-mix(in srgb, var(--accent) 40%, transparent);
         }
         50% {
-          box-shadow: 0 4px 30px rgba(0, 255, 255, 0.7), 0 0 40px rgba(255, 0, 128, 0.3);
+          box-shadow: 0 4px 30px color-mix(in srgb, var(--accent) 70%, transparent), 0 0 40px color-mix(in srgb, var(--ink-2) 30%, transparent);
         }
       }
 
       #chat-toggle-btn:hover {
         transform: scale(1.1);
-        box-shadow: 0 6px 30px rgba(0, 255, 255, 0.6);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
         animation: none;
       }
 
       #chat-toggle-btn svg {
         width: 28px;
         height: 28px;
-        fill: white;
+        fill: var(--paper);
       }
 
       #chat-panel {
@@ -129,13 +128,13 @@ class PortfolioChatWidget {
       }
 
       #chat-panel.dark {
-        background: rgba(10, 10, 20, 0.98);
-        border: 1px solid rgba(0, 255, 255, 0.3);
+        background: var(--paper-2);
+        border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
       }
 
       #chat-panel.light {
-        background: rgba(255, 255, 255, 0.98);
-        border: 1px solid rgba(0, 184, 184, 0.4);
+        background: var(--paper-2);
+        border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
       }
 
       @keyframes slideUp {
@@ -144,8 +143,8 @@ class PortfolioChatWidget {
       }
 
       .chat-header {
-        background: linear-gradient(135deg, #00FFFF 0%, #FF0080 100%);
-        color: white;
+        background: var(--ink);
+        color: var(--paper);
         padding: 16px;
         font-weight: 600;
         font-size: 15px;
@@ -157,7 +156,7 @@ class PortfolioChatWidget {
       .chat-close {
         background: none;
         border: none;
-        color: white;
+        color: var(--paper);
         font-size: 24px;
         cursor: pointer;
         padding: 0;
@@ -189,22 +188,22 @@ class PortfolioChatWidget {
       }
 
       .chat-message.user {
-        background: linear-gradient(135deg, #00FFFF 0%, #00B8B8 100%);
-        color: #0A0A0F;
+        background: var(--ink);
+        color: var(--paper);
         align-self: flex-end;
         border-bottom-right-radius: 4px;
       }
 
       #chat-panel.dark .chat-message.assistant {
         background: rgba(255, 255, 255, 0.1);
-        color: #E0E0E0;
+        color: var(--ink);
         align-self: flex-start;
         border-bottom-left-radius: 4px;
       }
 
       #chat-panel.light .chat-message.assistant {
         background: rgba(0, 0, 0, 0.05);
-        color: #1A1A2E;
+        color: var(--ink);
         align-self: flex-start;
         border-bottom-left-radius: 4px;
       }
@@ -227,25 +226,25 @@ class PortfolioChatWidget {
       }
 
       #chat-panel.dark .chat-suggestion {
-        background: rgba(0, 255, 255, 0.1);
-        color: #00FFFF;
-        border: 1px solid rgba(0, 255, 255, 0.3);
+        background: color-mix(in srgb, var(--accent) 10%, transparent);
+        color: var(--accent);
+        border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
       }
 
       #chat-panel.dark .chat-suggestion:hover {
-        background: rgba(0, 255, 255, 0.2);
-        border-color: rgba(0, 255, 255, 0.5);
+        background: color-mix(in srgb, var(--accent) 20%, transparent);
+        border-color: color-mix(in srgb, var(--accent) 50%, transparent);
       }
 
       #chat-panel.light .chat-suggestion {
-        background: rgba(0, 184, 184, 0.1);
-        color: #008080;
-        border: 1px solid rgba(0, 184, 184, 0.3);
+        background: color-mix(in srgb, var(--accent) 10%, transparent);
+        color: var(--accent);
+        border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
       }
 
       #chat-panel.light .chat-suggestion:hover {
-        background: rgba(0, 184, 184, 0.2);
-        border-color: rgba(0, 184, 184, 0.5);
+        background: color-mix(in srgb, var(--accent) 20%, transparent);
+        border-color: color-mix(in srgb, var(--accent) 50%, transparent);
       }
 
       .chat-input-container {
@@ -273,18 +272,18 @@ class PortfolioChatWidget {
 
       #chat-panel.dark .chat-input {
         background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(0, 255, 255, 0.3);
-        color: #E0E0E0;
+        border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+        color: var(--ink);
       }
 
       #chat-panel.light .chat-input {
         background: rgba(0, 0, 0, 0.05);
-        border: 1px solid rgba(0, 184, 184, 0.4);
-        color: #1A1A2E;
+        border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+        color: var(--ink);
       }
 
       .chat-input:focus {
-        border-color: #00FFFF;
+        border-color: var(--accent);
       }
 
       .chat-input::placeholder {
@@ -292,8 +291,8 @@ class PortfolioChatWidget {
       }
 
       .chat-send {
-        background: linear-gradient(135deg, #00FFFF 0%, #FF0080 100%);
-        color: white;
+        background: var(--ink);
+        color: var(--paper);
         border: none;
         border-radius: 50%;
         width: 44px;
@@ -335,7 +334,7 @@ class PortfolioChatWidget {
       .chat-typing span {
         width: 8px;
         height: 8px;
-        background: #00FFFF;
+        background: var(--accent);
         border-radius: 50%;
         animation: typing 1s infinite;
       }

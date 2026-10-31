@@ -23,8 +23,8 @@ export const en: Strings = {
 
   platformsNum: "4",
   platformsLabel: "ANDROID · iOS · WEB · DESKTOP",
-  builtWithTech: "THIS SITE IS BUILT WITH",
-  techName: "ASTRO + TAILWIND CSS",
+  builtWithTech: "Built with",
+  techName: "Astro + Tailwind CSS",
 
   stackLabel: "Core stack",
 
@@ -54,7 +54,8 @@ export const en: Strings = {
   yearsShort: "yrs",
 
   // Contact
-  connect: "CONNECT",
+  connect: "Contact",
+  contactLead: "I live in Madrid and work remotely. Write to me.",
   whoami: "$ whoami",
   whoamiResult: "alvaro_quintana",
   catContact: "$ cat contact.txt",

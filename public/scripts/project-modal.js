@@ -93,9 +93,9 @@ class ProjectDetailModal {
     styles.id = 'project-modal-styles';
     styles.textContent = `
       #project-modal-overlay {
-        --accent-color: #FFFF00;
-        --accent-color-dim: rgba(255, 255, 0, 0.2);
-        --accent-color-border: rgba(255, 255, 0, 0.4);
+        --accent-color: var(--accent);
+        --accent-color-dim: color-mix(in srgb, var(--accent) 15%, transparent);
+        --accent-color-border: color-mix(in srgb, var(--accent) 40%, transparent);
         position: fixed;
         top: 0;
         left: 0;
@@ -116,12 +116,12 @@ class ProjectDetailModal {
       }
 
       #project-modal-overlay.dark {
-        background: rgba(0, 0, 0, 0.85);
+        background: color-mix(in srgb, var(--paper) 88%, transparent);
         backdrop-filter: blur(8px);
       }
 
       #project-modal-overlay.light {
-        background: rgba(255, 255, 255, 0.9);
+        background: color-mix(in srgb, var(--paper) 88%, transparent);
         backdrop-filter: blur(8px);
       }
 
@@ -145,7 +145,7 @@ class ProjectDetailModal {
         display: flex;
         flex-direction: column;
         animation: modalSlideIn 0.3s ease;
-        font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+        font-family: var(--font-ui);
       }
 
       @keyframes modalSlideIn {
@@ -154,13 +154,15 @@ class ProjectDetailModal {
       }
 
       #project-modal-overlay.dark #project-modal-content {
-        background: #12121A;
-        box-shadow: 0 0 40px var(--accent-color-dim);
+        background: var(--paper-2);
+        border: 1px solid var(--line);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
       }
 
       #project-modal-overlay.light #project-modal-content {
-        background: #FFFFFF;
-        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+        background: var(--paper-2);
+        border: 1px solid var(--line);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.12);
       }
 
       /* Border only on mobile */
@@ -217,21 +219,23 @@ class ProjectDetailModal {
 
       #project-modal-overlay.dark .badge-private {
         background: rgba(255, 255, 255, 0.1);
-        color: #B0B0B0;
+        color: var(--ink-muted);
         border: 1px solid rgba(255, 255, 255, 0.2);
       }
 
       #project-modal-overlay.light .badge-private {
         background: rgba(0, 0, 0, 0.05);
-        color: #666666;
+        color: var(--ink-muted);
         border: 1px solid rgba(0, 0, 0, 0.15);
       }
 
       .modal-title {
-        font-size: 28px;
-        font-weight: 700;
+        font-family: var(--font-display);
+        font-size: 32px;
+        font-weight: 600;
+        line-height: 1.05;
         margin: 0;
-        color: var(--accent-color);
+        color: var(--ink);
       }
 
       .modal-subtitle-row {
@@ -247,11 +251,11 @@ class ProjectDetailModal {
       }
 
       #project-modal-overlay.dark .modal-subtitle {
-        color: #B0B0B0;
+        color: var(--ink-muted);
       }
 
       #project-modal-overlay.light .modal-subtitle {
-        color: #666666;
+        color: var(--ink-muted);
       }
 
       .modal-demo-btn {
@@ -264,7 +268,7 @@ class ProjectDetailModal {
         font-weight: 600;
         text-decoration: none;
         background: var(--accent-color);
-        color: #000;
+        color: var(--paper);
         transition: opacity 0.2s, transform 0.2s;
       }
 
@@ -391,11 +395,11 @@ class ProjectDetailModal {
       }
 
       #project-modal-overlay.dark .modal-description {
-        color: #E0E0E0;
+        color: var(--ink);
       }
 
       #project-modal-overlay.light .modal-description {
-        color: #1A1A2E;
+        color: var(--ink);
       }
 
       .modal-screenshots-grid {
@@ -487,11 +491,11 @@ class ProjectDetailModal {
       }
 
       #project-modal-overlay.dark .modal-highlight-item {
-        color: #E0E0E0;
+        color: var(--ink);
       }
 
       #project-modal-overlay.light .modal-highlight-item {
-        color: #1A1A2E;
+        color: var(--ink);
       }
 
       .modal-architecture-box {
@@ -505,12 +509,12 @@ class ProjectDetailModal {
 
       #project-modal-overlay.dark .modal-architecture-box {
         background: rgba(0, 0, 0, 0.4);
-        color: #E0E0E0;
+        color: var(--ink);
       }
 
       #project-modal-overlay.light .modal-architecture-box {
         background: rgba(0, 0, 0, 0.03);
-        color: #1A1A2E;
+        color: var(--ink);
       }
 
       .modal-tech-chips {
@@ -551,11 +555,11 @@ class ProjectDetailModal {
       }
 
       #project-modal-overlay.dark .modal-video-text {
-        color: #B0B0B0;
+        color: var(--ink-muted);
       }
 
       #project-modal-overlay.light .modal-video-text {
-        color: #666666;
+        color: var(--ink-muted);
       }
 
       /* Lightbox for expanded screenshots */
@@ -750,7 +754,7 @@ class ProjectDetailModal {
         border-radius: 20px;
         color: white;
         font-size: 14px;
-        font-family: 'JetBrains Mono', monospace;
+        font-family: var(--font-mono);
       }
 
       @media (max-width: 600px) {
@@ -813,22 +817,16 @@ class ProjectDetailModal {
     document.head.appendChild(styles);
   }
 
-  // Convert hex to rgba for CSS
-  hexToRgba(hex, alpha) {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-  }
-
   // Update CSS custom properties with accent color
   updateAccentColor(color) {
     this.accentColor = color;
     const overlay = document.getElementById('project-modal-overlay');
+    // Single site accent: the per-project colour is kept in the data but the
+    // modal always follows the --accent token so it matches both themes.
     if (overlay) {
-      overlay.style.setProperty('--accent-color', color);
-      overlay.style.setProperty('--accent-color-dim', this.hexToRgba(color, 0.15));
-      overlay.style.setProperty('--accent-color-border', this.hexToRgba(color, 0.4));
+      overlay.style.setProperty('--accent-color', 'var(--accent)');
+      overlay.style.setProperty('--accent-color-dim', 'color-mix(in srgb, var(--accent) 15%, transparent)');
+      overlay.style.setProperty('--accent-color-border', 'color-mix(in srgb, var(--accent) 40%, transparent)');
     }
   }
 

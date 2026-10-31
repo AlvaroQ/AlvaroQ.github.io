@@ -21,8 +21,8 @@ export const es = {
 
   platformsNum: "4",
   platformsLabel: "ANDROID · iOS · WEB · DESKTOP",
-  builtWithTech: "SITIO CONSTRUIDO CON",
-  techName: "ASTRO + TAILWIND CSS",
+  builtWithTech: "Sitio construido con",
+  techName: "Astro + Tailwind CSS",
 
   stackLabel: "Stack principal",
 
@@ -52,7 +52,8 @@ export const es = {
   yearsShort: "años",
 
   // Contact
-  connect: "CONECTAR",
+  connect: "Contacto",
+  contactLead: "Vivo en Madrid y trabajo en remoto. Escríbeme.",
   whoami: "$ whoami",
   whoamiResult: "alvaro_quintana",
   catContact: "$ cat contacto.txt",
