@@ -1,7 +1,6 @@
 ---
 import '../styles/global.css';
 import '../styles/animations.css';
-import MouseSpotlight from '../components/MouseSpotlight.astro';
 
 interface Props {
   title?: string;
@@ -134,7 +133,6 @@ const altURL = new URL(altPath, Astro.site);
     Skip to content
   </a>
 
-  <MouseSpotlight />
 
   <main id="main-content">
     <slot />

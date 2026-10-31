@@ -21,6 +21,9 @@
       if (paper) meta.setAttribute('content', paper);
     }
 
+    // Re-read ink tokens for the hero effect
+    if (window.inkSignature) window.inkSignature.setTheme();
+
     // Notify chat widget and modal
     if (window.chatWidget) window.chatWidget.setTheme(theme);
     if (window.projectModal) window.projectModal.setTheme(theme);

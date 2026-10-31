@@ -1,11 +1,12 @@
 export const es = {
-  // Header
-  systemInitialized: "[ SISTEMA INICIALIZADO ]",
-  name: "ÁLVARO QUINTANA",
-  subtitle: "INGENIERO FULL-STACK | MOBILE · WEB · IA",
-  platforms: "Android | iOS | Web | CI/CD | Agentes IA",
-  builtWith: "Hecho con ",
-  usingTech: " usando Astro",
+  // Header (ink signature hero)
+  name: "Álvaro Quintana",
+  heroEyebrow: "Madrid · 15+ años · Senior Full-Stack",
+  heroHeadline: "Ingeniero Full-Stack",
+  heroHeadlineEm: "Mobile · Web · IA",
+  platforms: "Android · iOS · Web · CI/CD · Agentes IA",
+  inkPause: "Pausar tinta",
+  inkResume: "Reanudar tinta",
 
   // Presentation
   hiImAlvaro: "HOLA, SOY ÁLVARO",

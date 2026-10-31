@@ -1,13 +1,14 @@
 import type { Strings } from './es';
 
 export const en: Strings = {
-  // Header
-  systemInitialized: "[ SYSTEM INITIALIZED ]",
-  name: "ALVARO QUINTANA",
-  subtitle: "FULL-STACK ENGINEER | MOBILE · WEB · AI",
-  platforms: "Android | iOS | KMP | Web | CI/CD | AI Agents",
-  builtWith: "Built with ",
-  usingTech: " using Astro",
+  // Header (ink signature hero)
+  name: "Álvaro Quintana",
+  heroEyebrow: "Madrid · 15+ years · Senior Full-Stack",
+  heroHeadline: "Full-Stack Engineer",
+  heroHeadlineEm: "Mobile · Web · AI",
+  platforms: "Android · iOS · KMP · Web · CI/CD · AI Agents",
+  inkPause: "Pause ink",
+  inkResume: "Resume ink",
 
   // Presentation
   hiImAlvaro: "HI, I'M ALVARO",
