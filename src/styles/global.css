@@ -292,8 +292,51 @@ section + section {
 
 /* ===== BOLD IN BIO ===== */
 .bio-text strong {
-  color: var(--neon-cyan);
-  font-weight: 700;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ===== PILL BUTTONS (hero, presentation) ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s, background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-solid {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn-ghost {
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.btn-ghost:hover {
+  border-color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+
+  .btn:hover {
+    transform: none;
+  }
 }
 
 /* ===== BADGE VARIANTS ===== */

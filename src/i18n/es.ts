@@ -9,7 +9,7 @@ export const es = {
   inkResume: "Reanudar tinta",
 
   // Presentation
-  hiImAlvaro: "HOLA, SOY ÁLVARO",
+  hiImAlvaro: "Hola, soy Álvaro",
   jobTitle: "Senior Full-Stack Engineer — Mobile, Web & AI",
   linkedIn: "LinkedIn",
   github: "GitHub",
@@ -23,6 +23,8 @@ export const es = {
   platformsLabel: "ANDROID · iOS · WEB · DESKTOP",
   builtWithTech: "SITIO CONSTRUIDO CON",
   techName: "ASTRO + TAILWIND CSS",
+
+  stackLabel: "Stack principal",
 
   // Evolution
   careerTimeline: "TRAYECTORIA",
@@ -57,8 +59,8 @@ export const es = {
   availableFor: "Abierto a roles Senior/Staff • Remoto • Full-Stack / Mobile / IA",
 
   // Theme/Language
-  lightMode: "[ CLARO ]",
-  darkMode: "[ OSCURO ]",
+  lightMode: "Claro",
+  darkMode: "Oscuro",
 
   // Banner
   bannerText: "Vivo en Madrid pero trabajo en remoto, puedes contactarme por ",

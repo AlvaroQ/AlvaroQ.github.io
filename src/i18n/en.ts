@@ -11,7 +11,7 @@ export const en: Strings = {
   inkResume: "Resume ink",
 
   // Presentation
-  hiImAlvaro: "HI, I'M ALVARO",
+  hiImAlvaro: "Hi, I'm Álvaro",
   jobTitle: "Senior Full-Stack Engineer — Mobile, Web & AI",
   linkedIn: "LinkedIn",
   github: "GitHub",
@@ -25,6 +25,8 @@ export const en: Strings = {
   platformsLabel: "ANDROID · iOS · WEB · DESKTOP",
   builtWithTech: "THIS SITE IS BUILT WITH",
   techName: "ASTRO + TAILWIND CSS",
+
+  stackLabel: "Core stack",
 
   // Evolution
   careerTimeline: "CAREER TIMELINE",
@@ -59,8 +61,8 @@ export const en: Strings = {
   availableFor: "Open to Senior/Staff roles • Remote • Full-Stack / Mobile / AI",
 
   // Theme/Language
-  lightMode: "[ LIGHT ]",
-  darkMode: "[ DARK ]",
+  lightMode: "Light",
+  darkMode: "Dark",
 
   // Banner
   bannerText: "I live in Madrid but work remotely, you can contact me via ",

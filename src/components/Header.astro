@@ -15,28 +15,18 @@ const altPath = lang === 'es' ? '/en/' : '/';
 
 <section id="header" class="relative">
   <!-- Banner -->
-  <div id="top-banner" class="absolute top-0 left-0 right-0 bg-[var(--bg-surface)] border-b border-[var(--grid-lines)] py-2 px-4 text-xs text-[var(--text-secondary)] text-center z-50">
+  <div id="top-banner" class="absolute top-0 left-0 right-0 z-50 border-b border-(--line) bg-(--paper-2) px-4 py-2 text-center text-xs text-(--ink-muted)">
     <span>{strings.bannerText}</span>
-    <a href={`mailto:${contact.email}`} class="text-[var(--neon-cyan)] hover:underline">{strings.bannerEmail}</a>
+    <a href={`mailto:${contact.email}`} class="link-grow text-(--accent)">{strings.bannerEmail}</a>
   </div>
 
   <!-- Controls -->
-  <div class="absolute top-12 right-4 flex gap-3 z-10">
-    <button
-      id="theme-toggle"
-      class="header-control px-4 py-2.5 min-h-[44px] min-w-[44px] text-xs font-mono border border-[var(--neon-cyan-border)] rounded-lg backdrop-blur-md hover:border-[var(--neon-cyan-border-hover)] text-[var(--text-secondary)] hover:text-[var(--neon-cyan)] transition-all"
-      aria-label={strings.a11yThemeToggle}
-    >
+  <div class="header-controls absolute right-4 z-10 flex gap-2">
+    <button id="theme-toggle" type="button" class="header-control" aria-label={strings.a11yThemeToggle}>
       <span class="dark-label">{strings.lightMode}</span>
       <span class="light-label" style="display:none">{strings.darkMode}</span>
     </button>
-    <a
-      href={altPath}
-      class="header-control px-4 py-2.5 min-h-[44px] min-w-[44px] flex items-center text-xs font-mono border border-[var(--neon-cyan-border)] rounded-lg backdrop-blur-md hover:border-[var(--neon-cyan-border-hover)] text-[var(--text-secondary)] hover:text-[var(--neon-cyan)] transition-all uppercase"
-      aria-label={strings.a11yLanguageToggle}
-    >
-      [ {altLang} ]
-    </a>
+    <a href={altPath} class="header-control" aria-label={strings.a11yLanguageToggle} hreflang={altLang}>{altLang}</a>
   </div>
 
   <InkSignature strings={strings} />
@@ -47,13 +37,38 @@ const altPath = lang === 'es' ? '/en/' : '/';
     padding: 0;
   }
 
-  .header-control {
-    background: rgba(10, 10, 15, 0.5);
+  .header-controls {
+    top: 3rem;
   }
 
-  :global(html.light) .header-control {
-    background: rgba(255, 255, 255, 0.85) !important;
-    border-color: rgba(0, 100, 100, 0.2) !important;
+  .header-control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--ink-muted);
+    font: 500 11px/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .header-control:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  /* Below md the fixed nav pill spans the top row: drop the controls under it. */
+  @media (max-width: 767px) {
+    .header-controls {
+      top: 6.75rem;
+    }
   }
 </style>
 
