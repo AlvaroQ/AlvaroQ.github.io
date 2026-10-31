@@ -14,6 +14,13 @@
     document.documentElement.classList.toggle('light', theme === 'light');
     document.documentElement.setAttribute('data-theme', theme);
 
+    // Keep the browser UI colour in sync with the --paper token
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      const paper = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim();
+      if (paper) meta.setAttribute('content', paper);
+    }
+
     // Notify chat widget and modal
     if (window.chatWidget) window.chatWidget.setTheme(theme);
     if (window.projectModal) window.projectModal.setTheme(theme);
