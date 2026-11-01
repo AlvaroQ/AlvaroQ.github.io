@@ -21,37 +21,58 @@ const lastName = rest.join(' ');
       <canvas class="fx" aria-hidden="true"></canvas>
     </div>
     <p class="headline hero-enter" style="--step: 2">{strings.heroHeadline} <em>{strings.heroHeadlineEm}</em></p>
-    <p class="platforms hero-enter" style="--step: 2">{strings.platforms}</p>
+    <div class="platforms-row hero-enter" style="--step: 2">
+      <p class="platforms">{strings.platforms}</p>
+      <button
+        class="ink-pause"
+        type="button"
+        aria-pressed="false"
+        hidden
+        data-label-pause={strings.inkPause}
+        data-label-resume={strings.inkResume}
+      >{strings.inkPause}</button>
+    </div>
     <div class="ctas hero-enter" style="--step: 3">
       <a class="btn btn-solid" href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label={strings.a11yOpenLinkedIn}>{strings.linkedIn}</a>
       <a class="btn btn-ghost" href={contact.githubUrl} target="_blank" rel="noopener noreferrer" aria-label={strings.a11yOpenGitHub}>{strings.github}</a>
     </div>
   </div>
-  <button
-    class="ink-pause"
-    type="button"
-    aria-pressed="false"
-    hidden
-    data-label-pause={strings.inkPause}
-    data-label-resume={strings.inkResume}
-  >{strings.inkPause}</button>
 </div>
 
 <style>
   .hero {
     position: relative;
-    min-height: 100svh;
+    /* Capped so tall viewports (tablets, large monitors) do not open empty bands */
+    min-height: min(100svh, 640px);
     display: grid;
     align-items: center;
     isolation: isolate;
     touch-action: pan-y;
   }
 
+  /* Paper veins across the whole hero, as in scenario A: a static vector noise mask
+     (no bitmap, so it cannot pixelate) tinted with the second ink. */
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-color: var(--ink-2);
+    opacity: var(--vein-opacity, 0.1);
+    -webkit-mask: url("/images/paper-veins.svg") center / cover no-repeat;
+    mask: url("/images/paper-veins.svg") center / cover no-repeat;
+  }
+
+  :global(html.light) .hero::before {
+    --vein-opacity: 0.08;
+  }
+
   .hero-inner {
     width: 100%;
     max-width: 1200px;
     margin-inline: auto;
-    padding: 128px 56px 88px;
+    padding: 128px 56px 72px;
     display: grid;
     gap: 22px;
     justify-items: start;
@@ -132,6 +153,13 @@ const lastName = rest.join(' ');
     color: var(--ink-muted);
   }
 
+  .platforms-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 18px;
+  }
+
   .ctas {
     display: flex;
     flex-wrap: wrap;
@@ -140,10 +168,6 @@ const lastName = rest.join(' ');
   }
 
   .ink-pause {
-    position: absolute;
-    left: calc(max(0px, (100% - 1200px) / 2) + 56px);
-    bottom: 32px;
-    z-index: 2;
     min-height: 32px;
     padding: 8px 10px;
     border: 1px solid var(--line);
@@ -171,17 +195,13 @@ const lastName = rest.join(' ');
     }
 
     .hero-inner {
-      padding: 176px 22px 96px;
+      padding: 176px 22px 48px;
     }
 
     .ink-name {
       font-size: clamp(56px, 17vw, 84px);
     }
 
-    .ink-pause {
-      left: 22px;
-      bottom: 24px;
-    }
   }
 
   @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
@@ -198,7 +218,8 @@ const lastName = rest.join(' ');
       -webkit-text-fill-color: CanvasText;
     }
 
-    .fx {
+    .fx,
+    .hero::before {
       display: none;
     }
   }
