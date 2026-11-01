@@ -11,7 +11,7 @@ Personal portfolio of Álvaro Quintana — a static, bilingual (es/en) single pa
 | `npm run dev` | Dev server at `localhost:4321` |
 | `npm run build` | Production build in `dist/` |
 | `npm run preview` | Serve the build locally |
-| `npm run verify` | `astro check`, build and the `node --test scripts/` checks (same as CI) |
+| `npm run verify` | `astro check`, build and the `node --test 'scripts/*.test.mjs'` checks (same as CI) |
 | `npm run assets:icons` | Regenerate favicons and the per-language Open Graph images (needs Chrome) |
 | `npm run assets:relief` | Regenerate the hero watermark height map from the portrait |
 

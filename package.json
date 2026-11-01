@@ -10,7 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "verify": "astro check && astro build && node --test scripts/",
+    "verify": "astro check && astro build && node --test 'scripts/*.test.mjs'",
     "assets:icons": "node scripts/assets/icons.mjs",
     "assets:relief": "node scripts/assets/relief.mjs"
   },
