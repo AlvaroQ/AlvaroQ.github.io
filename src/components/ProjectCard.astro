@@ -3,7 +3,7 @@
 // 'compact' is a grid tile (media on top, no feature list). Both open the project modal.
 import type { Lang, Strings } from '../i18n';
 import type { Project } from '../data/projects';
-import { asset, fitFor, responsive, type Slot } from '../lib/images';
+import { mediaFor, thumbFor, type MediaLayout } from '../lib/images';
 
 interface Props {
   project: Project;
@@ -19,7 +19,7 @@ interface Props {
 const { project, index, total, variant, strings, lang } = Astro.props;
 
 // 16:10 media box per breakpoint (CSS px): lg, md, mobile.
-const LAYOUT: Record<Props['variant'], { slots: Slot[]; lg: number; md: string }> = {
+const LAYOUT: Record<Props['variant'], MediaLayout> = {
   feature: {
     slots: [{ w: 600, h: 375, dpr: 2 }, { w: 488, h: 305, dpr: 2 }, { w: 342, h: 214, dpr: 3 }],
     lg: 600,
@@ -31,51 +31,11 @@ const LAYOUT: Record<Props['variant'], { slots: Slot[]; lg: number; md: string }
     md: 'calc((100vw - 80px) / 2)',
   },
 };
-const MEDIA_WIDTHS = [400, 600, 800, 1000, 1200, 1440];
-const MODAL_WIDTHS = [480, 800, 1200, 1600];
 
-const layout = LAYOUT[variant];
 const { caseStudy, links } = project;
 const keys = caseStudy.screenshots;
-
-async function mediaImage(key: string) {
-  const meta = asset(key);
-  const fit = fitFor(meta, layout.slots);
-  const img = await responsive(key, MEDIA_WIDTHS);
-  if (fit === 'cover') {
-    // A source wider than 16:10 is painted wider than its box (cropped at the sides).
-    const k = Math.max(1, meta.width / meta.height / (16 / 10)).toFixed(3);
-    return {
-      ...img,
-      fit,
-      cap: undefined,
-      sizes: `(min-width: 1024px) ${Math.round(layout.lg * Number(k))}px, (min-width: 768px) calc(${layout.md} * ${k}), calc((100vw - 48px) * ${k})`,
-    };
-  }
-  // Shown whole on the plate, never larger than half the source (≤ 1x on 2x screens).
-  const [lg, md, sm] = layout.slots.map((s) => Math.round(Math.min(s.w, (s.h * meta.width) / meta.height, meta.width / 2)));
-  return {
-    ...img,
-    fit,
-    cap: `max-width: ${Math.floor(meta.width / 2)}px; max-height: ${Math.floor(meta.height / 2)}px`,
-    sizes: `(min-width: 1024px) ${lg}px, (min-width: 768px) ${md}px, ${sm}px`,
-  };
-}
-
-const cover = keys[0] ? await mediaImage(keys[0]) : null;
-// Modal gallery: the largest variant feeds the lightbox, the srcset feeds the thumbnails.
-const gallery = await Promise.all(keys.map((key) => responsive(key, MODAL_WIDTHS)));
-// Modal thumbnails are contained in a cell up to 750 px wide (90vw on phones) and at most
-// 250 px tall; capping the height at a third of the source keeps them ≤ 1x up to 3x screens.
-const thumbs = gallery.map((g) => {
-  const maxHeight = Math.min(250, Math.floor(g.height / 3));
-  const painted = Math.round((maxHeight * g.width) / g.height);
-  return {
-    srcset: g.srcset,
-    sizes: `(max-width: 600px) ${Math.min(painted, 540)}px, ${Math.min(painted, 750)}px`,
-    maxHeight,
-  };
-});
+const cover = keys[0] ? await mediaFor(keys[0], LAYOUT[variant]) : null;
+const thumbs = await Promise.all(keys.map((key) => thumbFor(key)));
 const number = String(index + 1).padStart(2, '0');
 ---
 
@@ -91,8 +51,8 @@ const number = String(index + 1).padStart(2, '0');
   data-project-description={project.description[lang]}
   data-project-long-desc={caseStudy.longDescription[lang]}
   data-project-architecture={caseStudy.architecture[lang]}
-  data-project-screenshots={JSON.stringify(gallery.map((g) => g.src))}
-  data-project-thumbs={JSON.stringify(thumbs)}
+  data-project-screenshots={JSON.stringify(thumbs.map((t) => t.src))}
+  data-project-thumbs={JSON.stringify(thumbs.map(({ srcset, sizes, maxHeight }) => ({ srcset, sizes, maxHeight })))}
   data-project-highlights={JSON.stringify(caseStudy.keyHighlights.map((h) => h[lang]))}
   data-project-demo={links.demo ?? ''}
   data-project-github={links.github ?? ''}

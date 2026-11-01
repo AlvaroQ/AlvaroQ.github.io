@@ -1,0 +1,91 @@
+---
+// Hero name: living marbled ink (WebGL, ink-signature.js) drawn over a static gradient h1
+// that is always painted (LCP, fallback, accessibility).
+interface Props {
+  name: string;
+}
+
+const { name } = Astro.props;
+const [firstName, ...rest] = name.split(' ');
+const lastName = rest.join(' ');
+---
+
+<div class="ink-box hero-enter-name" style="--step: 1">
+  <h1 class="ink-name" aria-label={name}><span class="ink-word">{firstName}</span> <span class="ink-word">{lastName}</span></h1>
+  <canvas class="fx" aria-hidden="true"></canvas>
+</div>
+
+<style>
+  .ink-box {
+    position: relative;
+    max-width: 100%;
+  }
+
+  /* Static layer: always painted, never transparent without its gradient. */
+  .ink-name {
+    display: grid;
+    width: max-content;
+    max-width: 100%;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "opsz" 144;
+    font-size: clamp(64px, 10.5vw, 150px);
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    background: linear-gradient(120deg, var(--ink) 20%, var(--ink-2) 55%, var(--accent) 80%, var(--ink) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .ink-word {
+    display: block;
+    width: max-content;
+  }
+
+  .fx {
+    position: absolute;
+    left: -24px;
+    top: -24px;
+    width: calc(100% + 48px);
+    height: calc(100% + 48px);
+    display: block;
+    pointer-events: none;
+    visibility: hidden;
+    z-index: 1;
+  }
+
+  :global(.hero.running) .fx {
+    visibility: visible;
+  }
+
+  @media (max-width: 639px) {
+    .ink-name {
+      font-size: clamp(56px, 17vw, 84px);
+    }
+  }
+
+  @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+    .ink-name {
+      background: none;
+      -webkit-text-fill-color: currentColor;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .ink-name {
+      background: none;
+      color: CanvasText;
+      -webkit-text-fill-color: CanvasText;
+    }
+
+    .fx {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import '../scripts/ink-signature.js';
+</script>

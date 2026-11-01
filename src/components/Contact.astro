@@ -75,16 +75,20 @@ const availability = strings.availableFor.split(' • ');
   }
 </style>
 
-<script is:inline>
-  document.getElementById('copy-email')?.addEventListener('click', async function() {
-    var btn = document.getElementById('copy-email');
-    var email = btn && btn.dataset.email;
+<script>
+  const copyButton = document.getElementById('copy-email');
+  copyButton?.addEventListener('click', async () => {
+    const email = copyButton.dataset.email;
+    const indicator = document.getElementById('email-copied');
     if (!email) return;
     try {
       await navigator.clipboard.writeText(email);
-      const indicator = document.getElementById('email-copied');
-      indicator.style.opacity = '1';
-      setTimeout(() => { indicator.style.opacity = '0'; }, 2000);
-    } catch { /* ignore */ }
+      if (indicator) {
+        indicator.style.opacity = '1';
+        setTimeout(() => { indicator.style.opacity = '0'; }, 2000);
+      }
+    } catch {
+      /* clipboard denied: the address stays visible on screen */
+    }
   });
 </script>

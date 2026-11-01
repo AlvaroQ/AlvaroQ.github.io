@@ -1,0 +1,44 @@
+---
+// Watermark portrait pressed into the paper (ink-watermark.js). Absolute and clipped to the
+// hero, so it can bleed off the edge without moving the layout or widening the page.
+import { responsive } from '../lib/images';
+
+// Height map (generate-relief.js): the script picks the variant that covers the canvas,
+// never wider than the 1200 px master.
+const reliefHeight = await responsive('profile/portrait-relief-height.jpg', [600, 900, 1200]);
+---
+
+<div class="wm-clip" aria-hidden="true">
+  <canvas class="wm" data-height-srcset={reliefHeight.srcset}></canvas>
+</div>
+
+<style>
+  .wm-clip {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .wm {
+    position: absolute;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  :global(.hero.wm-ready) .wm {
+    opacity: 1;
+  }
+
+  @media (forced-colors: active) {
+    .wm-clip {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import '../scripts/ink-watermark.js';
+</script>

@@ -29,6 +29,12 @@ Todo componente `.astro` debe seguir el orden:
 - Atributos booleanos: `<input disabled />` (no `disabled={true}`).
 - Eventos: NO usar `onClick` — usar `<script>` con `addEventListener`.
 
+## Scripts
+
+- `is:inline` solo para el anti-FOUC del tema en `Layout.astro` (y el JSON-LD, que es dato, no codigo); el resto de scripts son `<script>` procesados por Vite (o modulos en `src/scripts/`).
+- Sin atributos `on*` en el markup: `addEventListener` en el script del componente.
+- `set:html` solo con texto que vive en el repo (i18n, datos), nunca con entrada del usuario ni de red.
+
 ## Zero JS por Defecto
 
 - NO agregar `client:load` salvo que el componente NECESITE interactividad en el cliente.

@@ -1,34 +1,26 @@
 ---
-// Hero signature: the name is living marbled ink (WebGL), drawn over a
-// static gradient h1 that is always painted (LCP, fallback, accessibility).
+// Hero: eyebrow, the ink name, headline, platforms + ink pause, CTAs, and the watermark behind.
 import type { Strings } from '../i18n';
 import { contact } from '../data/contact';
-import { responsive } from '../lib/images';
+import InkName from './InkName.astro';
+import InkWatermark from './InkWatermark.astro';
 
 interface Props {
   strings: Strings;
 }
 
 const { strings } = Astro.props;
-const [firstName, ...rest] = strings.name.split(' ');
-const lastName = rest.join(' ');
-// Watermark height map (generate-relief.js): the script picks the variant that covers the
-// canvas, never wider than the 1200 px master.
-const reliefHeight = await responsive('profile/portrait-relief-height.jpg', [600, 900, 1200]);
 ---
 
 <div class="hero" data-ink>
   <div class="hero-inner">
     <p class="eyebrow hero-enter" style="--step: 0">{strings.heroEyebrow}</p>
-    <div class="ink-box hero-enter-name" style="--step: 1">
-      <h1 class="ink-name" aria-label={strings.name}><span class="ink-word">{firstName}</span> <span class="ink-word">{lastName}</span></h1>
-      <canvas class="fx" aria-hidden="true"></canvas>
-    </div>
+    <InkName name={strings.name} />
     <p class="headline hero-enter" style="--step: 2">{strings.heroHeadline} <em>{strings.heroHeadlineEm}</em></p>
     <div class="platforms-row hero-enter" style="--step: 2">
       <p class="platforms">{strings.platforms}</p>
       <button
-        class="ink-pause"
+        class="control ink-pause"
         type="button"
         aria-pressed="false"
         data-usable="false"
@@ -41,10 +33,7 @@ const reliefHeight = await responsive('profile/portrait-relief-height.jpg', [600
       <a class="btn btn-ghost" href={contact.githubUrl} target="_blank" rel="noopener noreferrer" aria-label={strings.a11yOpenGitHub}>{strings.github}</a>
     </div>
   </div>
-  <!-- Watermark portrait pressed into the paper (ink-watermark.js); absolute, so it never moves the layout -->
-  <div class="wm-clip" aria-hidden="true">
-    <canvas class="wm" data-height-srcset={reliefHeight.srcset}></canvas>
-  </div>
+  <InkWatermark />
 </div>
 
 <style>
@@ -94,50 +83,6 @@ const reliefHeight = await responsive('profile/portrait-relief-height.jpg', [600
     color: var(--ink-muted);
   }
 
-  .ink-box {
-    position: relative;
-    max-width: 100%;
-  }
-
-  /* Static layer: always painted, never transparent without its gradient. */
-  .ink-name {
-    display: grid;
-    width: max-content;
-    max-width: 100%;
-    font-family: var(--font-display);
-    font-weight: 900;
-    font-variation-settings: "opsz" 144;
-    font-size: clamp(64px, 10.5vw, 150px);
-    line-height: 0.92;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-    background: linear-gradient(120deg, var(--ink) 20%, var(--ink-2) 55%, var(--accent) 80%, var(--ink) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .ink-word {
-    display: block;
-    width: max-content;
-  }
-
-  .fx {
-    position: absolute;
-    left: -24px;
-    top: -24px;
-    width: calc(100% + 48px);
-    height: calc(100% + 48px);
-    display: block;
-    pointer-events: none;
-    visibility: hidden;
-    z-index: 1;
-  }
-
-  .hero:global(.running) .fx {
-    visibility: visible;
-  }
-
   .headline {
     font-family: var(--font-display);
     font-size: clamp(20px, 2.2vw, 30px);
@@ -175,16 +120,19 @@ const reliefHeight = await responsive('profile/portrait-relief-height.jpg', [600
     margin-top: 6px;
   }
 
+  /* .control at the compact size it had before the control family (44 px targets: P3) */
   .ink-pause {
+    min-width: 0;
     min-height: 32px;
     padding: 8px 10px;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: transparent;
-    color: var(--ink-muted);
-    font: 500 11px/1 var(--font-mono);
     letter-spacing: 0.04em;
-    cursor: pointer;
+    text-transform: none;
+    transition: none;
+  }
+
+  .ink-pause:hover {
+    color: var(--ink-muted);
+    border-color: var(--line);
   }
 
   /* The control appears once the effect starts: its slot stays reserved so the
@@ -215,10 +163,6 @@ const reliefHeight = await responsive('profile/portrait-relief-height.jpg', [600
       padding: 128px 22px 48px;
     }
 
-    .ink-name {
-      font-size: clamp(56px, 17vw, 84px);
-    }
-
     /* Own line for the pause control on phones: whether it fits next to the
        platforms would depend on the mono font having loaded (layout shift). */
     .platforms-row {
@@ -229,49 +173,9 @@ const reliefHeight = await responsive('profile/portrait-relief-height.jpg', [600
 
   }
 
-  /* Watermark: clipped to the hero so it can bleed off the edge without widening the page */
-  .wm-clip {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    overflow: hidden;
-    pointer-events: none;
-  }
-
-  .wm {
-    position: absolute;
-    display: block;
-    opacity: 0;
-    transition: opacity 0.6s ease;
-  }
-
-  .hero:global(.wm-ready) .wm {
-    opacity: 1;
-  }
-
-  @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
-    .ink-name {
-      background: none;
-      -webkit-text-fill-color: currentColor;
-    }
-  }
-
   @media (forced-colors: active) {
-    .ink-name {
-      background: none;
-      color: CanvasText;
-      -webkit-text-fill-color: CanvasText;
-    }
-
-    .fx,
-    .hero::before,
-    .wm-clip {
+    .hero::before {
       display: none;
     }
   }
 </style>
-
-<script>
-  import '../scripts/ink-signature.js';
-  import '../scripts/ink-watermark.js';
-</script>

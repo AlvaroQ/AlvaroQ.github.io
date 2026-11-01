@@ -2,6 +2,9 @@
 // Keys are paths relative to src/assets, e.g. 'projects/rag-chatbot.webp'.
 import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import { fitFor, sizesFor, thumbSizes, type MediaLayout } from './media';
+
+export { fitFor, PORTRAIT_RATIO, type MediaLayout, type Slot } from './media';
 
 const files = import.meta.glob<{ default: ImageMetadata }>('../assets/**/*.{png,jpg,jpeg,webp}', { eager: true });
 
@@ -34,19 +37,19 @@ export async function fixed(key: string, width: number): Promise<ResponsiveImage
   return { src: img.src, srcset: img.srcSet.attribute, width, height: Math.round((width * meta.height) / meta.width) };
 }
 
-export interface Slot {
-  /** Rendered CSS width and height of the media box. */
-  w: number;
-  h: number;
-  dpr: number;
+const MEDIA_WIDTHS = [400, 600, 800, 1000, 1200, 1440];
+const MODAL_WIDTHS = [480, 800, 1200, 1600];
+
+/** Card media: responsive variants, cover/contain decision, `sizes` and the contain cap. */
+export async function mediaFor(key: string, layout: MediaLayout) {
+  const meta = asset(key);
+  const fit = fitFor(meta, layout.slots);
+  const img = await responsive(key, MEDIA_WIDTHS);
+  return { ...img, fit, ...sizesFor(meta, layout, fit) };
 }
 
-/**
- * 'cover' only when the source fills every slot without upscaling; otherwise the image is
- * shown whole ('contain') and its render size is capped at natural ÷ 2 CSS px.
- */
-export function fitFor(meta: ImageMetadata, slots: Slot[]): 'cover' | 'contain' {
-  if (meta.height >= meta.width * 0.85) return 'contain';
-  const fits = slots.every((s) => Math.max((s.w * s.dpr) / meta.width, (s.h * s.dpr) / meta.height) <= 1);
-  return fits ? 'cover' : 'contain';
+/** Case-study screenshot: the largest variant feeds the lightbox, the srcset the thumbnail. */
+export async function thumbFor(key: string, { maxHeight = 250, maxWidth = 750, mobileMaxWidth = 540 } = {}) {
+  const img = await responsive(key, MODAL_WIDTHS);
+  return { src: img.src, srcset: img.srcset, ...thumbSizes(img, { maxHeight, maxWidth, mobileMaxWidth }) };
 }

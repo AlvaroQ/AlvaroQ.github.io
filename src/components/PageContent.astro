@@ -28,9 +28,9 @@ const strings = t(lang);
 <script is:inline src="/scripts/chat-widget.js" defer></script>
 <script is:inline define:vars={{ lang }}>
   document.addEventListener('DOMContentLoaded', () => {
-    var theme;
-    try { theme = localStorage.getItem('portfolio_theme') || 'dark'; } catch(e) { theme = 'dark'; }
+    var theme = document.documentElement.classList.contains('light') ? 'light' : 'dark';
     window.chatWidget = new PortfolioChatWidget({ lang: lang, theme: theme });
+    document.addEventListener('themechange', function (e) { window.chatWidget.setTheme(e.detail.theme); });
   });
 </script>
 
@@ -38,10 +38,10 @@ const strings = t(lang);
 <script is:inline src="/scripts/project-modal.js" defer></script>
 <script is:inline define:vars={{ lang }}>
   document.addEventListener('DOMContentLoaded', () => {
-    var theme;
-    try { theme = localStorage.getItem('portfolio_theme') || 'dark'; } catch(e) { theme = 'dark'; }
+    var theme = document.documentElement.classList.contains('light') ? 'light' : 'dark';
     window.projectModal = new ProjectDetailModal();
     window.projectModal.setTheme(theme);
+    document.addEventListener('themechange', function (e) { window.projectModal.setTheme(e.detail.theme); });
     window.projectModal.setLang(lang);
   });
 </script>

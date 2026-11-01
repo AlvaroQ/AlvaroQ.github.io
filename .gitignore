@@ -72,8 +72,6 @@ pnpm-debug.log*
 *.log
 
 # ============================================
-# PWA Generated (se regenera en build)
+# Raw image sources (originals, never published)
 # ============================================
-dev-dist/
-sw.js
-workbox-*.js
+assets-raw/

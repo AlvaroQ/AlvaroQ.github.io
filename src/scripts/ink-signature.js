@@ -310,6 +310,8 @@ function setup(hero) {
     sync();
   });
 
+  document.addEventListener('themechange', setTheme);
+
   if (RM.matches) s.reason = 'reduced-motion';
   else initGL();
 

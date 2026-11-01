@@ -316,8 +316,7 @@ function setup(hero) {
       else rest();
     }, 100);
   }).observe(hero);
-  new MutationObserver(() => { readTheme(); request(); })
-    .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  document.addEventListener('themechange', () => { readTheme(); request(); });
   RM.addEventListener('change', () => {
     if (!s.ready) return;
     if (RM.matches) staticFrame();

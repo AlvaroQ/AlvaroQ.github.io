@@ -77,17 +77,9 @@ const altURL = new URL(altPath, Astro.site);
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />
 
-  <!-- Theme script (inline to prevent FOUC) -->
+  <!-- Anti-FOUC: the only inline script; sets the theme class before paint (theme.js owns the rest) -->
   <script is:inline>
-    (function(){
-      var t;
-      try { t = localStorage.getItem('portfolio_theme'); } catch(e) {}
-      if (t === 'light') {
-        document.documentElement.classList.replace('dark','light');
-        var m = document.querySelector('meta[name="theme-color"]');
-        if (m) m.setAttribute('content', '#F4ECDD');
-      }
-    })();
+    try { if (localStorage.getItem('portfolio_theme') === 'light') document.documentElement.classList.replace('dark', 'light'); } catch (e) {}
   </script>
 </head>
 <body>

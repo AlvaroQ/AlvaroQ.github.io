@@ -1,7 +1,7 @@
 ---
 import type { Lang, Strings } from '../i18n';
 import { contact } from '../data/contact';
-import InkSignature from './InkSignature.astro';
+import Hero from './Hero.astro';
 
 interface Props {
   strings: Strings;
@@ -22,14 +22,14 @@ const altPath = lang === 'es' ? '/en/' : '/';
 
   <!-- Controls -->
   <div class="header-controls absolute right-4 z-10 flex gap-2">
-    <button id="theme-toggle" type="button" class="header-control" aria-label={strings.a11yThemeToggle}>
+    <button id="theme-toggle" type="button" class="control" aria-label={strings.a11yThemeToggle}>
       <span class="dark-label">{strings.lightMode}</span>
-      <span class="light-label" style="display:none">{strings.darkMode}</span>
+      <span class="light-label">{strings.darkMode}</span>
     </button>
-    <a href={altPath} class="header-control" aria-label={strings.a11yLanguageToggle} hreflang={altLang}>{altLang}</a>
+    <a href={altPath} class="control" aria-label={strings.a11yLanguageToggle} hreflang={altLang}>{altLang}</a>
   </div>
 
-  <InkSignature strings={strings} />
+  <Hero strings={strings} />
 </section>
 
 <style>
@@ -41,27 +41,14 @@ const altPath = lang === 'es' ? '/en/' : '/';
     top: 3rem;
   }
 
-  .header-control {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
-    padding: 0 14px;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: transparent;
-    color: var(--ink-muted);
-    font: 500 11px/1 var(--font-mono);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: color 0.2s, border-color 0.2s;
+  /* Each label names the theme the button switches to */
+  .light-label,
+  :global(html.light) .dark-label {
+    display: none;
   }
 
-  .header-control:hover {
-    color: var(--ink);
-    border-color: var(--ink);
+  :global(html.light) .light-label {
+    display: inline;
   }
 
   /* Below md the controls share the top band with the (narrower) nav pill. */
@@ -70,35 +57,8 @@ const altPath = lang === 'es' ? '/en/' : '/';
       gap: 6px;
     }
 
-    .header-control {
+    .control {
       padding: 0 10px;
     }
   }
 </style>
-
-<script is:inline>
-  document.getElementById('theme-toggle')?.addEventListener('click', () => {
-    const next = window.toggleTheme();
-    const darkLabel = document.querySelector('.dark-label');
-    const lightLabel = document.querySelector('.light-label');
-    if (next === 'light') {
-      darkLabel.style.display = 'none';
-      lightLabel.style.display = 'inline';
-    } else {
-      darkLabel.style.display = 'inline';
-      lightLabel.style.display = 'none';
-    }
-  });
-
-  // Init label state
-  (function() {
-    var t;
-    try { t = localStorage.getItem('portfolio_theme'); } catch(e) {}
-    if (t === 'light') {
-      var d = document.querySelector('.dark-label');
-      var l = document.querySelector('.light-label');
-      if (d) d.style.display = 'none';
-      if (l) l.style.display = 'inline';
-    }
-  })();
-</script>

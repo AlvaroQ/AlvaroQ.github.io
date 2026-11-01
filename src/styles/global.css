@@ -251,8 +251,38 @@ section + section {
   border-color: var(--ink);
 }
 
+/* ===== CONTROLS (theme, language, ink pause, widget chrome) ===== */
+.control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-muted);
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.control:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.control:active {
+  border-color: var(--accent);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .btn {
+  .btn,
+  .control {
     transition: none;
   }
 
