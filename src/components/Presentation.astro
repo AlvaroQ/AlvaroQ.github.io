@@ -1,6 +1,5 @@
 ---
 import type { Strings } from '../i18n/es';
-import { contact } from '../data/contact';
 import { stack } from '../data/stack';
 import { responsive } from '../lib/images';
 import SectionHeading from './SectionHeading.astro';
@@ -12,10 +11,10 @@ interface Props {
 
 const { strings, lang } = Astro.props;
 // Painted portrait width = frame width - 26 px (12 px padding + 1 px border per side). From lg the
-// frame is the grid column, clamp(320px, 34vw, 400px); below lg it caps at 320 px and shrinks with
+// frame is the grid column, clamp(320px, 34vw, 440px); below lg it caps at 320 px and shrinks with
 // the viewport (24 px side gutters).
 const portrait = await responsive('profile/portrait.jpg', [300, 450, 600, 900, 1200]);
-const portraitSizes = '(min-width: 1024px) min(374px, calc(34vw - 26px)), min(294px, calc(100vw - 74px))';
+const portraitSizes = '(min-width: 1024px) min(414px, calc(34vw - 26px)), min(294px, calc(100vw - 74px))';
 const bio = [strings.bioP1, strings.bioP2, strings.bioP3, strings.bioP4, strings.bioP5];
 ---
 
@@ -24,7 +23,7 @@ const bio = [strings.bioP1, strings.bioP2, strings.bioP3, strings.bioP4, strings
     <!-- Same index + title position as sections 02-05 -->
     <SectionHeading index="01" title={strings.hiImAlvaro} />
 
-    <div class="grid gap-10 md:gap-12 lg:grid-cols-[clamp(320px,34vw,400px)_minmax(0,1fr)] lg:grid-rows-[auto_auto_1fr] lg:gap-x-12 lg:gap-y-10 xl:grid-rows-[auto_1fr_auto] xl:gap-x-20">
+    <div class="grid gap-10 md:gap-12 lg:grid-cols-[clamp(320px,34vw,440px)_minmax(0,1fr)] lg:grid-rows-[auto_1fr] lg:gap-x-12 lg:gap-y-10 xl:grid-rows-[1fr_auto] xl:gap-x-20">
       <!-- Portrait: 4:5 crop on small screens (shorter), 3:4 from lg -->
       <figure class="portrait animate-on-scroll self-start lg:col-start-1 lg:row-start-1">
         <img
@@ -41,7 +40,7 @@ const bio = [strings.bioP1, strings.bioP2, strings.bioP3, strings.bioP4, strings
       </figure>
 
       <!-- Bio: pull line, lead paragraph, then the rest -->
-      <div class="min-w-0 lg:col-start-2 lg:row-span-3 lg:row-start-1 xl:row-span-2">
+      <div class="min-w-0 lg:col-start-2 lg:row-span-2 lg:row-start-1 xl:row-span-1">
         <p class="pull-line animate-on-scroll font-display text-[clamp(20px,2vw,26px)] italic leading-snug text-(--ink-2)">
           {strings.jobTitle}
         </p>
@@ -51,15 +50,9 @@ const bio = [strings.bioP1, strings.bioP2, strings.bioP3, strings.bioP4, strings
         </div>
       </div>
 
-      <!-- Links: under the portrait on lg, after the bio below it -->
-      <div class="animate-on-scroll flex flex-wrap gap-3 lg:col-start-1 lg:row-start-2 lg:self-start" style="--stagger: 160ms">
-        <a href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer" class="btn btn-solid cta" aria-label={strings.a11yOpenLinkedIn}>{strings.linkedIn}</a>
-        <a href={contact.githubUrl} target="_blank" rel="noopener noreferrer" class="btn btn-ghost cta" aria-label={strings.a11yOpenGitHub}>{strings.github}</a>
-      </div>
-
       <!-- Stack: rows under the portrait on lg (fills the column); from xl a full-width band with the
            Career stats rule, label in the portrait column and three columns under the bio -->
-      <div class="stack animate-on-scroll mt-6 min-w-0 border-t border-(--line) pt-8 lg:col-start-1 lg:row-start-3 lg:mt-0 lg:self-start xl:col-span-2 xl:mt-6 xl:grid xl:grid-cols-subgrid xl:gap-x-20" style="--stagger: 240ms">
+      <div class="stack animate-on-scroll mt-6 min-w-0 border-t border-(--line) pt-8 lg:col-start-1 lg:row-start-2 lg:mt-0 lg:self-start xl:col-span-2 xl:mt-6 xl:grid xl:grid-cols-subgrid xl:gap-x-20" style="--stagger: 160ms">
         <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-(--ink-muted)">{strings.stackLabel}</p>
         <ol class="stack-list mt-5 grid md:max-lg:grid-cols-3 xl:col-start-2 xl:mt-0 xl:grid-cols-3">
           {stack.map((col) => (
@@ -86,9 +79,10 @@ const bio = [strings.bioP1, strings.bioP2, strings.bioP3, strings.bioP4, strings
     max-width: 320px;
   }
 
+  /* Up to 440 px from lg: without the CTA pair, a taller portrait keeps the column level with the bio */
   @media (min-width: 1024px) {
     .portrait {
-      max-width: 400px;
+      max-width: 440px;
     }
   }
 
@@ -105,14 +99,6 @@ const bio = [strings.bioP1, strings.bioP2, strings.bioP3, strings.bioP4, strings
     font-size: clamp(18px, 1.5vw, 20px);
     line-height: 1.55;
     color: var(--ink);
-  }
-
-  /* Buttons share the portrait width from lg; natural width below */
-  @media (min-width: 1024px) {
-    .cta {
-      flex: 1 1 0;
-      justify-content: center;
-    }
   }
 
   /* Stack rows on small screens: label | techs */
