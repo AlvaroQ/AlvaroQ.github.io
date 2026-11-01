@@ -3,7 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { TUNE, TICK_MS, SETTLE_TICKS, advance, waveSpeed, settleTicks } from '../src/scripts/project-ripple.js';
-import { WAVE_SHADER } from '../src/scripts/ripple-shader.js';
+import { WAVE_SHADER, RENDER_SHADER } from '../src/scripts/ripple-shader.js';
 
 /** Simulation ticks run over `seconds` of display frames at `hz`. */
 function ticksOver(hz, seconds) {
@@ -47,4 +47,11 @@ test('the loop settles when the water is below 1 % of a drop (about 3 s)', () =>
 test('the wave coefficient is a uniform, not a constant in the shader', () => {
   assert.match(WAVE_SHADER, /uniform[^;]*\buK\b/);
   assert.doesNotMatch(WAVE_SHADER, /\.45\s*\*\s*lap/);
+});
+
+// L14: "añade un alpha a las ondas para que no destaque tanto".
+test('the rings carry an overall alpha below 1 (peak alpha 0.12 × 0.6)', () => {
+  assert.equal(TUNE.alpha, 0.6);
+  assert.match(RENDER_SHADER, /uniform[^;]*\buAlpha\b/);
+  assert.match(RENDER_SHADER, /\*\s*uAlpha/);
 });

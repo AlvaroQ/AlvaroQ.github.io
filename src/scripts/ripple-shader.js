@@ -39,11 +39,12 @@ export const MAX_HOLES = 16;
 /**
  * Render pass over the visible window of the section. Coordinates are section CSS px, y down.
  * uWin: window top and height inside the section. uSection: section size.
- * uHoles: image boxes (x0, y0, x1, y1) where nothing is drawn. Output is premultiplied alpha.
+ * uHoles: image boxes (x0, y0, x1, y1) where nothing is drawn. uAlpha: overall ring opacity.
+ * Output is premultiplied alpha.
  */
 export const RENDER_SHADER = `${HEAD}uniform sampler2D uH;uniform vec2 uT,uSection,uWin;
 uniform vec4 uHoles[${MAX_HOLES}];uniform float uHoleCount;
-uniform vec3 uInk;uniform float uShade,uRing;
+uniform vec3 uInk;uniform float uShade,uRing,uAlpha;
 void main(){
   vec2 p=vec2(v.x*uSection.x,uWin.x+(1.-v.y)*uWin.y);
   for(int i=0;i<${MAX_HOLES};i++){
@@ -59,6 +60,6 @@ void main(){
   float slope=dot(N,L)-L.z;
   // Fade at the section's top and bottom edges, where the waves reflect.
   float edge=smoothstep(0.,80.,min(p.y,uSection.y-p.y));
-  float a=clamp(abs(slope)*uShade*uRing,0.,.12)*edge;
+  float a=clamp(abs(slope)*uShade*uRing,0.,.12)*edge*uAlpha;
   gl_FragColor=vec4(uInk*a,a);
 }`;

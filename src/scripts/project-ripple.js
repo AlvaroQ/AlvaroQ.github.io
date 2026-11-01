@@ -10,9 +10,10 @@
 /**
  * Tuning. sim: CSS px per cell. wave: laplacian coefficient (propagation speed, sqrt(wave) cells
  * per tick). damp: decay per tick (how long a ring lives). spacing: CSS px of pointer travel per
- * drop (how many rings a stroke leaves). shade, drop: ring light and drop strength.
+ * drop (how many rings a stroke leaves). shade, drop: ring light and drop strength. alpha: overall
+ * opacity of the rings, so they stay in the background.
  */
-export const TUNE = { sim: 3, wave: 0.3, damp: 0.975, spacing: 28, shade: 0.55, drop: 0.26 };
+export const TUNE = { sim: 3, wave: 0.3, damp: 0.975, spacing: 28, shade: 0.55, drop: 0.26, alpha: 0.6 };
 /** Ring strength per theme (alpha is capped at 0.12 in the shader). */
 const RING = { light: 0.42, dark: 0.9 };
 /** Simulation step: 60 ticks per second whatever the refresh rate. */
@@ -83,7 +84,7 @@ export function init(scope, { shader, color }) {
   try {
     wave = program(shader.WAVE_SHADER, ['uP', 'uC', 'uT', 'uD', 'uK']);
     drop = program(shader.DROP_SHADER, ['uS', 'uSize', 'uDrop']);
-    rend = program(shader.RENDER_SHADER, ['uH', 'uT', 'uSection', 'uWin', 'uHoles', 'uHoleCount', 'uInk', 'uShade', 'uRing']);
+    rend = program(shader.RENDER_SHADER, ['uH', 'uT', 'uSection', 'uWin', 'uHoles', 'uHoleCount', 'uInk', 'uShade', 'uRing', 'uAlpha']);
   } catch {
     return null;
   }
@@ -217,6 +218,7 @@ export function init(scope, { shader, color }) {
     gl.uniform3fv(u.uInk, ink);
     gl.uniform1f(u.uShade, light ? TUNE.shade * 0.7 : TUNE.shade);
     gl.uniform1f(u.uRing, light ? RING.light : RING.dark);
+    gl.uniform1f(u.uAlpha, TUNE.alpha);
     quad();
   }
 
