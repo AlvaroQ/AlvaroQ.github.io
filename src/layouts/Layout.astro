@@ -1,22 +1,22 @@
 ---
 import '../styles/global.css';
 import '../styles/animations.css';
-import { t } from '../i18n';
+import { t, type Lang } from '../i18n';
+import { jsonLd } from '../data/seo';
+import { responsive } from '../lib/images';
 
 interface Props {
-  title?: string;
-  description?: string;
-  lang?: 'es' | 'en';
+  lang: Lang;
 }
 
-const {
-  title = 'Alvaro Quintana | Mobile & AI Developer',
-  description = 'Senior Mobile Developer & AI Specialist. +12 years building Android, iOS, and KMP apps. Expert in Kotlin Multiplatform and AI Agents.',
-  lang = 'es'
-} = Astro.props;
+const { lang } = Astro.props;
 
 const strings = t(lang);
+const title = strings.pageTitle;
+const description = strings.pageDescription;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const portrait = await responsive('profile/portrait.jpg', [600]);
+const structuredData = jsonLd(lang, strings, canonicalURL.href, new URL(portrait.src, Astro.site).href);
 const altLang = lang === 'es' ? 'en' : 'es';
 const altPath = lang === 'es' ? '/en/' : '/';
 const altURL = new URL(altPath, Astro.site);
@@ -70,51 +70,12 @@ const altURL = new URL(altPath, Astro.site);
   <!-- Preload critical assets -->
   <link rel="preload" href="/fonts/Fraunces-900-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="/fonts/InstrumentSans-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/Fraunces-400-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/Fraunces-400italic-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/Fraunces-600-latin.woff2" as="font" type="font/woff2" crossorigin />
 
   <!-- JSON-LD Structured Data -->
-  <script type="application/ld+json" is:inline set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Person",
-        "@id": "https://alvaroq.github.io/#person",
-        "name": "Alvaro Quintana",
-        "url": "https://alvaroq.github.io",
-        "jobTitle": "Senior Full-Stack Engineer — Mobile, Web & AI",
-        "description": "Senior Full-Stack Engineer with 12+ years building Android, iOS, KMP, Web platforms and AI agent systems.",
-        "worksFor": {
-          "@type": "Organization",
-          "name": "B-FY",
-          "url": "https://b-fy.com",
-          "description": "Passwordless IDaaS platform for identity protection"
-        },
-        "knowsAbout": [
-          "Kotlin", "KMP", "Android", "iOS", "Jetpack Compose",
-          "Next.js", "React", "Astro", "TypeScript", "Python",
-          "AI Agents", "LangChain", "MCP", "RAG", "Claude",
-          "CI/CD", "Jenkins", "Firebase", "Biometrics", "Security"
-        ],
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Madrid",
-          "addressCountry": "ES"
-        },
-        "sameAs": [
-          "https://www.linkedin.com/in/alvaro-quintana-palacios/",
-          "https://github.com/AlvaroQ"
-        ]
-      },
-      {
-        "@type": "WebSite",
-        "@id": "https://alvaroq.github.io/#website",
-        "url": "https://alvaroq.github.io",
-        "name": "Alvaro Quintana Portfolio",
-        "description": "Portfolio personal de Alvaro Quintana — Senior Full-Stack Engineer Mobile, Web & AI",
-        "inLanguage": ["es-ES", "en-US"],
-        "author": { "@id": "https://alvaroq.github.io/#person" }
-      }
-    ]
-  })} />
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />
 
   <!-- Theme script (inline to prevent FOUC) -->
   <script is:inline>
@@ -131,7 +92,7 @@ const altURL = new URL(altPath, Astro.site);
 </head>
 <body>
   <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-(--ink) focus:text-(--paper) focus:rounded focus:font-bold focus:text-sm">
-    Skip to content
+    {strings.skipLink}
   </a>
 
 

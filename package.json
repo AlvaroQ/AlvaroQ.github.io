@@ -9,12 +9,13 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "verify": "astro check && astro build && node --test scripts/"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.1",
     "@tailwindcss/vite": "^4.2.1",
-"astro": "^6.0.5",
+    "astro": "^6.0.5",
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {

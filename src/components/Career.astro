@@ -3,6 +3,7 @@ import type { Strings } from '../i18n/es';
 import { career } from '../data/career';
 import SectionHeading from './SectionHeading.astro';
 import { fixed } from '../lib/images';
+import { YEARS_AT_COMPANY, YEARS_IN_TECH } from '../data/site';
 
 interface Props {
   strings: Strings;
@@ -16,8 +17,8 @@ const formatPeriod = (period: string) => period.replace('Present', strings.prese
 const logos = await Promise.all(career.map((node) => (node.logo ? fixed(node.logo, 28) : null)));
 
 const stats = [
-  { value: '+15', label: strings.yearsInTechLabel },
-  { value: '+7', label: strings.yearsAtBfyLabel },
+  { value: `+${YEARS_IN_TECH}`, label: strings.yearsInTechLabel },
+  { value: `+${YEARS_AT_COMPANY}`, label: strings.yearsAtBfyLabel },
   { value: strings.platformsNum, label: strings.platformsLabel },
 ];
 ---

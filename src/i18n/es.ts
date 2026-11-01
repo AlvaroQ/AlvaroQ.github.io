@@ -1,7 +1,16 @@
+import { YEARS_IN_TECH } from '../data/site';
+
 export const es = {
+  // Page metadata
+  pageTitle: "Álvaro Quintana | Ingeniero Full-Stack — Mobile, Web e IA",
+  pageDescription: `Álvaro Quintana, ingeniero Full-Stack sénior en Madrid con más de ${YEARS_IN_TECH} años creando apps Android, iOS y KMP, plataformas web y sistemas de agentes de IA.`,
+  skipLink: "Saltar al contenido",
+  portraitAlt: "Álvaro Quintana, ingeniero Full-Stack sénior, en Madrid",
+  location: "Madrid, España (remoto)",
+
   // Header (ink signature hero)
   name: "Álvaro Quintana",
-  heroEyebrow: "Madrid · 15+ años · Senior Full-Stack",
+  heroEyebrow: `Madrid · ${YEARS_IN_TECH}+ años · Senior Full-Stack`,
   heroHeadline: "Ingeniero Full-Stack",
   heroHeadlineEm: "Mobile · Web · IA",
   platforms: "Android · iOS · Web · CI/CD · Agentes IA",
@@ -10,10 +19,10 @@ export const es = {
 
   // Presentation
   hiImAlvaro: "Hola, soy Álvaro",
-  jobTitle: "Senior Full-Stack Engineer — Mobile, Web & AI",
+  jobTitle: "Ingeniero Full-Stack sénior — Mobile, Web e IA",
   linkedIn: "LinkedIn",
   github: "GitHub",
-  bioP1: 'Ingeniero full-stack con más de <strong>15 años de experiencia</strong> construyendo productos digitales de principio a fin — desde aplicaciones móviles nativas (<strong>Android</strong>, <strong>iOS</strong>) hasta plataformas web y pipelines de <strong>CI/CD</strong>. Actualmente lidero el desarrollo en <strong>B-FY</strong>, una plataforma <strong>IDaaS passwordless</strong> que protege a empresas contra la <strong>suplantación de identidad</strong>.',
+  bioP1: `Ingeniero full-stack con más de <strong>${YEARS_IN_TECH} años de experiencia</strong> construyendo productos digitales de principio a fin — desde aplicaciones móviles nativas (<strong>Android</strong>, <strong>iOS</strong>) hasta plataformas web y pipelines de <strong>CI/CD</strong>. Actualmente lidero el desarrollo en <strong>B-FY</strong>, una plataforma <strong>IDaaS passwordless</strong> que protege a empresas contra la <strong>suplantación de identidad</strong>.`,
   bioP2: 'Dominio profundo del ecosistema <strong>Kotlin</strong>: <strong>Jetpack Compose</strong>, <strong>Compose Multiplatform</strong> y <strong>KMP</strong> para compartir lógica de negocio entre Android, iOS, web y desktop. Diseño <strong>arquitecturas escalables</strong> con código limpio que se mantiene a largo plazo.',
   bioP3: 'En el lado web, desarrollo con <strong>Astro</strong>, <strong>Next.js</strong>, <strong>React</strong> y <strong>Tailwind CSS</strong>. Recientemente diseñé e implementé un <strong>pipeline CI/CD completo en Jenkins</strong> que incluye tests E2E con <strong>Appium</strong>, análisis estático con <strong>Detekt</strong>, escaneo de seguridad <strong>OWASP</strong>, documentación automatizada con <strong>Dokka</strong>, distribución vía <strong>Firebase App Distribution</strong> e integración con <strong>Jira</strong> — reduciendo el tiempo de release y garantizando calidad en cada build.',
   bioP4: 'Especializado en <strong>aplicaciones seguras</strong>: soluciones <strong>biométricas</strong>, <strong>encriptación</strong> y protocolos de <strong>autenticación</strong>. Mi experiencia práctica en <strong>IDaaS</strong> me da una perspectiva única sobre seguridad, privacidad y cumplimiento normativo.',

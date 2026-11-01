@@ -1,9 +1,17 @@
 import type { Strings } from './es';
+import { YEARS_IN_TECH } from '../data/site';
 
 export const en: Strings = {
+  // Page metadata
+  pageTitle: "Álvaro Quintana | Full-Stack Engineer — Mobile, Web & AI",
+  pageDescription: `Álvaro Quintana, senior Full-Stack engineer in Madrid with over ${YEARS_IN_TECH} years building Android, iOS and KMP apps, web platforms and AI agent systems.`,
+  skipLink: "Skip to content",
+  portraitAlt: "Álvaro Quintana, senior Full-Stack engineer, in Madrid",
+  location: "Madrid, Spain (remote)",
+
   // Header (ink signature hero)
   name: "Álvaro Quintana",
-  heroEyebrow: "Madrid · 15+ years · Senior Full-Stack",
+  heroEyebrow: `Madrid · ${YEARS_IN_TECH}+ years · Senior Full-Stack`,
   heroHeadline: "Full-Stack Engineer",
   heroHeadlineEm: "Mobile · Web · AI",
   platforms: "Android · iOS · KMP · Web · CI/CD · AI Agents",
@@ -15,7 +23,7 @@ export const en: Strings = {
   jobTitle: "Senior Full-Stack Engineer — Mobile, Web & AI",
   linkedIn: "LinkedIn",
   github: "GitHub",
-  bioP1: 'Full-stack engineer with over <strong>15 years of experience</strong> building digital products end-to-end — from native mobile apps (<strong>Android</strong>, <strong>iOS</strong>) to web platforms and <strong>CI/CD</strong> pipelines. Currently leading development at <strong>B-FY</strong>, a <strong>passwordless IDaaS</strong> platform protecting businesses against <strong>identity fraud</strong>.',
+  bioP1: `Full-stack engineer with over <strong>${YEARS_IN_TECH} years of experience</strong> building digital products end-to-end — from native mobile apps (<strong>Android</strong>, <strong>iOS</strong>) to web platforms and <strong>CI/CD</strong> pipelines. Currently leading development at <strong>B-FY</strong>, a <strong>passwordless IDaaS</strong> platform protecting businesses against <strong>identity fraud</strong>.`,
   bioP2: 'Deep expertise in the <strong>Kotlin</strong> ecosystem: <strong>Jetpack Compose</strong>, <strong>Compose Multiplatform</strong>, and <strong>KMP</strong> for sharing business logic across Android, iOS, web, and desktop. I design <strong>scalable architectures</strong> with clean code built to last.',
   bioP3: 'On the web side, I build with <strong>Astro</strong>, <strong>Next.js</strong>, <strong>React</strong>, and <strong>Tailwind CSS</strong>. Recently designed and implemented a <strong>full CI/CD pipeline in Jenkins</strong> featuring E2E tests with <strong>Appium</strong>, static analysis via <strong>Detekt</strong>, <strong>OWASP</strong> security scanning, automated docs with <strong>Dokka</strong>, distribution through <strong>Firebase App Distribution</strong>, and <strong>Jira</strong> integration — cutting release time and ensuring quality on every build.',
   bioP4: 'Specialized in <strong>secure applications</strong>: <strong>biometric</strong> solutions, <strong>encryption</strong>, and <strong>authentication</strong> protocols. My hands-on <strong>IDaaS</strong> experience gives me a unique perspective on security, privacy, and regulatory compliance.',

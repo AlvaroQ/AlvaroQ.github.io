@@ -18,6 +18,8 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
+      // Build date as lastmod: the site is a single page per locale rebuilt on every deploy.
+      lastmod: new Date(),
       i18n: {
         defaultLocale: 'es',
         locales: {
