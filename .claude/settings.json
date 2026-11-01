@@ -13,7 +13,6 @@
       "Bash(git log*)",
       "Bash(git add *)",
       "Bash(git branch*)",
-      "Bash(git push *)",
       "Bash(git show*)",
       "Bash(npm run build*)",
       "Bash(npm run dev*)",

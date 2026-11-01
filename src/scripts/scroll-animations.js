@@ -1,7 +1,5 @@
 // IntersectionObserver-based scroll animations
 document.addEventListener('DOMContentLoaded', () => {
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -21,36 +19,20 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(el);
   });
 
-  // Skill bars: animate width on scroll
-  const skillObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const fill = entry.target;
-          const level = fill.dataset.level;
-          if (!level) return;
-          fill.style.width = level + '%';
-          skillObserver.unobserve(fill);
-        }
-      });
-    },
-    { threshold: 0.3 }
-  );
-
-  document.querySelectorAll('.skill-bar-fill').forEach((fill) => {
-    if (prefersReducedMotion) {
-      const level = fill.dataset.level;
-      if (!level) return;
-      fill.style.width = level + '%';
-      return;
-    }
-    fill.style.width = '0%';
-    skillObserver.observe(fill);
-  });
-
   // Active nav section tracking
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-link');
+
+  // On mobile the pill scrolls horizontally: keep the active link in view.
+  function revealInPill(link) {
+    const pill = link.closest('.nav-pill');
+    if (!pill || pill.scrollWidth <= pill.clientWidth) return;
+    const pillBox = pill.getBoundingClientRect();
+    const linkBox = link.getBoundingClientRect();
+    if (linkBox.left >= pillBox.left + 12 && linkBox.right <= pillBox.right - 20) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    pill.scrollBy({ left: linkBox.left - pillBox.left - 16, behavior: reduce ? 'auto' : 'smooth' });
+  }
 
   const navObserver = new IntersectionObserver(
     (entries) => {
@@ -62,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
             link.classList.toggle('active', isActive);
             if (isActive) {
               link.setAttribute('aria-current', 'true');
+              revealInPill(link);
             } else {
               link.removeAttribute('aria-current');
             }

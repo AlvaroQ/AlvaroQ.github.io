@@ -1,40 +1,46 @@
-// Theme management with localStorage persistence
-(function () {
-  const STORAGE_KEY = 'portfolio_theme';
+// Theme: the single source of truth is the `light` class on <html> (set before paint by
+// the anti-FOUC snippet in Layout.astro). Everything else subscribes to `themechange`.
+const STORAGE_KEY = 'portfolio_theme';
+const root = document.documentElement;
 
-  function getStoredTheme() {
-    try {
-      return localStorage.getItem(STORAGE_KEY) || 'dark';
-    } catch {
-      return 'dark';
-    }
+/** @returns {'light' | 'dark'} */
+export function getTheme() {
+  return root.classList.contains('light') ? 'light' : 'dark';
+}
+
+/** Applies, persists and announces a theme. @param {'light' | 'dark'} theme */
+export function setTheme(theme) {
+  root.classList.toggle('light', theme === 'light');
+  root.classList.toggle('dark', theme !== 'light');
+  try {
+    localStorage.setItem(STORAGE_KEY, theme);
+  } catch {
+    /* storage unavailable: the choice lasts for this page only */
   }
+  syncThemeColor();
+  document.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
+}
 
-  function applyTheme(theme) {
-    document.documentElement.classList.toggle('light', theme === 'light');
-    document.documentElement.setAttribute('data-theme', theme);
+/**
+ * Calls `fn` with the new theme on every change.
+ * @param {(theme: 'light' | 'dark') => void} fn
+ * @returns {() => void} unsubscribe
+ */
+export function onThemeChange(fn) {
+  /** @param {Event} e */
+  const handler = (e) => fn(/** @type {CustomEvent} */ (e).detail.theme);
+  document.addEventListener('themechange', handler);
+  return () => document.removeEventListener('themechange', handler);
+}
 
-    // Notify chat widget and modal
-    if (window.chatWidget) window.chatWidget.setTheme(theme);
-    if (window.projectModal) window.projectModal.setTheme(theme);
-  }
+/** Keeps the browser UI colour in sync with the --paper token. */
+function syncThemeColor() {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  const paper = getComputedStyle(root).getPropertyValue('--paper').trim();
+  if (meta && paper) meta.setAttribute('content', paper);
+}
 
-  function toggleTheme() {
-    const current = getStoredTheme();
-    const next = current === 'dark' ? 'light' : 'dark';
-    try {
-      localStorage.setItem(STORAGE_KEY, next);
-    } catch { /* ignore */ }
-    applyTheme(next);
-    return next;
-  }
-
-  // Theme is already applied in Layout.astro via is:inline script in <head>.
-  // Calling applyTheme here again would be redundant and could cause a flash.
-  // applyTheme(getStoredTheme());
-
-  // Expose globally
-  window.getTheme = getStoredTheme;
-  window.toggleTheme = toggleTheme;
-  window.applyTheme = applyTheme;
-})();
+syncThemeColor();
+document.getElementById('theme-toggle')?.addEventListener('click', () => {
+  setTheme(getTheme() === 'light' ? 'dark' : 'light');
+});

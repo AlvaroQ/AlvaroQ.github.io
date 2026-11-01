@@ -14,11 +14,11 @@
 |------|-----------|---------|
 | **Framework** | Astro (SSG + Islands) | ^6.0.5 |
 | **Estilos** | Tailwind CSS (CSS-first, Vite plugin) | ^4.2.1 |
-| **PWA** | @vite-pwa/astro | ^1.2.0 |
+| **Imagenes** | astro:assets + sharp (build) | ^0.34.5 |
 | **SEO** | @astrojs/sitemap | ^3.7.1 |
 | **Types** | TypeScript (strict mode) | via astro |
-| **Deploy** | GitHub Pages (GitHub Actions) | withastro/action@v3 |
-| **Node** | >=22.12.0 | LTS |
+| **Deploy** | GitHub Pages (GitHub Actions) | upload-pages-artifact + deploy-pages |
+| **Node** | >=22.18.0 (type stripping for the tests) | LTS |
 
 ### Estandares de Codigo
 
@@ -35,35 +35,55 @@
 
 ```
 src/
-├── components/           # Componentes Astro reutilizables
-│   ├── Career.astro      # Seccion experiencia laboral
-│   ├── Contact.astro     # Seccion contacto
-│   ├── Header.astro      # Header con hero
-│   ├── Navigation.astro  # Navegacion principal
-│   ├── Presentation.astro # Seccion presentacion/about
-│   ├── Projects.astro    # Seccion proyectos
-│   └── Skills.astro      # Seccion habilidades
-├── data/                 # Datos tipados (TS)
-│   ├── career.ts         # Datos de experiencia
-│   ├── contact.ts        # Datos de contacto
-│   ├── projects.ts       # Datos de proyectos
-│   └── skills.ts         # Datos de habilidades
-├── i18n/                 # Internacionalizacion
-│   ├── es.ts             # Traducciones espanol
-│   ├── en.ts             # Traducciones ingles
-│   └── index.ts          # Helper t(locale)
-├── layouts/
-│   └── Layout.astro      # Layout principal (html, head, meta)
-├── pages/
-│   ├── index.astro       # Home (es) → /
-│   └── en/
-│       └── index.astro   # Home (en) → /en
-├── scripts/
-│   ├── scroll-animations.js  # Animaciones de scroll
-│   └── theme.js              # Toggle de tema
-└── styles/
-    ├── animations.css    # Keyframes y animaciones
-    └── global.css        # Estilos globales + @theme inline
+├── components/
+│   ├── PageContent.astro   # Compone la pagina (secciones + ProjectModal + ChatWidget)
+│   ├── Navigation.astro    # Pildora fija; itera data/sections.ts
+│   ├── Header.astro        # Banner, controles de tema/idioma y <Hero>
+│   ├── Hero.astro          # Hero: eyebrow, titular, pausa, CTAs
+│   ├── InkName.astro       # h1 + canvas de tinta viva (scripts/ink-signature.js)
+│   ├── InkWatermark.astro  # Filigrana en relieve (scripts/ink-watermark.js)
+│   ├── Section.astro       # <section id> + contenedor + SectionHeading
+│   ├── SectionHeading.astro
+│   ├── Presentation.astro  # Sobre mi
+│   ├── Career.astro        # Trayectoria
+│   ├── Projects.astro      # Proyectos (ProjectRipple > Section > ProjectCard)
+│   ├── ProjectRipple.astro # Anillos de agua a todo el ancho, bajo el contenido; las portadas son paredes que las ondas rodean (project-ripple.js perezoso, paso fijo de 60 Hz)
+│   ├── ProjectCard.astro   # Tarjeta: enlace extendido + <ProjectCase> en un <template>
+│   ├── ProjectCase.astro   # Caso completo renderizado en build
+│   ├── ProjectModal.astro  # <dialog> del caso + lightbox (src/scripts/project-modal.js perezoso)
+│   ├── ChatWidget.astro    # FAB + <dialog> del chat (src/scripts/chat-widget.js perezoso)
+│   ├── Skills.astro        # Habilidades
+│   └── Contact.astro       # Contacto
+├── data/                   # Datos tipados; textos por idioma como Localized
+│   ├── site.ts             # Cifras (anos), URLs y email compartidos
+│   ├── seo.ts              # JSON-LD localizado (Person, WebSite, ProfilePage)
+│   ├── sections.ts         # Orden y claves de navegacion/titulo
+│   ├── projects.ts         # Project { slug, status?, links, caseStudy }
+│   ├── career.ts · skills.ts · stack.ts · contact.ts
+├── i18n/
+│   ├── index.ts            # LANGS, Lang, Strings, Localized, t(lang) — unico punto de import
+│   ├── es.ts · en.ts       # en.ts tipado con Strings: paridad de claves por TS
+├── layouts/Layout.astro    # <head>, meta/OG, JSON-LD, anti-FOUC (unico is:inline)
+├── lib/
+│   ├── images.ts           # responsive(), fixed(), mediaFor(), thumbFor() (astro:assets)
+│   └── media.ts            # Matematica pura de tamanos: fitFor, sizesFor, thumbSizes
+├── pages/index.astro · pages/en/index.astro
+├── scripts/                # Modulos cliente (Vite)
+│   ├── theme.js            # getTheme / setTheme / onThemeChange + evento 'themechange'
+│   ├── anti-fouc.mjs       # Unico script inline (tema antes de pintar)
+│   ├── project-modal.js · chat-widget.js · project-ripple.js  # Modulos perezosos (import por URL, sin imports estaticos)
+│   ├── ripple-shader.js    # GLSL de la gota de agua (se inyecta en project-ripple.js)
+│   ├── ink-signature.js · ink-watermark.js · ink-shader.js · ink-color.js
+│   └── scroll-animations.js
+└── styles/global.css · animations.css
+scripts/
+├── check-dist.test.mjs     # Tests deterministas sobre dist/ (SEO, CSP, a11y estatica, activos)
+├── images.test.mjs         # Tests de src/lib/media.ts
+├── csp-hash.mjs            # Hash CSP del anti-FOUC (lo usa astro.config.mjs)
+├── prune-masters.mjs       # Integracion astro:build:done: borra masters sin referencia
+└── assets/                 # Generadores manuales (fuera del build)
+    ├── icons.mjs           # favicon.svg/.ico/32, apple-touch-icon, og-image(-en).png
+    └── relief.mjs          # Mapa de alturas de la filigrana desde el retrato
 ```
 
 ### Agregar Contenido
@@ -82,6 +102,9 @@ Para agregar/editar contenido del portfolio:
 npm run dev       # Servidor desarrollo (localhost:4321)
 npm run build     # Build produccion (dist/)
 npm run preview   # Preview del build
+npm run verify    # astro check && astro build && node --test scripts/ (lo mismo que CI)
+npm run assets:icons   # Regenera favicon, apple-touch-icon y las OG (Chrome del sistema, CHROME_PATH)
+npm run assets:relief  # Regenera el mapa de relieve de la filigrana tras cambiar el retrato
 npx astro check   # Type checking
 ```
 
@@ -89,9 +112,16 @@ npx astro check   # Type checking
 
 Despues de cualquier cambio:
 ```bash
-npx astro check   # SIEMPRE - verificar tipos
-npm run build     # Para cambios de imports, nuevos componentes, o cambios de config
+npm run verify    # SIEMPRE: tipos, build y tests deterministas de dist/
 ```
+
+### Sondas manuales (no forman parte de verify)
+
+Capturas, teclado, axe y Lighthouse se hacen con Chrome headless por CDP sobre `npm run preview`, con
+scripts desechables fuera del repo (scratchpad o `mktemp -d`). Reglas: medir el fichero servido
+(`currentSrc` cargado en un `new Image()`, no `naturalWidth`), carga fresca sin cache para `sizes`,
+recorrer la pagina antes de una captura completa (imagenes lazy), Lighthouse movil simulado
+(LCP < 2,5 s, TBT < 200 ms, CLS <= 0,01).
 
 ---
 
@@ -252,7 +282,9 @@ Los merges a master/main son responsabilidad exclusiva del usuario.
 - **Astro `class` vs `className`**: Astro usa HTML nativo. Siempre `class`, nunca `className`.
 - **`<script>` en Astro**: Se procesa por Vite y se bundlea. Para scripts sin procesar usar `is:inline`.
 - **i18n routing**: Default locale (`es`) NO tiene prefijo. Solo `/en` tiene prefijo.
-- **PWA manifest**: Configurado en `astro.config.mjs`, no en archivo separado.
+- **Sin PWA**: no hay manifest ni service worker propio.
+- **Modulos `?url`**: Vite los emite en crudo (sin resolver imports); sus dependencias se importan aparte y se inyectan. `assetsInlineLimit` no inlinea `src/scripts/*.js` como `data:` (la CSP los bloquearia).
+- **Tema**: la clase `light` en `<html>` es la unica fuente; escuchar `themechange` (no leer localStorage).
 
 ---
 
@@ -260,6 +292,8 @@ Los merges a master/main son responsabilidad exclusiva del usuario.
 
 GitHub Pages via GitHub Actions:
 - **Trigger**: Push a `main` o dispatch manual.
-- **Action**: `withastro/action@v3` (build automatico).
+- **Workflow**: `.github/workflows/deploy.yml` (`npm ci` → `npm run verify` → artefacto `dist/` → deploy-pages).
+- **CSP**: `security.csp` en `astro.config.mjs` (meta con hashes). Nada de `style=""`, `on*` ni scripts inline nuevos: el unico inline es `src/scripts/anti-fouc.mjs`, cuyo hash calcula la config.
+- **`public/sw.js`**: kill switch del service worker del sitio anterior (limpia caches, se desregistra). Retirarlo a partir de mayo de 2027.
 - **URL**: https://alvaroq.github.io
 

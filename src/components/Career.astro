@@ -1,89 +1,136 @@
 ---
-import type { Strings } from '../i18n/es';
-import { career } from '../data/career';
+import type { Lang, Strings } from '../i18n';
+import { career, type Period } from '../data/career';
+import Section from './Section.astro';
+import { fixed } from '../lib/images';
+import { YEARS_AT_COMPANY, YEARS_IN_TECH } from '../data/site';
 
 interface Props {
   strings: Strings;
-  lang: 'es' | 'en';
+  lang: Lang;
 }
 
 const { strings, lang } = Astro.props;
+const formatPeriod = ({ from, to }: Period) => (from === to ? String(from) : `${from} — ${to ?? strings.present}`);
+
+// Logos render at 28 CSS px; 1x/2x/3x variants keep them sharp on every DPR.
+const logos = await Promise.all(career.map((node) => (node.logo ? fixed(node.logo, 28) : null)));
+
+const stats: { value: string; unit?: string; label: string }[] = [
+  { value: `+${YEARS_IN_TECH}`, unit: strings.yearsUnit, label: strings.yearsInTechLabel },
+  { value: `+${YEARS_AT_COMPANY}`, unit: strings.yearsUnit, label: strings.yearsAtBfyLabel },
+  { value: strings.platformsNum, unit: strings.platformsUnit, label: strings.platformsLabel },
+];
 ---
 
-<section id="career" class="py-20">
-  <div class="section-container">
-    <div class="text-center mb-12 animate-on-scroll slide-up">
-      <h2 class="text-2xl md:text-4xl font-bold text-[var(--neon-cyan)] tracking-[2px] neon-text">
-        {strings.careerTimeline}
-      </h2>
-      <p class="text-sm text-[var(--text-secondary)] mt-2">{strings.careerSubtitle}</p>
-    </div>
+<Section id="career" strings={strings} subtitle={strings.careerSubtitle}>
 
-    <!-- Timeline -->
-    <div class="relative">
-      <!-- Connection line (desktop) -->
-      <div class="hidden md:block timeline-line"></div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-        {career.map((node, i) => (
-          <div
-            class="animate-on-scroll slide-up neon-card timeline-card text-center group flex flex-col relative z-10"
-            style={`animation-delay: ${i * 100}ms; border-color: ${node.color};`}
-          >
-            <!-- Icon -->
-            <div class="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center text-sm font-bold overflow-hidden"
-                 style={`border: 2px solid ${node.color}; color: ${node.color};`}>
-              {node.logo ? (
-                <img src={node.logo} alt={node.company} class="w-10 h-10 object-contain rounded-full bg-[var(--logo-bg)]" loading="lazy" decoding="async" width="40" height="40" />
+    <!-- Timeline: vertical below lg, horizontal from lg -->
+    <ol class="timeline relative grid gap-10 lg:grid-cols-5 lg:gap-8">
+      {career.map((node, i) => (
+        <li class={`entry animate-on-scroll relative stagger-${i}`}>
+          <span class="dot" aria-hidden="true"></span>
+          <div class="flex items-center gap-3">
+            <span class="logo flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-(--paper-2) font-mono text-[11px] text-(--ink-muted)">
+              {logos[i] ? (
+                <img src={logos[i].src} srcset={logos[i].srcset} alt="" class="h-7 w-7 rounded-full object-contain" loading="lazy" decoding="async" width={logos[i].width} height={logos[i].height} />
               ) : (
-                <span>{node.icon}</span>
+                <span aria-hidden="true">{node.icon}</span>
               )}
-            </div>
-
-            <!-- Info -->
-            <h3 class="text-sm font-bold mb-1" style={`color: ${node.color};`}>{node.company}</h3>
-            <p class="text-[0.65rem] text-[var(--text-secondary)] mb-1">{node.period}</p>
-            <p class="text-xs font-medium text-[var(--text-primary)] mb-2">{node.role}</p>
-            <p class="text-[0.65rem] text-[var(--text-secondary)] mb-3 leading-relaxed">{node.description[lang]}</p>
-
-            <!-- Skills -->
-            <div class="flex flex-wrap justify-center gap-1">
-              {node.skills.map((skill) => (
-                <span class="tech-pill text-[0.65rem]">{skill}</span>
-              ))}
-            </div>
-
-            <!-- Type badge -->
-            <span class="inline-block mt-auto pt-3 text-[0.65rem] tracking-widest opacity-50 uppercase">{node.type}</span>
+            </span>
+            <p class="label-ui text-(--accent)">{formatPeriod(node.period)}</p>
           </div>
-        ))}
-      </div>
-    </div>
+          <h3 class="mt-4 font-display text-[22px] font-semibold leading-tight text-(--ink)">{node.company}</h3>
+          <p class="mt-1 text-sm font-medium text-(--ink)">{node.role[lang]}</p>
+          <p class="mt-3 text-sm leading-relaxed text-(--ink-muted)">{node.description[lang]}</p>
+          <ul class="mt-4 flex flex-wrap gap-1.5">
+            {node.skills.map((skill) => <li class="tag">{skill}</li>)}
+          </ul>
+        </li>
+      ))}
+    </ol>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-3 gap-4 mt-14 animate-on-scroll fade-in">
-      <div class="neon-card text-center">
-        <p class="text-2xl font-bold text-[var(--neon-cyan)]">+15</p>
-        <p class="text-[0.7rem] text-[var(--text-secondary)] tracking-wider">{strings.yearsInTechLabel}</p>
-      </div>
-      <div class="neon-card text-center">
-        <p class="text-2xl font-bold text-[var(--neon-magenta)]">+7</p>
-        <p class="text-[0.7rem] text-[var(--text-secondary)] tracking-wider">{strings.yearsAtBfyLabel}</p>
-      </div>
-      <div class="neon-card text-center">
-        <p class="text-2xl font-bold text-[var(--neon-green)]">{strings.platformsNum}</p>
-        <p class="text-[0.7rem] text-[var(--text-secondary)] tracking-wider">{strings.platformsLabel}</p>
-      </div>
-    </div>
-  </div>
-</section>
+    <!-- Stats: large numbers, no cards -->
+    <dl class="animate-on-scroll mt-16 grid grid-cols-3 border-t border-(--line) pt-8 lg:mt-20">
+      {stats.map((stat) => (
+        <div class="stat px-2 sm:px-6">
+          <dt class="label-index order-2 mt-2 leading-snug text-(--ink-muted) max-sm:tracking-[0.08em]">{stat.label}</dt>
+          <dd class="font-display text-[clamp(40px,6vw,72px)] font-semibold leading-none text-(--ink)">
+            {stat.value}{stat.unit && <span class="stat-unit">{stat.unit}</span>}
+          </dd>
+        </div>
+      ))}
+    </dl>
+</Section>
 
 <style>
-  .timeline-card {
-    background: rgba(26, 26, 46, 0.92);
+  /* Vertical rail below lg */
+  .timeline {
+    padding-left: 28px;
   }
 
-  :global(html.light) .timeline-card {
-    background: rgba(255, 255, 255, 0.95);
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: var(--line);
+  }
+
+  .dot {
+    position: absolute;
+    left: -28px;
+    top: 16px;
+    width: 9px;
+    height: 9px;
+    border-radius: var(--radius-pill);
+    background: var(--paper);
+    border: 1px solid var(--accent);
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Unit after a figure ("4 entornos"): same face, smaller and in italics */
+  .stat-unit {
+    margin-left: 0.25em;
+    font-size: 0.4em;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink-2);
+  }
+
+  .stat + .stat {
+    border-left: 1px solid var(--line);
+  }
+
+  .stat:first-child {
+    padding-left: 0;
+  }
+
+  /* Horizontal rail from lg */
+  @media (min-width: 1024px) {
+    .timeline {
+      padding-left: 0;
+      padding-top: 28px;
+    }
+
+    .timeline::before {
+      left: 0;
+      right: 0;
+      top: 4px;
+      bottom: auto;
+      width: auto;
+      height: 1px;
+    }
+
+    .dot {
+      left: 0;
+      top: -28px;
+    }
   }
 </style>

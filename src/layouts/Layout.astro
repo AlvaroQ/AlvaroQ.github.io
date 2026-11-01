@@ -1,21 +1,24 @@
 ---
 import '../styles/global.css';
 import '../styles/animations.css';
-import MouseSpotlight from '../components/MouseSpotlight.astro';
+import { t, type Lang } from '../i18n';
+import { jsonLd } from '../data/seo';
+import { responsive } from '../lib/images';
+import { ANTI_FOUC } from '../scripts/anti-fouc.mjs';
 
 interface Props {
-  title?: string;
-  description?: string;
-  lang?: 'es' | 'en';
+  lang: Lang;
 }
 
-const {
-  title = 'Alvaro Quintana | Mobile & AI Developer',
-  description = 'Senior Mobile Developer & AI Specialist. +12 years building Android, iOS, and KMP apps. Expert in Kotlin Multiplatform and AI Agents.',
-  lang = 'es'
-} = Astro.props;
+const { lang } = Astro.props;
 
+const strings = t(lang);
+const title = strings.pageTitle;
+const description = strings.pageDescription;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const portrait = await responsive('profile/portrait.jpg', [600]);
+const ogImage = new URL(lang === 'es' ? '/images/og-image.png' : `/images/og-image-${lang}.png`, Astro.site);
+const structuredData = jsonLd(lang, strings, canonicalURL.href, new URL(portrait.src, Astro.site).href);
 const altLang = lang === 'es' ? 'en' : 'es';
 const altPath = lang === 'es' ? '/en/' : '/';
 const altURL = new URL(altPath, Astro.site);
@@ -26,6 +29,7 @@ const altURL = new URL(altPath, Astro.site);
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -35,6 +39,7 @@ const altURL = new URL(altPath, Astro.site);
   <meta name="description" content={description} />
   <meta name="author" content="Alvaro Quintana" />
   <meta name="robots" content="index, follow" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="canonical" href={canonicalURL} />
 
   <!-- i18n alternates -->
@@ -43,7 +48,7 @@ const altURL = new URL(altPath, Astro.site);
   <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site)} />
 
   <!-- Theme color -->
-  <meta name="theme-color" content="#00FFFF" />
+  <meta name="theme-color" content="#15110E" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -53,92 +58,44 @@ const altURL = new URL(altPath, Astro.site);
   <meta property="og:site_name" content="Alvaro Quintana Portfolio" />
   <meta property="og:locale" content={lang === 'es' ? 'es_ES' : 'en_US'} />
   <meta property="og:locale:alternate" content={lang === 'es' ? 'en_US' : 'es_ES'} />
-  <meta property="og:image" content={new URL('/images/og-image.png', Astro.site)} />
+  <meta property="og:image" content={ogImage} />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content={`${title} — Portfolio`} />
+  <meta property="og:image:alt" content={strings.ogImageAlt} />
   <meta property="og:image:type" content="image/png" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
-  <meta name="twitter:image" content={new URL('/images/og-image.png', Astro.site)} />
-  <meta name="twitter:image:alt" content={`${title} — Portfolio`} />
+  <meta name="twitter:image" content={ogImage} />
+  <meta name="twitter:image:alt" content={strings.ogImageAlt} />
 
   <!-- Preload critical assets -->
-  <link rel="preload" href="/fonts/JetBrainsMono-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="/fonts/JetBrainsMono-latin-ext.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="/images/profile/business_front.png" as="image" />
+  <link rel="preload" href="/fonts/Fraunces-900-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/InstrumentSans-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/Fraunces-400-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/Fraunces-400italic-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/Fraunces-600-latin.woff2" as="font" type="font/woff2" crossorigin />
 
   <!-- JSON-LD Structured Data -->
-  <script type="application/ld+json" is:inline set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Person",
-        "@id": "https://alvaroq.github.io/#person",
-        "name": "Alvaro Quintana",
-        "url": "https://alvaroq.github.io",
-        "jobTitle": "Senior Full-Stack Engineer — Mobile, Web & AI",
-        "description": "Senior Full-Stack Engineer with 12+ years building Android, iOS, KMP, Web platforms and AI agent systems.",
-        "worksFor": {
-          "@type": "Organization",
-          "name": "B-FY",
-          "url": "https://b-fy.com",
-          "description": "Passwordless IDaaS platform for identity protection"
-        },
-        "knowsAbout": [
-          "Kotlin", "KMP", "Android", "iOS", "Jetpack Compose",
-          "Next.js", "React", "Astro", "TypeScript", "Python",
-          "AI Agents", "LangChain", "MCP", "RAG", "Claude",
-          "CI/CD", "Jenkins", "Firebase", "Biometrics", "Security"
-        ],
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Madrid",
-          "addressCountry": "ES"
-        },
-        "sameAs": [
-          "https://www.linkedin.com/in/alvaro-quintana-palacios/",
-          "https://github.com/AlvaroQ"
-        ]
-      },
-      {
-        "@type": "WebSite",
-        "@id": "https://alvaroq.github.io/#website",
-        "url": "https://alvaroq.github.io",
-        "name": "Alvaro Quintana Portfolio",
-        "description": "Portfolio personal de Alvaro Quintana — Senior Full-Stack Engineer Mobile, Web & AI",
-        "inLanguage": ["es-ES", "en-US"],
-        "author": { "@id": "https://alvaroq.github.io/#person" }
-      }
-    ]
-  })} />
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />
 
-  <!-- Theme script (inline to prevent FOUC) -->
-  <script is:inline>
-    (function(){
-      var t;
-      try { t = localStorage.getItem('portfolio_theme'); } catch(e) {}
-      if (t === 'light') document.documentElement.classList.replace('dark','light');
-    })();
-  </script>
+  <!-- Anti-FOUC: the only inline script; sets the theme class before paint (theme.js owns the rest) -->
+  <script is:inline set:html={ANTI_FOUC} />
 </head>
 <body>
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--neon-cyan)] focus:text-[var(--bg-primary)] focus:rounded focus:font-bold focus:text-sm">
-    Skip to content
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-(--ink) focus:text-(--paper) focus:rounded focus:font-bold focus:text-sm">
+    {strings.skipLink}
   </a>
 
-  <div class="cyberpunk-grid" aria-hidden="true"></div>
-  <MouseSpotlight />
 
   <main id="main-content">
     <slot />
   </main>
 
-  <footer class="py-6 text-center text-xs text-[var(--text-secondary)] opacity-50 relative z-10">
-    <p>&copy; {new Date().getFullYear()} Alvaro Quintana</p>
+  <footer class="relative z-10 border-t border-(--line) px-6 py-8 text-center font-mono text-[11px] tracking-[0.08em] text-(--ink-muted)">
+    <p>&copy; {new Date().getFullYear()} Álvaro Quintana · {strings.builtWithTech} {strings.techName}</p>
   </footer>
 
   <script src="../scripts/theme.js"></script>

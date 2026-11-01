@@ -1,0 +1,197 @@
+---
+// Hero: eyebrow, the ink name, headline, platforms + ink pause, CTAs, and the watermark behind.
+import type { Strings } from '../i18n';
+import { contact } from '../data/contact';
+import InkName from './InkName.astro';
+import InkWatermark from './InkWatermark.astro';
+
+interface Props {
+  strings: Strings;
+}
+
+const { strings } = Astro.props;
+---
+
+<div class="hero" data-ink>
+  <div class="hero-inner">
+    <p class="eyebrow label-index hero-enter">{strings.heroEyebrow}</p>
+    <InkName name={strings.name} />
+    <p class="headline hero-enter step-2">{strings.heroHeadline} <em>{strings.heroHeadlineEm}</em></p>
+    <div class="platforms-row hero-enter step-2">
+      <p class="platforms">{strings.platforms}</p>
+      <button
+        class="control ink-pause"
+        type="button"
+        aria-pressed="false"
+        data-usable="false"
+        data-label-pause={strings.inkPause}
+        data-label-resume={strings.inkResume}
+      >{strings.inkPause}</button>
+    </div>
+    <div class="ctas hero-enter step-3">
+      <a class="btn btn-solid" href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer">{strings.linkedIn}</a>
+      <a class="btn btn-ghost" href={contact.githubUrl} target="_blank" rel="noopener noreferrer">{strings.github}</a>
+    </div>
+  </div>
+  <InkWatermark />
+</div>
+
+<style>
+  .hero {
+    position: relative;
+    /* Capped so tall viewports (tablets, large monitors) do not open empty bands */
+    min-height: min(100svh, 640px);
+    display: grid;
+    align-items: center;
+    isolation: isolate;
+    touch-action: pan-y;
+  }
+
+  /* Paper veins across the whole hero, as in scenario A: a static vector noise mask
+     (no bitmap, so it cannot pixelate) tinted with the second ink. */
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-color: var(--ink-2);
+    opacity: var(--vein-opacity, 0.1);
+    /* Veins intersected with a bottom fade, so they dissolve into the next section */
+    -webkit-mask:
+      url("/images/paper-veins.svg") center / cover no-repeat,
+      linear-gradient(black 82%, transparent);
+    -webkit-mask-composite: source-in;
+    mask:
+      url("/images/paper-veins.svg") center / cover no-repeat,
+      linear-gradient(black 82%, transparent);
+    mask-composite: intersect;
+  }
+
+  :global(html.light) .hero::before {
+    --vein-opacity: 0.08;
+  }
+
+  /* Same grid as the sections: 1.5rem gutters (2rem from lg) around a 1200 px column */
+  .hero-inner {
+    width: 100%;
+    max-width: calc(1200px + 3rem);
+    margin-inline: auto;
+    padding: 128px 1.5rem 72px;
+    display: grid;
+    gap: 22px;
+    justify-items: start;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-inner {
+      max-width: calc(1200px + 4rem);
+      padding-inline: 2rem;
+    }
+  }
+
+  .eyebrow {
+    color: var(--ink-muted);
+  }
+
+  .headline {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 2.2vw, 30px);
+    font-weight: 400;
+    font-variation-settings: "opsz" 36;
+    line-height: 1.25;
+    color: var(--ink);
+    max-width: 28ch;
+  }
+
+  .headline em {
+    font-style: italic;
+    white-space: nowrap;
+    color: var(--accent);
+  }
+
+  .platforms {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+
+  .platforms-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 18px;
+  }
+
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 6px;
+  }
+
+  /* A compact .control: 32 px tall on screen, but the ::before below extends the hit area to
+     44 px (WCAG 2.5.8) without changing its look or the height of its reserved slot. */
+  .ink-pause {
+    position: relative;
+    min-width: 0;
+    min-height: 32px;
+    padding: 8px 10px;
+    transition: none;
+  }
+
+  .ink-pause::before {
+    content: "";
+    position: absolute;
+    inset: -7px 0;
+  }
+
+  .ink-pause:hover {
+    color: var(--ink-muted);
+    border-color: var(--line);
+  }
+
+  /* The control appears once the effect starts: its slot stays reserved so the
+     row never reflows (it would shift the CTAs and everything below). */
+  .ink-pause[data-usable="false"] {
+    visibility: hidden;
+  }
+
+  /* The effect never starts under reduced motion: no slot needed. */
+  @media (prefers-reduced-motion: reduce) {
+    .ink-pause {
+      display: none;
+    }
+  }
+
+  .ink-pause[aria-pressed="true"] {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  @media (max-width: 639px) {
+    .hero {
+      min-height: auto;
+      align-items: start;
+    }
+
+    .hero-inner {
+      padding-bottom: 48px;
+    }
+
+    /* Own line for the pause control on phones: whether it fits next to the
+       platforms would depend on the mono font having loaded (layout shift). */
+    .platforms-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+  }
+
+  @media (forced-colors: active) {
+    .hero::before {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 760" width="1440" height="760" preserveAspectRatio="xMidYMid slice">
+  <!-- Paper veins for the hero (scenario A). Used as a mask: only alpha matters.
+       The filtered rect overflows the viewBox so the displacement never pulls in empty edges. -->
+  <filter id="v" filterUnits="userSpaceOnUse" x="-240" y="-240" width="1920" height="1240" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.0016 0.0028" numOctaves="4" seed="7" result="n"/>
+    <feDisplacementMap in="n" in2="n" scale="160" xChannelSelector="G" yChannelSelector="B" result="w"/>
+    <feColorMatrix in="w" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1 0 0 0 0"/>
+    <feComponentTransfer>
+      <feFuncA type="table" tableValues="0 0 0.08 0.45 1 0.45 0.08 0 0.12 0.5 0.12 0"/>
+    </feComponentTransfer>
+  </filter>
+  <rect x="-240" y="-240" width="1920" height="1240" filter="url(#v)"/>
+</svg>

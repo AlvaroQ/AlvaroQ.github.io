@@ -1,52 +1,65 @@
 ---
-import type { Strings } from '../i18n/es';
-import { skillCategories } from '../data/skills';
+import type { Lang, Strings } from '../i18n';
+import { skillCategories, type SkillDepth } from '../data/skills';
+import Section from './Section.astro';
 
 interface Props {
   strings: Strings;
+  lang: Lang;
 }
 
-const { strings } = Astro.props;
+const { strings, lang } = Astro.props;
+const depthLabel: Record<SkillDepth, string> = {
+  core: strings.depthCore,
+  solid: strings.depthSolid,
+  familiar: strings.depthFamiliar,
+};
 ---
 
-<section id="skills" class="py-20">
-  <div class="section-container">
-    <div class="text-center mb-12 animate-on-scroll slide-up">
-      <h2 class="text-2xl md:text-4xl font-bold text-[var(--neon-cyan)] tracking-[2px] neon-text">
-        {strings.skillsMatrix}
-      </h2>
-    </div>
+<Section id="skills" strings={strings}>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid gap-12 md:grid-cols-3 md:gap-10">
       {skillCategories.map((cat, i) => (
-        <div class="animate-on-scroll slide-up neon-card" style={`animation-delay: ${i * 150}ms;`}>
-          <h3 class="text-sm font-bold tracking-wider mb-6 text-center" style={`color: ${cat.color};`}>
-            {cat.title}
-          </h3>
-          <div class="space-y-4">
+        <div class={`animate-on-scroll stagger-${i}`}>
+          <h3 class="border-b border-(--line) pb-3 label-index text-(--ink-muted)">{cat.title[lang]}</h3>
+          <ul>
             {cat.skills.map((skill) => (
-              <div>
-                <div class="flex justify-between mb-1">
-                  <span class="text-xs text-[var(--text-primary)]">{skill.name}</span>
-                  <span class="text-[0.7rem] text-[var(--text-secondary)]">{skill.level}%</span>
-                </div>
-                <div class="skill-bar-track">
-                  <div
-                    class="skill-bar-fill"
-                    data-level={skill.level}
-                    style={`background: ${cat.color}; width: 0%;`}
-                    role="progressbar"
-                    aria-valuenow={skill.level}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-label={`${strings.a11ySkillLevel}: ${skill.name} ${skill.level}%`}
-                  />
-                </div>
-              </div>
+              <li class="flex items-baseline gap-3 border-b border-(--line) py-3">
+                <span class="min-w-0 flex-1 text-[15px] text-(--ink)">{skill.name}</span>
+                <span class="font-mono text-xs text-(--ink-muted)">{skill.years} {strings.yearsShort}</span>
+                <span class={`depth depth-${skill.depth}`}>{depthLabel[skill.depth]}</span>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       ))}
     </div>
-  </div>
-</section>
+</Section>
+
+<style>
+  .depth {
+    min-width: 72px;
+    padding: 2px 8px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  .depth-core {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .depth-solid {
+    color: var(--ink);
+  }
+
+  .depth-familiar {
+    border-style: dashed;
+  }
+</style>

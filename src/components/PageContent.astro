@@ -6,42 +6,25 @@ import Career from './Career.astro';
 import Projects from './Projects.astro';
 import Skills from './Skills.astro';
 import Contact from './Contact.astro';
-import { t } from '../i18n';
+import ProjectModal from './ProjectModal.astro';
+import ChatWidget from './ChatWidget.astro';
+import { t, type Lang } from '../i18n';
 
 interface Props {
-  lang: 'es' | 'en';
+  lang: Lang;
 }
 
 const { lang } = Astro.props;
 const strings = t(lang);
 ---
 
-<Navigation strings={strings} lang={lang} />
+<Navigation strings={strings} />
 <Header strings={strings} lang={lang} />
-<Presentation strings={strings} />
+<Presentation strings={strings} lang={lang} />
 <Career strings={strings} lang={lang} />
 <Projects strings={strings} lang={lang} />
-<Skills strings={strings} />
+<Skills strings={strings} lang={lang} />
 <Contact strings={strings} />
 
-<!-- Chat Widget -->
-<script is:inline src="/scripts/chat-widget.js" defer></script>
-<script is:inline define:vars={{ lang }}>
-  document.addEventListener('DOMContentLoaded', () => {
-    var theme;
-    try { theme = localStorage.getItem('portfolio_theme') || 'dark'; } catch(e) { theme = 'dark'; }
-    window.chatWidget = new PortfolioChatWidget({ lang: lang, theme: theme });
-  });
-</script>
-
-<!-- Project Modal -->
-<script is:inline src="/scripts/project-modal.js" defer></script>
-<script is:inline define:vars={{ lang }}>
-  document.addEventListener('DOMContentLoaded', () => {
-    var theme;
-    try { theme = localStorage.getItem('portfolio_theme') || 'dark'; } catch(e) { theme = 'dark'; }
-    window.projectModal = new ProjectDetailModal();
-    window.projectModal.setTheme(theme);
-    window.projectModal.setLang(lang);
-  });
-</script>
+<ProjectModal strings={strings} />
+<ChatWidget strings={strings} lang={lang} />

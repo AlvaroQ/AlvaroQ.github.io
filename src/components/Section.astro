@@ -1,0 +1,22 @@
+---
+// Section wrapper: anchor id, container and the heading from src/data/sections.ts.
+import type { Strings } from '../i18n';
+import { sectionById, type SectionId } from '../data/sections';
+import SectionHeading from './SectionHeading.astro';
+
+interface Props {
+  id: SectionId;
+  strings: Strings;
+  subtitle?: string;
+}
+
+const { id, strings, subtitle } = Astro.props;
+const section = sectionById(id);
+---
+
+<section id={id}>
+  <div class="section-container">
+    <SectionHeading title={strings[section.titleKey]} subtitle={subtitle} />
+    <slot />
+  </div>
+</section>

@@ -1,0 +1,14 @@
+---
+// Shared section heading: Fraunces title, optional subtitle.
+interface Props {
+  title: string;
+  subtitle?: string;
+}
+
+const { title, subtitle } = Astro.props;
+---
+
+<header class="animate-on-scroll mb-10 lg:mb-12">
+  <h2 class="font-display text-[clamp(34px,4.4vw,56px)] leading-[1.05] tracking-[-0.01em] text-(--ink)">{title}</h2>
+  {subtitle && <p class="mt-3 max-w-[60ch] text-[17px] leading-relaxed text-(--ink-muted)">{subtitle}</p>}
+</header>

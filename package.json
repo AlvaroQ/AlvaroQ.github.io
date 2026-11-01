@@ -3,23 +3,30 @@
   "type": "module",
   "version": "0.0.1",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.18.0"
   },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "verify": "astro check && astro build && node --test scripts/",
+    "assets:icons": "node scripts/assets/icons.mjs",
+    "assets:relief": "node scripts/assets/relief.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.1",
     "@tailwindcss/vite": "^4.2.1",
-"astro": "^6.0.5",
+    "astro": "^6.0.5",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
-    "sharp": "^0.34.5",
+    "node-html-parser": "^7.1.0",
     "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "vite": "^7.3.2"
   }
 }

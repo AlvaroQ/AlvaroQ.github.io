@@ -1,49 +1,51 @@
+import type { Localized } from '../i18n';
+
+export type SkillDepth = 'core' | 'solid' | 'familiar';
+
 export interface Skill {
   name: string;
-  level: number; // 0-100
+  /** Approximate years of hands-on use, derived from the career periods. */
+  years: number;
+  depth: SkillDepth;
 }
 
 export interface SkillCategory {
-  title: string;
-  color: string;
+  title: Localized;
   skills: Skill[];
 }
 
 export const skillCategories: SkillCategory[] = [
   {
-    title: "Mobile & Native",
-    color: "var(--neon-green)",
+    title: { es: "Mobile y nativo", en: "Mobile & Native" },
     skills: [
-      { name: "Kotlin", level: 95 },
-      { name: "Jetpack Compose", level: 92 },
-      { name: "KMP", level: 90 },
-      { name: "Android SDK", level: 88 },
-      { name: "iOS / Swift", level: 70 },
-      { name: "Flutter", level: 65 }
+      { name: "Kotlin", years: 9, depth: 'core' },
+      { name: "Jetpack Compose", years: 5, depth: 'core' },
+      { name: "KMP", years: 4, depth: 'core' },
+      { name: "Android SDK", years: 13, depth: 'core' },
+      { name: "iOS / Swift", years: 5, depth: 'familiar' },
+      { name: "Flutter", years: 3, depth: 'familiar' }
     ]
   },
   {
-    title: "Web & Backend",
-    color: "var(--neon-cyan)",
+    title: { es: "Web y backend", en: "Web & Backend" },
     skills: [
-      { name: "Next.js / React", level: 90 },
-      { name: "TypeScript", level: 90 },
-      { name: "REST / GraphQL", level: 88 },
-      { name: "Python", level: 88 },
-      { name: "Firebase", level: 85 },
-      { name: "Astro / Tailwind", level: 85 }
+      { name: "Next.js / React", years: 5, depth: 'core' },
+      { name: "TypeScript", years: 6, depth: 'core' },
+      { name: "REST / GraphQL", years: 13, depth: 'core' },
+      { name: "Python", years: 6, depth: 'core' },
+      { name: "Firebase", years: 9, depth: 'solid' },
+      { name: "Astro / Tailwind", years: 3, depth: 'solid' }
     ]
   },
   {
-    title: "AI & DevOps",
-    color: "var(--neon-magenta)",
+    title: { es: "IA y DevOps", en: "AI & DevOps" },
     skills: [
-      { name: "Claude / Anthropic", level: 90 },
-      { name: "Prompt Engineering", level: 88 },
-      { name: "Docker / CI-CD", level: 88 },
-      { name: "LangChain", level: 85 },
-      { name: "MCP / RAG", level: 83 },
-      { name: "n8n / Pen-testing", level: 78 }
+      { name: "Claude / Codex", years: 2, depth: 'core' },
+      { name: "Prompt Engineering", years: 2, depth: 'core' },
+      { name: "Pen-testing", years: 3, depth: 'core' },
+      { name: "Gemini / Grok / …", years: 2, depth: 'solid' },
+      { name: "LangChain", years: 2, depth: 'solid' },
+      { name: "MCP / RAG", years: 2, depth: 'solid' }
     ]
   }
 ];

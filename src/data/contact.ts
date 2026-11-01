@@ -1,6 +1,7 @@
+import { EMAIL, GITHUB_URL, LINKEDIN_URL } from './site';
+
 export interface Contact {
   email: string;
-  location: string;
   linkedinUrl: string;
   linkedinDisplay: string;
   githubUrl: string;
@@ -8,10 +9,9 @@ export interface Contact {
 }
 
 export const contact: Contact = {
-  email: "alvaroquintanapalacios@gmail.com",
-  location: "Madrid, Spain (Remote)",
-  linkedinUrl: "https://www.linkedin.com/in/alvaro-quintana-palacios/",
-  linkedinDisplay: "linkedin.com/in/alvaro-quintana-palacios",
-  githubUrl: "https://github.com/AlvaroQ",
-  githubDisplay: "github.com/AlvaroQ"
-} as const;
+  email: EMAIL,
+  linkedinUrl: LINKEDIN_URL,
+  linkedinDisplay: 'linkedin.com/in/alvaro-quintana-palacios',
+  githubUrl: GITHUB_URL,
+  githubDisplay: 'github.com/AlvaroQ',
+};
