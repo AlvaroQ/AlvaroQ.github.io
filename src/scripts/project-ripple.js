@@ -3,14 +3,39 @@
 // covers the section, the canvas only the visible window of it (moved on scroll with CSSOM).
 // Imported by URL from ProjectRipple.astro on the first hover, so it cannot have static imports:
 // the GLSL module and the colour helpers are passed to init().
-// The loop runs only while the water moves on a visible section in a visible tab.
+// The loop runs only while the water moves on a visible section in a visible tab. The simulation
+// advances on a fixed 60 Hz step, so the waves keep the same speed on 60, 144 or 180 Hz displays;
+// the render runs once per display frame.
 
-/** Tuning (CSS px): sim cell size, light, drop strength and damping. */
-const TUNE = { sim: 3, shade: 0.55, drop: 0.26, damp: 0.965 };
+/**
+ * Tuning. sim: CSS px per cell. wave: laplacian coefficient (propagation speed, sqrt(wave) cells
+ * per tick). damp: decay per tick (how long a ring lives). spacing: CSS px of pointer travel per
+ * drop (how many rings a stroke leaves). shade, drop: ring light and drop strength.
+ */
+export const TUNE = { sim: 3, wave: 0.3, damp: 0.975, spacing: 28, shade: 0.55, drop: 0.26 };
 /** Ring strength per theme (alpha is capped at 0.12 in the shader). */
 const RING = { light: 0.42, dark: 0.9 };
-/** Frames the water keeps moving after the last drop (~2.5 s at 60 Hz). */
-const SETTLE_FRAMES = 150;
+/** Simulation step: 60 ticks per second whatever the refresh rate. */
+export const TICK_MS = 1000 / 60;
+/** Longest frame gap simulated at once (a tab switch or a jank never replays seconds of water). */
+const MAX_GAP_MS = 100;
+
+/**
+ * Ticks to run for a display frame of `dt` ms, carrying the remainder in `acc`.
+ * @param {number} acc @param {number} dt @returns {{ ticks: number, acc: number }}
+ */
+export function advance(acc, dt) {
+  const total = acc + Math.min(Math.max(dt, 0), MAX_GAP_MS);
+  const ticks = Math.floor(total / TICK_MS);
+  return { ticks, acc: total - ticks * TICK_MS };
+}
+
+/** Wave speed in CSS px per second. */
+export const waveSpeed = (t = TUNE) => Math.sqrt(t.wave) * t.sim * (1000 / TICK_MS);
+
+/** Ticks until a ring decays below 1 % of its height: the loop stops then. */
+export const settleTicks = (damp) => Math.ceil(Math.log(0.01) / Math.log(damp));
+export const SETTLE_TICKS = settleTicks(TUNE.damp);
 /** Device-pixel cap for the canvas: the rings are soft, 1.5× is indistinguishable from 2×. */
 const MAX_DPR = 1.5;
 
@@ -56,7 +81,7 @@ export function init(scope, { shader, color }) {
   };
   let wave, drop, rend;
   try {
-    wave = program(shader.WAVE_SHADER, ['uP', 'uC', 'uT', 'uD']);
+    wave = program(shader.WAVE_SHADER, ['uP', 'uC', 'uT', 'uD', 'uK']);
     drop = program(shader.DROP_SHADER, ['uS', 'uSize', 'uDrop']);
     rend = program(shader.RENDER_SHADER, ['uH', 'uT', 'uSection', 'uWin', 'uHoles', 'uHoleCount', 'uInk', 'uShade', 'uRing']);
   } catch {
@@ -105,7 +130,8 @@ export function init(scope, { shader, color }) {
   let size = { w: 1, h: 1 }, win = { top: -1, h: 1 };
   /** Image boxes in section px: the rings never draw over them. */
   let holes = [];
-  let running = false, raf = 0, quiet = SETTLE_FRAMES + 1, onScreen = true, dead = false;
+  let running = false, raf = 0, quiet = SETTLE_TICKS + 1, onScreen = true, dead = false;
+  let acc = 0, prev = 0;
   const drops = [];
   let last = null;
 
@@ -163,6 +189,7 @@ export function init(scope, { shader, color }) {
     gl.uniform1i(wave.u.uC, 1);
     gl.uniform2f(wave.u.uT, 1 / simW, 1 / simH);
     gl.uniform1f(wave.u.uD, TUNE.damp);
+    gl.uniform1f(wave.u.uK, TUNE.wave);
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbs[order[2]]);
     quad();
     order = [order[1], order[2], order[0]];
@@ -193,16 +220,22 @@ export function init(scope, { shader, color }) {
     quad();
   }
 
-  function frame() {
+  /** @param {number} now */
+  function frame(now) {
     raf = 0;
     if (!running) return;
-    addDrops();
-    step();
-    step();
-    render();
+    const r = advance(acc, prev ? now - prev : TICK_MS);
+    acc = r.acc;
+    prev = now;
+    for (let i = 0; i < r.ticks; i++) {
+      addDrops();
+      step();
+    }
+    if (r.ticks) render();
     probe.frames++;
     // A resting pointer adds no drops: the loop stops once the water settles, hover or not.
-    if (++quiet > SETTLE_FRAMES) {
+    quiet += r.ticks;
+    if (quiet > SETTLE_TICKS) {
       stop();
       canvas.classList.remove('is-on');
       return;
@@ -212,6 +245,8 @@ export function init(scope, { shader, color }) {
   function start() {
     if (running || dead || !onScreen || document.hidden) return;
     running = true;
+    acc = 0;
+    prev = 0;
     raf = requestAnimationFrame(frame);
   }
   function stop() {
@@ -219,7 +254,7 @@ export function init(scope, { shader, color }) {
     if (raf) cancelAnimationFrame(raf);
     raf = 0;
   }
-  const settled = () => quiet > SETTLE_FRAMES;
+  const settled = () => quiet > SETTLE_TICKS;
 
   const io = new IntersectionObserver(([e]) => {
     onScreen = e.isIntersecting;
@@ -259,7 +294,7 @@ export function init(scope, { shader, color }) {
     if (last) {
       const dx = x - last.x, dy = y - last.y, d = Math.hypot(dx, dy);
       if (d < 6) return;
-      const n = Math.min(Math.ceil(d / 18), 4);
+      const n = Math.min(Math.ceil(d / TUNE.spacing), 4);
       for (let i = 1; i <= n; i++) splash({ x: last.x + (dx * i) / n, y: last.y + (dy * i) / n, r: 16, s: TUNE.drop });
     } else {
       splash({ x, y, r: 22, s: TUNE.drop * 1.6 });
@@ -284,7 +319,7 @@ export function init(scope, { shader, color }) {
   measure();
   scope.prepend(canvas);
 
-  // Probe hook: n frames with drops in the visible window, each in a GPU timer query when available.
+  // Probe hook: n ticks with drops in the visible window, each in a GPU timer query when available.
   probe.bench = async (n = 120) => {
     const ext = gl.getExtension('EXT_disjoint_timer_query');
     const was = running;
@@ -296,7 +331,6 @@ export function init(scope, { shader, color }) {
       const q = ext?.createQueryEXT();
       if (q) ext.beginQueryEXT(ext.TIME_ELAPSED_EXT, q);
       addDrops();
-      step();
       step();
       render();
       if (q) { ext.endQueryEXT(ext.TIME_ELAPSED_EXT); queries.push(q); }

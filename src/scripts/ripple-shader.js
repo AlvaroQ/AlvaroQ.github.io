@@ -13,13 +13,16 @@ varying vec2 v;
 
 export const VERTEX_SHADER = 'attribute vec2 p;varying vec2 v;void main(){v=p*.5+.5;gl_Position=vec4(p,0.,1.);}';
 
-/** One damped wave step: (previous, current) → next height, clamped so energy never saturates. */
-export const WAVE_SHADER = `${HEAD}uniform sampler2D uP,uC;uniform vec2 uT;uniform float uD;
+/**
+ * One damped wave step: (previous, current) → next height, clamped so energy never saturates.
+ * uK: laplacian coefficient (propagation speed; stable below .5). uD: damping per step.
+ */
+export const WAVE_SHADER = `${HEAD}uniform sampler2D uP,uC;uniform vec2 uT;uniform float uD,uK;
 void main(){
   float p=texture2D(uP,v).r,c=texture2D(uC,v).r;
   float lap=texture2D(uC,v-vec2(uT.x,0.)).r+texture2D(uC,v+vec2(uT.x,0.)).r
     +texture2D(uC,v+vec2(0.,uT.y)).r+texture2D(uC,v-vec2(0.,uT.y)).r-4.*c;
-  gl_FragColor=vec4(clamp((2.*c-p+.45*lap)*uD,-1.,1.),0.,0.,1.);
+  gl_FragColor=vec4(clamp((2.*c-p+uK*lap)*uD,-1.,1.),0.,0.,1.);
 }`;
 
 /** Adds up to four drops (x, y, radius, strength in sim cells) as cosine bumps. */
