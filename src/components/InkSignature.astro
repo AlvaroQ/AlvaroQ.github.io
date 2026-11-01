@@ -12,10 +12,9 @@ interface Props {
 const { strings } = Astro.props;
 const [firstName, ...rest] = strings.name.split(' ');
 const lastName = rest.join(' ');
-// Watermark maps (generate-relief.js): the script picks the variant that covers the canvas,
-// never wider than the 1200 px masters.
+// Watermark height map (generate-relief.js): the script picks the variant that covers the
+// canvas, never wider than the 1200 px master.
 const reliefHeight = await responsive('profile/portrait-relief-height.jpg', [600, 900, 1200]);
-const reliefTone = await responsive('profile/portrait-relief-tone.jpg', [600, 900, 1200]);
 ---
 
 <div class="hero" data-ink>
@@ -44,9 +43,8 @@ const reliefTone = await responsive('profile/portrait-relief-tone.jpg', [600, 90
   </div>
   <!-- Watermark portrait pressed into the paper (ink-watermark.js); absolute, so it never moves the layout -->
   <div class="wm-clip" aria-hidden="true">
-    <canvas class="wm" data-height-srcset={reliefHeight.srcset} data-tone-srcset={reliefTone.srcset}></canvas>
+    <canvas class="wm" data-height-srcset={reliefHeight.srcset}></canvas>
   </div>
-  <div class="wm-glint" aria-hidden="true"></div>
 </div>
 
 <style>
@@ -251,29 +249,6 @@ const reliefTone = await responsive('profile/portrait-relief-tone.jpg', [600, 90
     opacity: 1;
   }
 
-  /* The lamp of the watermark also makes the ink catch light (soft-light over the type) */
-  .wm-glint {
-    --wm-glint: var(--ink);
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-    mix-blend-mode: soft-light;
-    opacity: var(--wm-a, 0);
-    background: radial-gradient(circle 230px at var(--wm-x, -999px) var(--wm-y, -999px), var(--wm-glint), transparent);
-  }
-
-  :global(html.light) .wm-glint {
-    --wm-glint: var(--paper);
-  }
-
-  /* Touch: the glint would sit under the finger and the text; the watermark alone answers */
-  @media (pointer: coarse) {
-    .wm-glint {
-      display: none;
-    }
-  }
-
   @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
     .ink-name {
       background: none;
@@ -290,8 +265,7 @@ const reliefTone = await responsive('profile/portrait-relief-tone.jpg', [600, 90
 
     .fx,
     .hero::before,
-    .wm-clip,
-    .wm-glint {
+    .wm-clip {
       display: none;
     }
   }

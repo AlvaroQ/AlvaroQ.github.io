@@ -1,7 +1,6 @@
-// Builds the two grayscale maps of the hero watermark from the profile portrait:
-//   portrait-relief-height.jpg  smooth sculpted height (the embossed relief)
-//   portrait-relief-tone.jpg    detailed tone (what a lamp behind the paper shows)
-// Both are 1200×1600 masters; astro:assets serves 600/900/1200 WebP variants.
+// Builds the height map of the hero watermark from the profile portrait:
+//   portrait-relief-height.jpg  local-contrast tone × softened silhouette (the embossed relief)
+// 1200×1600 master; astro:assets serves 600/900/1200 WebP variants.
 // Run after changing the portrait: node generate-relief.js
 import sharp from 'sharp';
 
@@ -65,26 +64,16 @@ async function matte() {
 
 async function generate() {
   const m = await matte();
-  const k = W / 600;
-  const grey = (src) => sharp(src).resize(W, H).greyscale();
-  const smoothTone = await grey(SRC).normalise({ lower: 3, upper: 97 }).blur(4 * k).raw().toBuffer();
-  const detailTone = await grey(SRC).normalise({ lower: 2, upper: 99 }).gamma(1.4).blur(0.9 * k).raw().toBuffer();
-  const softMatte = await grey(m).blur(6 * k).raw().toBuffer();
-  const edgeMatte = await grey(m).blur(2.2 * k).raw().toBuffer();
-  const dome = await grey(m).blur(46 * k).raw().toBuffer();
-
+  // Local contrast keeps the features in the relief; the blurred silhouette gives the paper
+  // a soft pressed edge instead of a cut-out outline. Tile and blur sizes are 2× the 600 px sketch.
+  const tone = await sharp(SRC).resize(W, H).greyscale().clahe({ width: 120, height: 160, maxSlope: 2 }).blur(4.4).raw().toBuffer();
+  const soft = await sharp(m).resize(W, H).greyscale().blur(26).raw().toBuffer();
   const height = Buffer.alloc(W * H);
-  const tone = Buffer.alloc(W * H);
-  for (let i = 0; i < W * H; i++) {
-    const relief = (softMatte[i] / 255) * (0.22 + (0.3 * smoothTone[i]) / 255) + (0.26 * dome[i]) / 255;
-    height[i] = Math.round(Math.min(1, relief) * 255);
-    tone[i] = Math.round((detailTone[i] / 255) * (edgeMatte[i] / 255) * 255);
-  }
-  const save = (buf, name) =>
-    sharp(buf, { raw: { width: W, height: H, channels: 1 } }).jpeg({ quality: 95, mozjpeg: true }).toFile(`${OUT}/${name}`);
-  await save(height, 'portrait-relief-height.jpg');
-  await save(tone, 'portrait-relief-tone.jpg');
-  console.log('Relief maps written to', OUT);
+  for (let i = 0; i < W * H; i++) height[i] = Math.round(((tone[i] / 255) * 0.75 + 0.25) * (soft[i] / 255) * 255);
+  await sharp(height, { raw: { width: W, height: H, channels: 1 } })
+    .jpeg({ quality: 95, mozjpeg: true })
+    .toFile(`${OUT}/portrait-relief-height.jpg`);
+  console.log('Relief map written to', OUT);
 }
 
 generate();
