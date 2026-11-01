@@ -2,8 +2,8 @@
 // move at the same speed on 60, 144 and 180 Hz displays, and slower than before.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { TUNE, TICK_MS, SETTLE_TICKS, advance, waveSpeed, settleTicks } from '../src/scripts/project-ripple.js';
-import { WAVE_SHADER, RENDER_SHADER } from '../src/scripts/ripple-shader.js';
+import { TUNE, TICK_MS, SETTLE_TICKS, advance, waveSpeed, settleTicks, wallMask } from '../src/scripts/project-ripple.js';
+import { WAVE_SHADER, DROP_SHADER, RENDER_SHADER } from '../src/scripts/ripple-shader.js';
 
 /** Simulation ticks run over `seconds` of display frames at `hz`. */
 function ticksOver(hz, seconds) {
@@ -54,4 +54,31 @@ test('the rings carry an overall alpha below 1 (peak alpha 0.12 × 0.4)', () => 
   assert.equal(TUNE.alpha, 0.4);
   assert.match(RENDER_SHADER, /uniform[^;]*\buAlpha\b/);
   assert.match(RENDER_SHADER, /\*\s*uAlpha/);
+});
+
+// Part B, option B3 (L16): the project images are walls in the simulation; the waves bend around
+// them and never enter them, so the covers stay pixel for pixel while the water moves.
+test('the wall mask marks the image boxes in simulation cells, row 0 at the bottom', () => {
+  // Section 30 × 30 CSS px at 3 px per cell → 10 × 10 cells; one image box at the top left.
+  const mask = wallMask(10, 10, [[0, 0, 12, 6]], { w: 30, h: 30 }, 3);
+  assert.equal(mask.length, 100);
+  const at = (x, row) => mask[row * 10 + x];
+  // CSS y 0–6 is the top of the section: cell rows 8 and 9 (row 0 is the bottom).
+  for (const row of [8, 9]) for (let x = 0; x < 4; x++) assert.equal(at(x, row), 255, `cell ${x},${row}`);
+  assert.equal(at(4, 9), 0);
+  assert.equal(at(0, 7), 0);
+  assert.equal(mask.filter(Boolean).length, 8);
+});
+
+test('the wall mask clamps boxes that leave the section', () => {
+  const mask = wallMask(4, 4, [[-30, -30, 300, 300]], { w: 12, h: 12 }, 3);
+  assert.equal(mask.filter(Boolean).length, 16);
+  assert.equal(wallMask(4, 4, [], { w: 12, h: 12 }, 3).some(Boolean), false);
+});
+
+test('the wave and drop passes zero the water inside the walls', () => {
+  for (const src of [WAVE_SHADER, DROP_SHADER]) {
+    assert.match(src, /uniform sampler2D[^;]*\buM\b/);
+    assert.match(src, /1\.\s*-\s*texture2D\(uM,v\)\.r/);
+  }
 });

@@ -1,7 +1,8 @@
 // GLSL sources for the Projects ripple (WebGL 1).
 // A heightfield covering the whole section is simulated at a few CSS px per cell (wave + drop
-// passes, ping-pong textures); the render pass draws faint ink rings over the visible window of
-// the section and nothing over the project images, so they stay pixel for pixel.
+// passes, ping-pong textures); the project images are walls (uM), so the waves bend around them.
+// The render pass draws faint ink rings over the visible window of the section and nothing over
+// the images, so they stay pixel for pixel.
 
 const HEAD = `#ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
@@ -16,21 +17,22 @@ export const VERTEX_SHADER = 'attribute vec2 p;varying vec2 v;void main(){v=p*.5
 /**
  * One damped wave step: (previous, current) → next height, clamped so energy never saturates.
  * uK: laplacian coefficient (propagation speed; stable below .5). uD: damping per step.
+ * uM: walls (1 inside the image boxes), where the water stays flat.
  */
-export const WAVE_SHADER = `${HEAD}uniform sampler2D uP,uC;uniform vec2 uT;uniform float uD,uK;
+export const WAVE_SHADER = `${HEAD}uniform sampler2D uP,uC,uM;uniform vec2 uT;uniform float uD,uK;
 void main(){
   float p=texture2D(uP,v).r,c=texture2D(uC,v).r;
   float lap=texture2D(uC,v-vec2(uT.x,0.)).r+texture2D(uC,v+vec2(uT.x,0.)).r
     +texture2D(uC,v+vec2(0.,uT.y)).r+texture2D(uC,v-vec2(0.,uT.y)).r-4.*c;
-  gl_FragColor=vec4(clamp((2.*c-p+uK*lap)*uD,-1.,1.),0.,0.,1.);
+  gl_FragColor=vec4(clamp((2.*c-p+uK*lap)*uD,-1.,1.)*(1.-texture2D(uM,v).r),0.,0.,1.);
 }`;
 
-/** Adds up to four drops (x, y, radius, strength in sim cells) as cosine bumps. */
-export const DROP_SHADER = `${HEAD}uniform sampler2D uS;uniform vec2 uSize;uniform vec4 uDrop[4];
+/** Adds up to four drops (x, y, radius, strength in sim cells) as cosine bumps, never inside a wall. */
+export const DROP_SHADER = `${HEAD}uniform sampler2D uS,uM;uniform vec2 uSize;uniform vec4 uDrop[4];
 void main(){
   float h=texture2D(uS,v).r;vec2 p=v*uSize;
   for(int i=0;i<4;i++){vec4 d=uDrop[i];if(d.z>0.){float r=length(p-d.xy)/d.z;if(r<1.)h+=d.w*(.5+.5*cos(3.14159*r));}}
-  gl_FragColor=vec4(h,0.,0.,1.);
+  gl_FragColor=vec4(h*(1.-texture2D(uM,v).r),0.,0.,1.);
 }`;
 
 /** Most image boxes the render pass can leave untouched (cards on screen at once, with margin). */

@@ -47,7 +47,7 @@ src/
 │   ├── Presentation.astro  # Sobre mi
 │   ├── Career.astro        # Trayectoria
 │   ├── Projects.astro      # Proyectos (ProjectRipple > Section > ProjectCard)
-│   ├── ProjectRipple.astro # Anillos de agua a todo el ancho, bajo el contenido y nunca sobre imagenes (project-ripple.js perezoso)
+│   ├── ProjectRipple.astro # Anillos de agua a todo el ancho, bajo el contenido; las portadas son paredes que las ondas rodean (project-ripple.js perezoso, paso fijo de 60 Hz)
 │   ├── ProjectCard.astro   # Tarjeta: enlace extendido + <ProjectCase> en un <template>
 │   ├── ProjectCase.astro   # Caso completo renderizado en build
 │   ├── ProjectModal.astro  # <dialog> del caso + lightbox (src/scripts/project-modal.js perezoso)

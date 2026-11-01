@@ -1,5 +1,5 @@
 // Water-drop ripple over the Projects section: faint ink rings across the full width, never over
-// the project images. One WebGL context and one canvas for the whole section; the heightfield
+// the project images, which are walls in the simulation: the waves bend around them. One WebGL context and one canvas for the whole section; the heightfield
 // covers the section, the canvas only the visible window of it (moved on scroll with CSSOM).
 // Imported by URL from ProjectRipple.astro on the first hover, so it cannot have static imports:
 // the GLSL module and the colour helpers are passed to init().
@@ -37,6 +37,25 @@ export const waveSpeed = (t = TUNE) => Math.sqrt(t.wave) * t.sim * (1000 / TICK_
 /** Ticks until a ring decays below 1 % of its height: the loop stops then. */
 export const settleTicks = (damp) => Math.ceil(Math.log(0.01) / Math.log(damp));
 export const SETTLE_TICKS = settleTicks(TUNE.damp);
+
+/**
+ * Walls for the simulation: 255 in the cells covered by an image box, 0 elsewhere. One byte per
+ * cell, row 0 at the bottom of the section (the heightfield's orientation).
+ * @param {number} w @param {number} h simulation size in cells
+ * @param {number[][]} boxes image boxes (x0, y0, x1, y1) in section CSS px, y down
+ * @param {{ w: number, h: number }} section section size in CSS px
+ * @param {number} cell CSS px per cell
+ */
+export function wallMask(w, h, boxes, section, cell) {
+  const mask = new Uint8Array(w * h);
+  const clamp = (v, max) => Math.min(Math.max(v, 0), max);
+  for (const [x0, y0, x1, y1] of boxes) {
+    const c0 = clamp(Math.floor(x0 / cell), w), c1 = clamp(Math.ceil(x1 / cell), w);
+    const r0 = clamp(Math.floor((section.h - y1) / cell), h), r1 = clamp(Math.ceil((section.h - y0) / cell), h);
+    for (let r = r0; r < r1; r++) mask.fill(255, r * w + c0, r * w + c1);
+  }
+  return mask;
+}
 /** Device-pixel cap for the canvas: the rings are soft, 1.5× is indistinguishable from 2×. */
 const MAX_DPR = 1.5;
 
@@ -82,8 +101,8 @@ export function init(scope, { shader, color }) {
   };
   let wave, drop, rend;
   try {
-    wave = program(shader.WAVE_SHADER, ['uP', 'uC', 'uT', 'uD', 'uK']);
-    drop = program(shader.DROP_SHADER, ['uS', 'uSize', 'uDrop']);
+    wave = program(shader.WAVE_SHADER, ['uP', 'uC', 'uM', 'uT', 'uD', 'uK']);
+    drop = program(shader.DROP_SHADER, ['uS', 'uM', 'uSize', 'uDrop']);
     rend = program(shader.RENDER_SHADER, ['uH', 'uT', 'uSection', 'uWin', 'uHoles', 'uHoleCount', 'uInk', 'uShade', 'uRing', 'uAlpha']);
   } catch {
     return null;
@@ -120,6 +139,22 @@ export function init(scope, { shader, color }) {
     order = [0, 1, 2];
   };
 
+  // Wall mask at simulation resolution (one byte per cell, sampled at cell centres).
+  const wallTex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, wallTex);
+  for (const k of [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER]) gl.texParameteri(gl.TEXTURE_2D, k, gl.NEAREST);
+  for (const k of [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T]) gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE);
+  const uploadWalls = (data) => {
+    gl.bindTexture(gl.TEXTURE_2D, wallTex);
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, simW, simH, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
+  };
+  const bindWalls = (u) => {
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, wallTex);
+    gl.uniform1i(u, 2);
+  };
+
   let ink = [1, 1, 1], light = false;
   const readTheme = () => {
     ink = color.token('--ink');
@@ -145,6 +180,7 @@ export function init(scope, { shader, color }) {
       const b = m.getBoundingClientRect();
       return [b.left - r.left, b.top - r.top, b.right - r.left, b.bottom - r.top];
     });
+    uploadWalls(wallMask(simW, simH, holes, size, TUNE.sim));
   }
 
   /** The canvas covers the visible part of the section: size and offset follow the viewport. */
@@ -175,6 +211,7 @@ export function init(scope, { shader, color }) {
     gl.uniform1i(drop.u.uS, 0);
     gl.uniform2f(drop.u.uSize, simW, simH);
     gl.uniform4fv(drop.u.uDrop, data);
+    bindWalls(drop.u.uM);
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbs[order[2]]);
     quad();
     [order[1], order[2]] = [order[2], order[1]];
@@ -191,6 +228,7 @@ export function init(scope, { shader, color }) {
     gl.uniform2f(wave.u.uT, 1 / simW, 1 / simH);
     gl.uniform1f(wave.u.uD, TUNE.damp);
     gl.uniform1f(wave.u.uK, TUNE.wave);
+    bindWalls(wave.u.uM);
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbs[order[2]]);
     quad();
     order = [order[1], order[2], order[0]];
