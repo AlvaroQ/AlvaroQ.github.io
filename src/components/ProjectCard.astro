@@ -1,19 +1,19 @@
 ---
 // One project card. 'feature' is the editorial row (media at 50%, alternating sides from md);
 // 'compact' is a grid tile (media on top, no feature list). Both open the project modal.
-import type { Strings } from '../i18n/es';
-import type { AIProject } from '../data/projects';
+import type { Lang, Strings } from '../i18n';
+import type { Project } from '../data/projects';
 import { asset, fitFor, responsive, type Slot } from '../lib/images';
 
 interface Props {
-  project: AIProject;
+  project: Project;
   /** Zero-based position in the full project list. */
   index: number;
   /** Zero-padded project count, e.g. "09". */
   total: string;
   variant: 'feature' | 'compact';
   strings: Strings;
-  lang: 'es' | 'en';
+  lang: Lang;
 }
 
 const { project, index, total, variant, strings, lang } = Astro.props;
@@ -35,7 +35,8 @@ const MEDIA_WIDTHS = [400, 600, 800, 1000, 1200, 1440];
 const MODAL_WIDTHS = [480, 800, 1200, 1600];
 
 const layout = LAYOUT[variant];
-const keys = project.detailedInfo?.screenshots ?? [];
+const { caseStudy, links } = project;
+const keys = caseStudy.screenshots;
 
 async function mediaImage(key: string) {
   const meta = asset(key);
@@ -76,27 +77,25 @@ const thumbs = gallery.map((g) => {
   };
 });
 const number = String(index + 1).padStart(2, '0');
-const githubUrl = project.githubUrl || project.detailedInfo?.githubUrl;
-const opensModal = Boolean(project.detailedInfo);
 ---
 
 <article
-  class:list={['card media-zoom animate-on-scroll group', `card-${variant}`, opensModal && 'cursor-pointer']}
+  class:list={['card media-zoom animate-on-scroll group cursor-pointer', `card-${variant}`]}
   style={`--stagger: ${(index % 3) * 80}ms`}
-  data-project-index={index}
-  data-featured={opensModal ? 'true' : 'false'}
-  {...(opensModal ? { role: 'button', tabindex: '0', 'aria-label': `${strings.viewDetails}: ${project.title}` } : {})}
+  data-case={project.slug}
+  role="button"
+  tabindex="0"
+  aria-label={`${strings.viewDetails}: ${project.title}`}
   data-project-title={project.title}
   data-project-subtitle={project.subtitle[lang]}
   data-project-description={project.description[lang]}
-  data-project-accent={project.accentColor}
-  data-project-long-desc={project.detailedInfo?.longDescription[lang] || ''}
-  data-project-architecture={project.detailedInfo?.architecture[lang] || ''}
+  data-project-long-desc={caseStudy.longDescription[lang]}
+  data-project-architecture={caseStudy.architecture[lang]}
   data-project-screenshots={JSON.stringify(gallery.map((g) => g.src))}
   data-project-thumbs={JSON.stringify(thumbs)}
-  data-project-highlights={JSON.stringify(project.detailedInfo?.keyHighlights.map((h) => h[lang]) || [])}
-  data-project-demo={project.detailedInfo?.demoUrl || ''}
-  data-project-github={project.detailedInfo?.githubUrl || ''}
+  data-project-highlights={JSON.stringify(caseStudy.keyHighlights.map((h) => h[lang]))}
+  data-project-demo={links.demo ?? ''}
+  data-project-github={links.github ?? ''}
   data-project-tech={JSON.stringify(project.techStack)}
 >
   <div class:list={['media relative overflow-hidden bg-(--paper-2)', cover?.fit === 'contain' && 'media-contain']}>
@@ -121,8 +120,8 @@ const opensModal = Boolean(project.detailedInfo);
   <div class="body grid content-start gap-3">
     <p class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs tracking-[0.1em] text-(--ink-muted)">
       <span>{strings.projectLabel} {number} / {total}</span>
-      {project.isLive && <span class="badge badge-live">{strings.liveBadge}</span>}
-      {project.isDiscontinued && <span class="badge badge-discontinued">{strings.discontinuedBadge}</span>}
+      {project.status === 'live' && <span class="badge badge-live">{strings.liveBadge}</span>}
+      {project.status === 'discontinued' && <span class="badge badge-discontinued">{strings.discontinuedBadge}</span>}
     </p>
     <h3 class="title font-display font-semibold leading-[1.05] tracking-[-0.01em] text-(--ink)">{project.title}</h3>
     <p class="font-display text-[17px] italic text-(--accent)">{project.subtitle[lang]}</p>
@@ -136,10 +135,10 @@ const opensModal = Boolean(project.detailedInfo);
       {project.techStack.map((tech) => <li class="tag">{tech}</li>)}
     </ul>
     <div class="mt-1 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
-      {opensModal && <span class="more font-semibold text-(--ink)">{strings.viewCase}</span>}
-      {githubUrl && (
+      <span class="more font-semibold text-(--ink)">{strings.viewCase}</span>
+      {links.github && (
         <a
-          href={githubUrl}
+          href={links.github}
           target="_blank"
           rel="noopener noreferrer"
           class="link-grow text-(--ink-muted) hover:text-(--ink)"
@@ -149,7 +148,7 @@ const opensModal = Boolean(project.detailedInfo);
           {strings.viewOnGithub}
         </a>
       )}
-      {project.isLive && (
+      {project.status === 'live' && (
         <button
           type="button"
           class="link-grow open-chat-btn text-(--accent)"

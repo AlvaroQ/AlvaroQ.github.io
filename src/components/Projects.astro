@@ -1,12 +1,12 @@
 ---
-import type { Strings } from '../i18n/es';
+import type { Lang, Strings } from '../i18n';
 import { projects } from '../data/projects';
-import SectionHeading from './SectionHeading.astro';
+import Section from './Section.astro';
 import ProjectCard from './ProjectCard.astro';
 
 interface Props {
   strings: Strings;
-  lang: 'es' | 'en';
+  lang: Lang;
 }
 
 const { strings, lang } = Astro.props;
@@ -18,9 +18,7 @@ const featured = projects.slice(0, FEATURED);
 const rest = projects.slice(FEATURED);
 ---
 
-<section id="projects">
-  <div class="section-container">
-    <SectionHeading index="03" title={strings.latestAiProjects} subtitle={strings.showcasingProjects} />
+<Section id="projects" strings={strings} subtitle={strings.showcasingProjects}>
 
     <div class="featured border-b border-(--line)">
       {featured.map((project, i) => (
@@ -33,39 +31,39 @@ const rest = projects.slice(FEATURED);
         <ProjectCard project={project} index={FEATURED + i} total={total} variant="compact" strings={strings} lang={lang} />
       ))}
     </div>
-  </div>
-</section>
+</Section>
 
-<script is:inline>
-  document.addEventListener('DOMContentLoaded', () => {
-    function openModal(card) {
-      if (!window.projectModal) return;
-      var data = {
-        title: card.dataset.projectTitle,
-        subtitle: card.dataset.projectSubtitle,
-        description: card.dataset.projectDescription,
-        longDescription: card.dataset.projectLongDesc,
-        architecture: card.dataset.projectArchitecture,
-        accentColor: card.dataset.projectAccent,
-        screenshots: JSON.parse(card.dataset.projectScreenshots || '[]'),
-        thumbs: JSON.parse(card.dataset.projectThumbs || '[]'),
-        keyHighlights: JSON.parse(card.dataset.projectHighlights || '[]'),
-        demoUrl: card.dataset.projectDemo || null,
-        githubUrl: card.dataset.projectGithub || null,
-        techStack: JSON.parse(card.dataset.projectTech || '[]')
-      };
-      window.projectModal.open(data);
-    }
+<script>
+  // Bridge to the public modal script until the modal becomes an Astro component.
+  type ModalWindow = Window & { projectModal?: { open(data: unknown): void } };
 
-    document.querySelectorAll('[data-featured="true"]').forEach(function(card) {
-      card.addEventListener('click', function() { openModal(card); });
-      card.addEventListener('keydown', function(e) {
-        if (e.target !== card) return;
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          openModal(card);
-        }
-      });
+  function openModal(card: HTMLElement) {
+    const modal = (window as ModalWindow).projectModal;
+    if (!modal) return;
+    const data = {
+      title: card.dataset.projectTitle,
+      subtitle: card.dataset.projectSubtitle,
+      description: card.dataset.projectDescription,
+      longDescription: card.dataset.projectLongDesc,
+      architecture: card.dataset.projectArchitecture,
+      screenshots: JSON.parse(card.dataset.projectScreenshots || '[]'),
+      thumbs: JSON.parse(card.dataset.projectThumbs || '[]'),
+      keyHighlights: JSON.parse(card.dataset.projectHighlights || '[]'),
+      demoUrl: card.dataset.projectDemo || null,
+      githubUrl: card.dataset.projectGithub || null,
+      techStack: JSON.parse(card.dataset.projectTech || '[]'),
+    };
+    modal.open(data);
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-case]').forEach((card) => {
+    card.addEventListener('click', () => openModal(card));
+    card.addEventListener('keydown', (e) => {
+      if (e.target !== card) return;
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openModal(card);
+      }
     });
   });
 </script>

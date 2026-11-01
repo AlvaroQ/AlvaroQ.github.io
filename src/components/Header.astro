@@ -1,11 +1,11 @@
 ---
-import type { Strings } from '../i18n/es';
+import type { Lang, Strings } from '../i18n';
 import { contact } from '../data/contact';
 import InkSignature from './InkSignature.astro';
 
 interface Props {
   strings: Strings;
-  lang: 'es' | 'en';
+  lang: Lang;
 }
 
 const { strings, lang } = Astro.props;

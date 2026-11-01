@@ -1,13 +1,14 @@
 ---
-import type { Strings } from '../i18n/es';
+import type { Lang, Strings } from '../i18n';
 import { skillCategories, type SkillDepth } from '../data/skills';
-import SectionHeading from './SectionHeading.astro';
+import Section from './Section.astro';
 
 interface Props {
   strings: Strings;
+  lang: Lang;
 }
 
-const { strings } = Astro.props;
+const { strings, lang } = Astro.props;
 const depthLabel: Record<SkillDepth, string> = {
   core: strings.depthCore,
   solid: strings.depthSolid,
@@ -15,14 +16,12 @@ const depthLabel: Record<SkillDepth, string> = {
 };
 ---
 
-<section id="skills">
-  <div class="section-container">
-    <SectionHeading index="04" title={strings.skillsMatrix} />
+<Section id="skills" strings={strings}>
 
     <div class="grid gap-12 md:grid-cols-3 md:gap-10">
       {skillCategories.map((cat, i) => (
         <div class="animate-on-scroll" style={`--stagger: ${i * 80}ms`}>
-          <h3 class="border-b border-(--line) pb-3 font-mono text-[11px] uppercase tracking-[0.14em] text-(--ink-muted)">{cat.title}</h3>
+          <h3 class="border-b border-(--line) pb-3 font-mono text-[11px] uppercase tracking-[0.14em] text-(--ink-muted)">{cat.title[lang]}</h3>
           <ul>
             {cat.skills.map((skill) => (
               <li class="flex items-baseline gap-3 border-b border-(--line) py-3">
@@ -35,8 +34,7 @@ const depthLabel: Record<SkillDepth, string> = {
         </div>
       ))}
     </div>
-  </div>
-</section>
+</Section>
 
 <style>
   .depth {

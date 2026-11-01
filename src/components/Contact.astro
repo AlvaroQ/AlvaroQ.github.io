@@ -1,7 +1,7 @@
 ---
-import type { Strings } from '../i18n/es';
+import type { Strings } from '../i18n';
 import { contact } from '../data/contact';
-import SectionHeading from './SectionHeading.astro';
+import Section from './Section.astro';
 
 interface Props {
   strings: Strings;
@@ -12,9 +12,7 @@ const { strings } = Astro.props;
 const availability = strings.availableFor.split(' • ');
 ---
 
-<section id="contact">
-  <div class="section-container">
-    <SectionHeading index="05" title={strings.connect} />
+<Section id="contact" strings={strings}>
 
     <div class="grid gap-10 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:items-center lg:gap-16">
       <!-- Editorial lead -->
@@ -64,8 +62,7 @@ const availability = strings.availableFor.split(' • ');
         </div>
       </div>
     </div>
-  </div>
-</section>
+</Section>
 
 <style>
   .terminal {

@@ -1,17 +1,17 @@
 ---
-import type { Strings } from '../i18n/es';
-import { career } from '../data/career';
-import SectionHeading from './SectionHeading.astro';
+import type { Lang, Strings } from '../i18n';
+import { career, type Period } from '../data/career';
+import Section from './Section.astro';
 import { fixed } from '../lib/images';
 import { YEARS_AT_COMPANY, YEARS_IN_TECH } from '../data/site';
 
 interface Props {
   strings: Strings;
-  lang: 'es' | 'en';
+  lang: Lang;
 }
 
 const { strings, lang } = Astro.props;
-const formatPeriod = (period: string) => period.replace('Present', strings.present).replace(' - ', ' — ');
+const formatPeriod = ({ from, to }: Period) => (from === to ? String(from) : `${from} — ${to ?? strings.present}`);
 
 // Logos render at 28 CSS px; 1x/2x/3x variants keep them sharp on every DPR.
 const logos = await Promise.all(career.map((node) => (node.logo ? fixed(node.logo, 28) : null)));
@@ -23,9 +23,7 @@ const stats = [
 ];
 ---
 
-<section id="career">
-  <div class="section-container">
-    <SectionHeading index="02" title={strings.careerTimeline} subtitle={strings.careerSubtitle} />
+<Section id="career" strings={strings} subtitle={strings.careerSubtitle}>
 
     <!-- Timeline: vertical below lg, horizontal from lg -->
     <ol class="timeline relative grid gap-10 lg:grid-cols-5 lg:gap-8">
@@ -43,7 +41,7 @@ const stats = [
             <p class="font-mono text-xs text-(--accent)">{formatPeriod(node.period)}</p>
           </div>
           <h3 class="mt-4 font-display text-[22px] font-semibold leading-tight text-(--ink)">{node.company}</h3>
-          <p class="mt-1 text-sm font-medium text-(--ink)">{node.role}</p>
+          <p class="mt-1 text-sm font-medium text-(--ink)">{node.role[lang]}</p>
           <p class="mt-3 text-sm leading-relaxed text-(--ink-muted)">{node.description[lang]}</p>
           <ul class="mt-4 flex flex-wrap gap-1.5">
             {node.skills.map((skill) => <li class="tag">{skill}</li>)}
@@ -61,8 +59,7 @@ const stats = [
         </div>
       ))}
     </dl>
-  </div>
-</section>
+</Section>
 
 <style>
   /* Vertical rail below lg */

@@ -1,12 +1,12 @@
 ---
-import type { Strings } from '../i18n/es';
+import type { Lang, Strings } from '../i18n';
 import { stack } from '../data/stack';
 import { responsive } from '../lib/images';
-import SectionHeading from './SectionHeading.astro';
+import Section from './Section.astro';
 
 interface Props {
   strings: Strings;
-  lang: 'es' | 'en';
+  lang: Lang;
 }
 
 const { strings, lang } = Astro.props;
@@ -18,10 +18,7 @@ const portraitSizes = '(min-width: 1024px) min(414px, calc(34vw - 26px)), min(29
 const bio = [strings.bioP1, strings.bioP2, strings.bioP3, strings.bioP4, strings.bioP5];
 ---
 
-<section id="about">
-  <div class="section-container">
-    <!-- Same index + title position as sections 02-05 -->
-    <SectionHeading index="01" title={strings.hiImAlvaro} />
+<Section id="about" strings={strings}>
 
     <div class="grid gap-10 md:gap-12 lg:grid-cols-[clamp(320px,34vw,440px)_minmax(0,1fr)] lg:grid-rows-[auto_1fr] lg:gap-x-12 lg:gap-y-10 xl:grid-rows-[1fr_auto] xl:gap-x-20">
       <!-- Portrait: 4:5 crop on small screens (shorter), 3:4 from lg -->
@@ -68,8 +65,7 @@ const bio = [strings.bioP1, strings.bioP2, strings.bioP3, strings.bioP4, strings
         </ol>
       </div>
     </div>
-  </div>
-</section>
+</Section>
 
 <style>
   .portrait {

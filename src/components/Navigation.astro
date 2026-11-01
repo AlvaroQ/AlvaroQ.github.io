@@ -1,26 +1,18 @@
 ---
-import type { Strings } from '../i18n/es';
+import type { Strings } from '../i18n';
+import { navItems } from '../data/sections';
 
 interface Props {
   strings: Strings;
-  lang: 'es' | 'en';
 }
 
-const { strings, lang } = Astro.props;
-
-const sections = [
-  { id: 'header', label: strings.navHome },
-  { id: 'about', label: strings.navAbout },
-  { id: 'career', label: strings.navCareer },
-  { id: 'projects', label: strings.navProjects },
-  { id: 'skills', label: strings.navSkills },
-  { id: 'contact', label: strings.navContact },
-];
+const { strings } = Astro.props;
+const items = navItems.map(({ id, navKey }) => ({ id, label: strings[navKey] }));
 ---
 
 <nav id="main-nav" class="fixed top-10 left-1/2 z-50 -translate-x-1/2 transition-[top] duration-300 max-md:left-4 max-md:right-[9rem] max-md:translate-x-0" aria-label={strings.a11yNavigation}>
   <div class="nav-pill flex gap-1 rounded-full border border-(--line) px-3 py-1.5 backdrop-blur-xl">
-    {sections.map(({ id, label }) => (
+    {items.map(({ id, label }) => (
       <a
         href={`#${id}`}
         class="nav-link flex min-h-[44px] items-center whitespace-nowrap rounded-full px-2 py-3 font-mono text-[11px] uppercase tracking-[0.08em] text-(--ink-muted) transition-colors duration-200 hover:text-(--ink) md:px-3"

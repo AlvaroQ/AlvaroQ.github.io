@@ -1,30 +1,35 @@
-export interface ProjectDetails {
-  longDescription: { es: string; en: string };
-  architecture: { es: string; en: string };
+import type { Localized } from '../i18n';
+
+export interface CaseStudy {
+  longDescription: Localized;
+  architecture: Localized;
   /** Image keys relative to src/assets, e.g. "projects/rag-chatbot.webp". */
   screenshots: string[];
-  keyHighlights: { es: string; en: string }[];
-  demoUrl?: string;
-  githubUrl?: string;
+  keyHighlights: Localized[];
 }
 
-export interface AIProject {
+export interface ProjectLinks {
+  github?: string;
+  demo?: string;
+}
+
+export interface Project {
+  /** Stable id: modal template key and history hash. */
+  slug: string;
   title: string;
-  subtitle: { es: string; en: string };
-  description: { es: string; en: string };
-  features: { es: string; en: string }[];
+  subtitle: Localized;
+  description: Localized;
+  features: Localized[];
   techStack: string[];
-  accentColor: string;
-  githubUrl?: string;
-  isLive?: boolean;
-  isDiscontinued?: boolean;
-  isFeatured?: boolean;
-  detailedInfo?: ProjectDetails;
+  status?: 'live' | 'discontinued';
+  links: ProjectLinks;
+  caseStudy: CaseStudy;
 }
 
-export const projects: AIProject[] = [
+export const projects: Project[] = [
   // Fila 1: Adivina Perro, Cartera Investing, RAG Chatbot
   {
+    slug: "adivina-perro",
     title: "Adivina Perro",
     subtitle: {
       es: "Reconocimiento de Razas con IA On-Device",
@@ -41,11 +46,9 @@ export const projects: AIProject[] = [
       { es: "200+ Razas Catalogadas", en: "200+ Breed Catalogue" }
     ],
     techStack: ["Kotlin Multiplatform", "Compose Multiplatform", "TensorFlow Lite", "MobileNet V2", "CameraX", "Koin", "SQLDelight", "Firebase"],
-    accentColor: "#EC9553",
-    isLive: true,
-    isFeatured: true,
-    detailedInfo: {
-      githubUrl: "https://github.com/AlvaroQ/AdivinaRaza",
+    status: 'live',
+    links: { github: "https://github.com/AlvaroQ/AdivinaRaza", demo: "https://play.google.com/store/apps/details?id=com.alvaroquintana.adivinaperro" },
+    caseStudy: {
       longDescription: {
         es: "App KMP para Android y iOS que combina un juego de razas de perros con reconocimiento por IA en el dispositivo, sin servidor y sin coste por petición.\n\n## Edge AI: Reconocimiento de Razas\nUn modelo MobileNet V2 optimizado y compilado a TensorFlow Lite ejecuta inferencia 100% on-device. La cámara captura la foto vía CameraX, la imagen se escala a 224×224 y se normaliza a [0, 1], el intérprete TFLite clasifica entre 120 razas y se muestran las top 5 predicciones con porcentaje de confianza. Tap en cualquier resultado abre la ficha completa de la raza.\n\n## Catálogo y Gameplay\n200+ razas con info detallada (origen, temperamento, tamaño, pelaje, ejercicio, cuidados, entrenabilidad, ladrido, datos curiosos), clasificación FCI, guías de nutrición e higiene, enfermedades comunes y nombres alternativos. Cuatro modos de juego: quiz clásico de raza, comparativa de peso/altura, adivinar por descripción y trivia FCI. Sistema de vidas, progresión por etapas y tracking de rachas.\n\n## Arquitectura Multiplataforma\nClean Architecture en 4 módulos KMP: `app` (Compose Multiplatform + plataformas), `usecases` (Pure Kotlin), `data` (repos + SQLDelight + mappers) y `core` (entidades). El interfaz `BreedClassifier` vive en `commonMain`; Android aporta la implementación TFLite, dejando el ViewModel agnóstico de plataforma y listo para una futura implementación iOS.\n\n## Decisiones de Diseño\nSQLDelight como source of truth y Firebase como semilla: una sincronización inicial alimenta SQLite y todas las queries posteriores son locales. MVVM con StateFlow granular en lugar de MVI (los formularios son pequeños y ortogonales). Koin sobre Hilt por compatibilidad KMP nativa sin kapt/ksp.",
         en: "KMP app for Android and iOS combining a dog breed quiz with on-device AI recognition — no server, no per-request cost.\n\n## Edge AI: Breed Recognition\nA MobileNet V2 model optimised and compiled to TensorFlow Lite runs inference 100% on-device. CameraX captures the photo, the image is scaled to 224×224 and normalised to [0, 1], the TFLite interpreter classifies across 120 breeds and the top 5 predictions are displayed with confidence percentages. Tap any result to open the full breed details.\n\n## Catalogue and Gameplay\n200+ breeds with detailed info (origin, temperament, size, coat, exercise needs, grooming, trainability, barking level, fun facts), FCI classification, nutrition and hygiene guides, common diseases and alternative names. Four game modes: classic breed quiz, weight/height comparison, description guessing and FCI trivia. Lives system, stage progression and streak tracking.\n\n## Multiplatform Architecture\nClean Architecture across 4 KMP modules: `app` (Compose Multiplatform + platforms), `usecases` (Pure Kotlin), `data` (repos + SQLDelight + mappers) and `core` (entities). The `BreedClassifier` interface lives in `commonMain`; Android provides the TFLite implementation, keeping the ViewModel platform-agnostic and ready for a future iOS implementation.\n\n## Design Decisions\nSQLDelight as source of truth and Firebase as the seed: an initial sync feeds SQLite and every subsequent query stays local. MVVM with granular StateFlow over MVI (forms are small and orthogonal). Koin over Hilt for native KMP compatibility without kapt/ksp."
@@ -67,10 +70,10 @@ export const projects: AIProject[] = [
         { es: "59 unit tests pasando en CI (32 ViewModels + 14 use cases + 13 data)", en: "59 unit tests passing in CI (32 ViewModels + 14 use cases + 13 data)" },
         { es: "SQLDelight como source of truth, Firebase como semilla — playable offline", en: "SQLDelight as source of truth, Firebase as seed — playable offline" }
       ],
-      demoUrl: "https://play.google.com/store/apps/details?id=com.alvaroquintana.adivinaperro"
     }
   },
   {
+    slug: "cartera-investing",
     title: "Cartera Investing",
     subtitle: {
       es: "Dashboard Financiero Personal",
@@ -87,10 +90,9 @@ export const projects: AIProject[] = [
       { es: "Informes Fiscales", en: "Tax Reports" }
     ],
     techStack: ["Next.js 16", "React 19", "Firebase", "Recharts", "Zustand", "Tailwind CSS 4", "TypeScript", "Framer Motion"],
-    accentColor: "#00E676",
-    isLive: true,
-    isFeatured: true,
-    detailedInfo: {
+    status: 'live',
+    links: { demo: "https://www.invirtiendo.site/" },
+    caseStudy: {
       longDescription: {
         es: "Plataforma de analytics financiero diseñada para inversores individuales que quieren entender su cartera en profundidad.\n\n## Dashboard Modular\n37+ feature modules independientes organizados como bounded contexts: heatmap sectorial, análisis de concentración y riesgo, equity curve con CAGR, tracking de decisiones de compra/venta, dividendos, comparativa con índices y más.\n\n## Doble Vía de Datos\nPara el usuario propietario, un bot en Python desplegado en un Synology NAS descarga automáticamente los CSVs de Investing y los almacena como snapshots históricos. La app implementa carga progresiva: primero renderiza el último snapshot para mostrar el dashboard en segundos, luego descarga el historial completo en background.\n\nPara el área pública, los usuarios pueden adjuntar manualmente sus ficheros CSV exportados desde su broker y explorar el dashboard con sus propios datos.\n\n## Modo Demo\nLanding page pública con datos demo para que cualquiera pueda explorar las capacidades del dashboard sin necesidad de autenticación.\n\n## Arquitectura\nFeature-based architecture con 37+ módulos, cada uno con su propio types/services/hooks/components. State management con Zustand + React Query. Container queries para layouts responsive por panel.",
         en: "Financial analytics platform designed for individual investors who want to deeply understand their portfolio.\n\n## Modular Dashboard\n37+ independent feature modules organized as bounded contexts: sector heatmap, concentration and risk analysis, equity curve with CAGR, buy/sell decision tracking, dividends, index comparison and more.\n\n## Dual Data Pipeline\nFor the owner user, a Python bot deployed on a Synology NAS automatically downloads CSVs from Investing and stores them as historical snapshots. The app implements progressive loading: first renders the latest snapshot to show the dashboard in seconds, then downloads the full history in the background.\n\nFor the public area, users can manually attach their CSV files exported from their broker and explore the dashboard with their own data.\n\n## Demo Mode\nPublic landing page with demo data so anyone can explore the dashboard capabilities without authentication.\n\n## Architecture\nFeature-based architecture with 37+ modules, each with its own types/services/hooks/components. State management with Zustand + React Query. Container queries for responsive per-panel layouts."
@@ -114,10 +116,10 @@ export const projects: AIProject[] = [
         { es: "Container queries para layouts responsive por panel", en: "Container queries for responsive per-panel layouts" },
         { es: "Informes fiscales anuales exportables a PDF", en: "Annual tax reports exportable to PDF" }
       ],
-      demoUrl: "https://www.invirtiendo.site/"
     }
   },
   {
+    slug: "rag-chatbot",
     title: "RAG Chatbot",
     subtitle: { es: "Asistente IA", en: "AI Assistant" },
     description: {
@@ -131,10 +133,9 @@ export const projects: AIProject[] = [
       { es: "Respuestas Contextuales", en: "Contextual Answers" }
     ],
     techStack: ["Cloudflare Workers", "Vectorize", "Llama 3.1", "BGE Embeddings"],
-    accentColor: "#FF00FF",
-    isLive: true,
-    isFeatured: true,
-    detailedInfo: {
+    status: 'live',
+    links: {},
+    caseStudy: {
       longDescription: {
         es: "Este chatbot representa mi visión de cómo la IA puede transformar la experiencia de reclutamiento. En lugar de que los recruiters lean páginas de CV, pueden simplemente preguntar lo que necesitan saber. El sistema usa RAG (Retrieval-Augmented Generation) para buscar en mi base de conocimiento vectorizada y generar respuestas precisas y contextuales.",
         en: "This chatbot represents my vision of how AI can transform the recruitment experience. Instead of recruiters reading pages of CVs, they can simply ask what they need to know. The system uses RAG (Retrieval-Augmented Generation) to search my vectorized knowledge base and generate precise, contextual answers."
@@ -154,6 +155,7 @@ export const projects: AIProject[] = [
     }
   },
   {
+    slug: "translation-voice-ai",
     title: "Translation & Voice AI",
     subtitle: { es: "100% Procesamiento Local", en: "100% Local Processing" },
     description: {
@@ -167,9 +169,8 @@ export const projects: AIProject[] = [
       { es: "Soporte Documentos", en: "Document Support" }
     ],
     techStack: ["Python", "PyTorch", "ONNX", "Kokoro-82M", "NLLB-200"],
-    accentColor: "#00FFFF",
-    githubUrl: "https://github.com/AlvaroQ/TranslationAndVoiceLocally",
-    detailedInfo: {
+    links: { github: "https://github.com/AlvaroQ/TranslationAndVoiceLocally" },
+    caseStudy: {
       longDescription: {
         es: "Desarrollé esta herramienta para resolver un problema real: convertir documentación técnica y libros a audio para escucharlos mientras conduzco o hago ejercicio. A diferencia de servicios cloud como ElevenLabs o Google TTS, todo el procesamiento ocurre localmente, garantizando privacidad total y sin costes recurrentes.",
         en: "I developed this tool to solve a real problem: converting technical documentation and books to audio to listen while driving or exercising. Unlike cloud services like ElevenLabs or Google TTS, all processing happens locally, guaranteeing total privacy and no recurring costs."
@@ -190,6 +191,7 @@ export const projects: AIProject[] = [
   },
   // Fila 2: Portfolio & Stock, Web Scraper Pro, Lotto Scan
   {
+    slug: "portfolio-stock",
     title: "Portfolio & Stock",
     subtitle: {
       es: "Cartera con Alertas Automatizadas",
@@ -206,10 +208,9 @@ export const projects: AIProject[] = [
       { es: "Ratios de Valoración", en: "Valuation Ratios" }
     ],
     techStack: ["Next.js 15", "Firebase", "Cloud Functions", "n8n", "Docker", "Gemini 2.0", "Perplexity AI", "TypeScript"],
-    accentColor: "#FFFF00",
-    isDiscontinued: true,
-    isFeatured: true,
-    detailedInfo: {
+    status: 'discontinued',
+    links: {},
+    caseStudy: {
       longDescription: {
         es: "⚠️ Proyecto descontinuado: El desarrollo se encuentra congelado debido a los elevados costos de suscripción a APIs financieras necesarias para datos en tiempo real. Video demo próximamente.\n\nPlataforma integral que consolida inversiones de múltiples brokers, genera informes fiscales y permite tomar decisiones basadas en datos.\n\n## Dashboard\nVisión global con índices mundiales, materias primas y sectores. Cada acción incluye ficha con fundamentales, gráficos históricos, ratios (PER, PEG, EV/EBITDA, P/B) y fórmulas automatizadas (DCF, Graham, Lynch) para detectar oportunidades.\n\n## Sistema de Alertas Inteligentes\nHe desplegado un contenedor Docker con n8n en mi NAS Synology que ejecuta workflows automatizados diarios y semanales con dos frentes de análisis:\n› Alertas de Precio Objetivo: Compara los precios de alerta del usuario (Firebase) con cotizaciones en tiempo real, notificando cuando un valor alcanza su objetivo de compra o venta.\n› Análisis de Movimientos: Identifica las mayores subidas y bajadas de tu cartera, busca noticias relevantes con IA y analiza las posibles causas de cada movimiento.\n\n## Seguridad como Prioridad\nToda comunicación con APIs externas pasa por Cloud Functions como middleware seguro: protege claves de API, valida peticiones y garantiza que datos sensibles nunca se exponen al cliente.\n\n## Análisis y Reporting\nInformes anuales con rentabilidades, mejores/peores valores y posiciones cerradas para declaración fiscal.",
         en: "⚠️ Discontinued project: Development is frozen due to the high subscription costs of financial APIs required for real-time data. Demo video coming soon.\n\nComprehensive platform that consolidates investments from multiple brokers, generates tax reports and enables data-driven decisions.\n\n## Dashboard\nGlobal vision with world indices, commodities and sectors. Each stock includes fundamentals, historical charts, ratios (P/E, PEG, EV/EBITDA, P/B) and automated formulas (DCF, Graham, Lynch) to detect opportunities.\n\n## Intelligent Alert System\nI've deployed a Docker container with n8n on my Synology NAS running automated daily and weekly workflows with two analysis fronts:\n› Target Price Alerts: Compares user alert prices (Firebase) with real-time quotes, notifying when a stock reaches its buy or sell target.\n› Movement Analysis: Identifies the biggest gainers and losers in your portfolio, searches relevant news with AI and analyzes the causes behind each movement.\n\n## Security as Priority\nAll external API communication goes through Cloud Functions as secure middleware: protects API keys, validates requests and ensures sensitive data is never exposed to the client.\n\n## Analysis and Reporting\nAnnual reports with returns, best/worst performers and closed positions for tax filing."
@@ -237,6 +238,7 @@ export const projects: AIProject[] = [
     }
   },
   {
+    slug: "web-scraper-pro",
     title: "Web Scraper Pro",
     subtitle: { es: "Scraper con Anti-Detección", en: "Scraper with Anti-Detection" },
     description: {
@@ -250,9 +252,8 @@ export const projects: AIProject[] = [
       { es: "Camoufox Fallback", en: "Camoufox Fallback" }
     ],
     techStack: ["Python", "FastAPI", "Playwright", "Camoufox", "Docker"],
-    accentColor: "#8B00FF",
-    githubUrl: "https://github.com/AlvaroQ/web-scraper",
-    detailedInfo: {
+    links: { github: "https://github.com/AlvaroQ/web-scraper" },
+    caseStudy: {
       longDescription: {
         es: "Herramienta profesional de web scraping diseñada para extraer contenido de sitios web modernos que usan JavaScript para renderizar contenido.",
         en: "Professional web scraping tool designed to extract content from modern websites that use JavaScript to render content."
@@ -271,6 +272,7 @@ export const projects: AIProject[] = [
     }
   },
   {
+    slug: "lotto-scan",
     title: "Lotto Scan",
     subtitle: { es: "Escáner OCR con IA", en: "AI-Powered OCR Scanner" },
     description: {
@@ -284,9 +286,8 @@ export const projects: AIProject[] = [
       { es: "Almacenamiento Local", en: "Local Storage" }
     ],
     techStack: ["Kotlin", "Compose MP", "PaddleOCR", "ONNX", "SQLDelight"],
-    accentColor: "#DA70D6",
-    githubUrl: "https://github.com/AlvaroQ/lotto-scan",
-    detailedInfo: {
+    links: { github: "https://github.com/AlvaroQ/lotto-scan" },
+    caseStudy: {
       longDescription: {
         es: "Este proyecto combina mi experiencia en Kotlin Multiplatform con IA on-device. La app escanea boletos de lotería española usando la cámara del dispositivo y extrae los números automáticamente con OCR.",
         en: "This project combines my expertise in Kotlin Multiplatform with on-device AI. The app scans Spanish lottery tickets using the device camera and automatically extracts numbers with OCR."
@@ -310,6 +311,7 @@ export const projects: AIProject[] = [
   },
   // Fila 3: YouTube Downloader, Chart Analyzer
   {
+    slug: "youtube-downloader",
     title: "YouTube Downloader",
     subtitle: { es: "Descargador con Resúmenes IA", en: "Downloader with AI Summaries" },
     description: {
@@ -323,9 +325,8 @@ export const projects: AIProject[] = [
       { es: "Multi-Formato", en: "Multi-Format" }
     ],
     techStack: ["Python", "FastAPI", "Perplexity AI", "JavaScript", "HTML/CSS"],
-    accentColor: "#FF0080",
-    githubUrl: "https://github.com/AlvaroQ/youtube-downloader",
-    detailedInfo: {
+    links: { github: "https://github.com/AlvaroQ/youtube-downloader" },
+    caseStudy: {
       longDescription: {
         es: "Herramienta de escritorio que combina descarga de contenido de YouTube con análisis inteligente mediante IA.",
         en: "Desktop tool that combines YouTube content downloading with intelligent AI analysis."
@@ -344,6 +345,7 @@ export const projects: AIProject[] = [
     }
   },
   {
+    slug: "chart-analyzer",
     title: "Chart Analyzer",
     subtitle: { es: "Inteligencia de Mercado en Tiempo Real", en: "Real-time Market Intelligence" },
     description: {
@@ -357,9 +359,8 @@ export const projects: AIProject[] = [
       { es: "Indicadores Técnicos", en: "Technical Indicators" }
     ],
     techStack: ["Next.js", "Perplexity AI", "Gemini 2.0", "TypeScript"],
-    accentColor: "#39FF14",
-    githubUrl: "https://github.com/AlvaroQ/chart-analyzer-and-stock-news",
-    detailedInfo: {
+    links: { github: "https://github.com/AlvaroQ/chart-analyzer-and-stock-news", demo: "https://project-ia-three.vercel.app/" },
+    caseStudy: {
       longDescription: {
         es: "Como inversor activo, necesitaba una herramienta que combinara análisis técnico con contexto de noticias en tiempo real. Este proyecto orquesta dos agentes IA.",
         en: "As an active investor, I needed a tool that combined technical analysis with real-time news context. This project orchestrates two AI agents."
@@ -376,7 +377,6 @@ export const projects: AIProject[] = [
         { es: "Correlaciona noticias con movimientos de precio", en: "Correlates news with price movements" },
         { es: "100% TypeScript con tipos estrictos", en: "100% TypeScript with strict types" }
       ],
-      demoUrl: "https://project-ia-three.vercel.app/"
     }
   }
 ];

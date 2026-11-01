@@ -6,22 +6,22 @@ import Career from './Career.astro';
 import Projects from './Projects.astro';
 import Skills from './Skills.astro';
 import Contact from './Contact.astro';
-import { t } from '../i18n';
+import { t, type Lang } from '../i18n';
 
 interface Props {
-  lang: 'es' | 'en';
+  lang: Lang;
 }
 
 const { lang } = Astro.props;
 const strings = t(lang);
 ---
 
-<Navigation strings={strings} lang={lang} />
+<Navigation strings={strings} />
 <Header strings={strings} lang={lang} />
 <Presentation strings={strings} lang={lang} />
 <Career strings={strings} lang={lang} />
 <Projects strings={strings} lang={lang} />
-<Skills strings={strings} />
+<Skills strings={strings} lang={lang} />
 <Contact strings={strings} />
 
 <!-- Chat Widget -->

@@ -1,3 +1,5 @@
+import type { Localized } from '../i18n';
+
 export type SkillDepth = 'core' | 'solid' | 'familiar';
 
 export interface Skill {
@@ -8,13 +10,13 @@ export interface Skill {
 }
 
 export interface SkillCategory {
-  title: string;
+  title: Localized;
   skills: Skill[];
 }
 
 export const skillCategories: SkillCategory[] = [
   {
-    title: "Mobile & Native",
+    title: { es: "Mobile y nativo", en: "Mobile & Native" },
     skills: [
       { name: "Kotlin", years: 9, depth: 'core' },
       { name: "Jetpack Compose", years: 5, depth: 'core' },
@@ -25,7 +27,7 @@ export const skillCategories: SkillCategory[] = [
     ]
   },
   {
-    title: "Web & Backend",
+    title: { es: "Web y backend", en: "Web & Backend" },
     skills: [
       { name: "Next.js / React", years: 5, depth: 'core' },
       { name: "TypeScript", years: 6, depth: 'core' },
@@ -36,7 +38,7 @@ export const skillCategories: SkillCategory[] = [
     ]
   },
   {
-    title: "AI & DevOps",
+    title: { es: "IA y DevOps", en: "AI & DevOps" },
     skills: [
       { name: "Claude / Anthropic", years: 2, depth: 'core' },
       { name: "Prompt Engineering", years: 2, depth: 'core' },

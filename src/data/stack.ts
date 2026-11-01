@@ -1,6 +1,8 @@
+import type { Localized } from '../i18n';
+
 export interface StackColumn {
   index: string;
-  label: { es: string; en: string };
+  label: Localized;
   techs: string[];
 }
 
