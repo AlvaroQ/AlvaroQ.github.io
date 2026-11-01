@@ -153,7 +153,8 @@ export const projects: Project[] = [
         en: "Job: daily cron at 10:15 (Europe/Madrid) on a VPS\nLanguage: Python 3, standard library only\nMarkets: Yahoo Finance (quotes and RSS), Nasdaq, US Treasury\nCalendar: ForexFactory + EODHD\nSentiment and portfolio: Firestore (Node reader with firebase-admin)\nAI: Claude Code in headless mode (claude -p) for summaries, titles and relevance\nInbox: read with himalaya without marking anything as read\nDelivery: Gmail SMTP, table-based HTML + plain-text version\nTesting: unittest (240+ tests)"
       },
       screenshots: [
-        "projects/briefing-mundial-sp500.webp"
+        "projects/briefing-mundial-sp500.webp",
+        "projects/briefing-mundial-overview.webp"
       ],
       keyHighlights: [
         { es: "Llega solo cada mañana a las 10:15: un cron en un VPS, sin intervención", en: "Arrives on its own every morning at 10:15: a cron job on a VPS, hands-free" },
