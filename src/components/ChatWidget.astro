@@ -81,7 +81,7 @@ const suggestions = [strings.chatSuggestion1, strings.chatSuggestion2, strings.c
     width: 56px;
     height: 56px;
     padding: 0;
-    border-radius: 50%;
+    border-radius: var(--radius-pill);
     border-color: var(--ink);
     background: var(--ink);
     color: var(--paper);
@@ -107,7 +107,7 @@ const suggestions = [strings.chatSuggestion1, strings.chatSuggestion2, strings.c
     max-height: none;
     overflow: hidden;
     border: 1px solid var(--line);
-    border-radius: 16px;
+    border-radius: var(--radius-md);
     background: var(--paper-2);
     color: var(--ink);
     font-family: var(--font-ui);
@@ -117,7 +117,7 @@ const suggestions = [strings.chatSuggestion1, strings.chatSuggestion2, strings.c
   dialog[open] {
     display: flex;
     flex-direction: column;
-    animation: chat-in 0.25s ease;
+    animation: chat-in 0.25s var(--ease-ink);
   }
 
   dialog::backdrop {
@@ -159,7 +159,7 @@ const suggestions = [strings.chatSuggestion1, strings.chatSuggestion2, strings.c
   .messages :global(.msg) {
     max-width: 88%;
     padding: 10px 14px;
-    border-radius: 16px;
+    border-radius: var(--radius-md);
     font-size: 14px;
     line-height: 1.55;
     overflow-wrap: anywhere;
@@ -206,7 +206,7 @@ const suggestions = [strings.chatSuggestion1, strings.chatSuggestion2, strings.c
   .messages :global(.msg-typing .dot) {
     width: 8px;
     height: 8px;
-    border-radius: 50%;
+    border-radius: var(--radius-pill);
     background: var(--accent);
     animation: chat-typing 1s infinite;
   }
@@ -270,7 +270,7 @@ const suggestions = [strings.chatSuggestion1, strings.chatSuggestion2, strings.c
     min-height: 44px;
     padding: 10px 16px;
     border: 1px solid var(--line);
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     background: var(--paper);
     color: var(--ink);
     font: inherit;

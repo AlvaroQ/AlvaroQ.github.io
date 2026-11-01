@@ -107,6 +107,7 @@ export const en: Strings = {
 
   // Banner
   bannerText: "I live in Madrid but work remotely, you can contact me via ",
+  bannerTextShort: "Remote from Madrid: write to me by ",
   bannerEmail: "email",
 
   // Navigation

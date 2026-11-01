@@ -16,7 +16,8 @@ const altPath = lang === 'es' ? '/en/' : '/';
 <section id="header" class="relative">
   <!-- Banner -->
   <div id="top-banner" class="absolute top-0 left-0 right-0 z-50 border-b border-(--line) bg-(--paper-2) px-4 py-2 text-center text-xs text-(--ink-muted)">
-    <span>{strings.bannerText}</span>
+    <span class="max-sm:hidden">{strings.bannerText}</span>
+    <span class="sm:hidden">{strings.bannerTextShort}</span>
     <a href={`mailto:${contact.email}`} class="link-grow text-(--accent)">{strings.bannerEmail}</a>
   </div>
 

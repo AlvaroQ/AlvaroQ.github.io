@@ -78,8 +78,32 @@
   --font-ui: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-  --text-micro: 0.65rem;
-  --text-label: 0.75rem;
+  /* Type: body-sm and lead complete the scale; labels are the two @utility recipes below */
+  --text-body-sm: 15px;
+  --text-lead: 17px;
+
+  /* Shape and motion: three radii (circles use the pill), one easing, one default duration */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-pill: 999px;
+  --ease-ink: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --default-transition-duration: 200ms;
+  --default-transition-timing-function: var(--ease-ink);
+}
+
+/* Mono labels: section/stack indexes and headings (wide tracking) and UI chrome (controls, nav, badges) */
+@utility label-index {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@utility label-ui {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 html.light {
@@ -169,11 +193,11 @@ html.light {
   .badge {
     display: inline-block;
     padding: 2px 10px;
-    border-radius: 9999px;
+    border-radius: var(--radius-pill);
     font-family: var(--font-mono);
-    font-size: var(--text-micro);
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
@@ -182,7 +206,7 @@ html.light {
     display: inline-block;
     padding: 3px 7px;
     border: 1px solid var(--line);
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     font-family: var(--font-mono);
     font-size: 11px;
     line-height: 1.4;
@@ -224,17 +248,22 @@ section + section {
   align-items: center;
   min-height: 44px;
   padding: 12px 22px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1.5px solid transparent;
   font-family: var(--font-ui);
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
-  transition: transform 0.2s, background-color 0.2s, color 0.2s, border-color 0.2s;
+  transition: transform 0.2s var(--ease-ink), background-color 0.2s var(--ease-ink), color 0.2s var(--ease-ink), border-color 0.2s var(--ease-ink);
 }
 
 .btn:hover {
   transform: translateY(-1px);
+}
+
+/* Pressed: back on the paper */
+.btn:active {
+  transform: translateY(0);
 }
 
 .btn-solid {
@@ -260,7 +289,7 @@ section + section {
   min-height: 44px;
   padding: 0 14px;
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   background: transparent;
   color: var(--ink-muted);
   font: 500 11px/1 var(--font-mono);
@@ -268,7 +297,7 @@ section + section {
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
+  transition: color 0.2s var(--ease-ink), border-color 0.2s var(--ease-ink);
 }
 
 .control:hover {

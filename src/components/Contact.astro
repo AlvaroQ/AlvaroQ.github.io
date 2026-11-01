@@ -10,6 +10,8 @@ interface Props {
 const { strings } = Astro.props;
 // Each segment stays on one line so "Full-Stack" never splits at its hyphen.
 const availability = strings.availableFor.split(' • ');
+// The address may only break before the "@" (never inside "gmail.com").
+const [emailUser, emailDomain] = contact.email.split('@');
 ---
 
 <Section id="contact" strings={strings}>
@@ -37,10 +39,10 @@ const availability = strings.availableFor.split(' • ');
             <button
               id="copy-email"
               type="button"
-              class="link-grow cursor-pointer border-none bg-transparent font-mono text-sm text-(--ink)"
+              class="link-grow cursor-pointer border-none bg-transparent font-mono text-sm text-(--ink) [overflow-wrap:normal]"
               data-email={contact.email}
             >
-              {contact.email}<span class="sr-only">, {strings.a11yCopyEmail}</span>
+              {emailUser}<wbr />@{emailDomain}<span class="sr-only">, {strings.a11yCopyEmail}</span>
             </button>
             <span id="email-copied" class="ml-2 text-xs text-(--accent) opacity-0 transition-opacity" aria-live="polite" aria-atomic="true">{strings.a11yEmailCopied}</span>
           </p>
@@ -67,7 +69,7 @@ const availability = strings.availableFor.split(' • ');
   .terminal {
     padding: 28px;
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: var(--paper-2);
     line-height: 1.7;
     overflow-wrap: anywhere;

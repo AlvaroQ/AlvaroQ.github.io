@@ -106,6 +106,7 @@ export const es = {
 
   // Banner
   bannerText: "Vivo en Madrid pero trabajo en remoto, puedes contactarme por ",
+  bannerTextShort: "Trabajo en remoto desde Madrid: escríbeme por ",
   bannerEmail: "email",
 
   // Navigation

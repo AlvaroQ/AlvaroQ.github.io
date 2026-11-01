@@ -61,7 +61,7 @@ const number = String(index + 1).padStart(2, '0');
   </div>
 
   <div class="body grid content-start gap-3">
-    <p class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs tracking-[0.1em] text-(--ink-muted)">
+    <p class="label-ui flex flex-wrap items-center gap-x-3 gap-y-1 text-(--ink-muted)">
       <span>{strings.projectLabel} {number} / {total}</span>
       {project.status === 'live' && <span class="badge badge-live">{strings.liveBadge}</span>}
       {project.status === 'discontinued' && <span class="badge badge-discontinued">{strings.discontinuedBadge}</span>}

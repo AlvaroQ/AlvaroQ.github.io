@@ -1,9 +1,7 @@
 /* ===== MOTION SYSTEM =====
    One easing for the whole site; every animation is disabled under
    prefers-reduced-motion at the end of this file. */
-:root {
-  --ease-ink: cubic-bezier(0.2, 0.7, 0.2, 1);
-}
+/* --ease-ink is a theme token (global.css) */
 
 /* ===== SCROLL REVEAL =====
    Fade + 24px rise. Stagger with the .stagger-N classes (multiples of 80ms): classes, not

@@ -67,7 +67,7 @@ const { strings } = Astro.props;
 
 <style>
   #project-modal {
-    --box-radius: 16px;
+    --box-radius: var(--radius-md);
     position: fixed;
     inset: 0;
     margin: auto;
@@ -86,7 +86,7 @@ const { strings } = Astro.props;
   /* Wider box from 1024 px: one 1000-ish column up to 1279, two columns from 1280 (ProjectCase) */
   @media (min-width: 1024px) {
     #project-modal {
-      --box-radius: 6px;
+      --box-radius: var(--radius-md);
       max-width: 1200px;
       max-height: 92dvh;
     }
@@ -95,7 +95,7 @@ const { strings } = Astro.props;
   #project-modal[open] {
     display: flex;
     flex-direction: column;
-    animation: modal-in 0.3s ease;
+    animation: modal-in 0.3s var(--ease-ink);
   }
 
   #project-modal::backdrop,
@@ -148,7 +148,7 @@ const { strings } = Astro.props;
   #project-lightbox[open] {
     display: grid;
     place-items: center;
-    animation: lb-fade 0.25s ease;
+    animation: lb-fade 0.25s var(--ease-ink);
   }
 
   #project-lightbox::backdrop {
@@ -174,7 +174,7 @@ const { strings } = Astro.props;
   .lb-nav {
     top: 50%;
     margin-top: -22px;
-    border-radius: 50%;
+    border-radius: var(--radius-pill);
   }
 
   .lb-prev {
@@ -203,7 +203,7 @@ const { strings } = Astro.props;
     padding: 6px 14px;
     transform: translateX(-50%);
     border: 1px solid var(--line);
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     background: var(--paper-2);
     font-family: var(--font-mono);
     font-size: 13px;
@@ -229,7 +229,7 @@ const { strings } = Astro.props;
     max-width: 90vw;
     max-height: 90dvh;
     object-fit: contain;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--line);
     background: var(--paper-2);
     pointer-events: none;
@@ -237,11 +237,11 @@ const { strings } = Astro.props;
   }
 
   .lb-stage.from-next {
-    animation: lb-from-next 0.2s ease;
+    animation: lb-from-next 0.2s var(--ease-ink);
   }
 
   .lb-stage.from-prev {
-    animation: lb-from-prev 0.2s ease;
+    animation: lb-from-prev 0.2s var(--ease-ink);
   }
 
   @keyframes modal-in {

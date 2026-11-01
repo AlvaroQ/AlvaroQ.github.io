@@ -14,7 +14,7 @@ const { strings } = Astro.props;
 
 <div class="hero" data-ink>
   <div class="hero-inner">
-    <p class="eyebrow hero-enter">{strings.heroEyebrow}</p>
+    <p class="eyebrow label-index hero-enter">{strings.heroEyebrow}</p>
     <InkName name={strings.name} />
     <p class="headline hero-enter step-2">{strings.heroHeadline} <em>{strings.heroHeadlineEm}</em></p>
     <div class="platforms-row hero-enter step-2">
@@ -57,29 +57,40 @@ const { strings } = Astro.props;
     pointer-events: none;
     background-color: var(--ink-2);
     opacity: var(--vein-opacity, 0.1);
-    -webkit-mask: url("/images/paper-veins.svg") center / cover no-repeat;
-    mask: url("/images/paper-veins.svg") center / cover no-repeat;
+    /* Veins intersected with a bottom fade, so they dissolve into the next section */
+    -webkit-mask:
+      url("/images/paper-veins.svg") center / cover no-repeat,
+      linear-gradient(black 82%, transparent);
+    -webkit-mask-composite: source-in;
+    mask:
+      url("/images/paper-veins.svg") center / cover no-repeat,
+      linear-gradient(black 82%, transparent);
+    mask-composite: intersect;
   }
 
   :global(html.light) .hero::before {
     --vein-opacity: 0.08;
   }
 
+  /* Same grid as the sections: 1.5rem gutters (2rem from lg) around a 1200 px column */
   .hero-inner {
     width: 100%;
-    max-width: 1200px;
+    max-width: calc(1200px + 3rem);
     margin-inline: auto;
-    padding: 128px 56px 72px;
+    padding: 128px 1.5rem 72px;
     display: grid;
     gap: 22px;
     justify-items: start;
   }
 
+  @media (min-width: 1024px) {
+    .hero-inner {
+      max-width: calc(1200px + 4rem);
+      padding-inline: 2rem;
+    }
+  }
+
   .eyebrow {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
     color: var(--ink-muted);
   }
 
@@ -102,7 +113,6 @@ const { strings } = Astro.props;
   .platforms {
     font-family: var(--font-mono);
     font-size: 13px;
-    letter-spacing: 0.02em;
     color: var(--ink-muted);
   }
 
@@ -127,8 +137,6 @@ const { strings } = Astro.props;
     min-width: 0;
     min-height: 32px;
     padding: 8px 10px;
-    letter-spacing: 0.04em;
-    text-transform: none;
     transition: none;
   }
 
@@ -168,7 +176,7 @@ const { strings } = Astro.props;
     }
 
     .hero-inner {
-      padding: 128px 22px 48px;
+      padding-bottom: 48px;
     }
 
     /* Own line for the pause control on phones: whether it fits next to the

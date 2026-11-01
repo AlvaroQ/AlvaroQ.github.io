@@ -38,7 +38,7 @@ const stats = [
                 <span aria-hidden="true">{node.icon}</span>
               )}
             </span>
-            <p class="font-mono text-xs text-(--accent)">{formatPeriod(node.period)}</p>
+            <p class="label-ui text-(--accent)">{formatPeriod(node.period)}</p>
           </div>
           <h3 class="mt-4 font-display text-[22px] font-semibold leading-tight text-(--ink)">{node.company}</h3>
           <p class="mt-1 text-sm font-medium text-(--ink)">{node.role[lang]}</p>
@@ -54,7 +54,7 @@ const stats = [
     <dl class="animate-on-scroll mt-16 grid grid-cols-3 border-t border-(--line) pt-8 lg:mt-20">
       {stats.map((stat) => (
         <div class="stat px-2 sm:px-6">
-          <dt class="order-2 mt-2 font-mono text-[10px] uppercase leading-snug tracking-[0.12em] text-(--ink-muted) sm:text-[11px]">{stat.label}</dt>
+          <dt class="label-index order-2 mt-2 leading-snug text-(--ink-muted)">{stat.label}</dt>
           <dd class="font-display text-[clamp(40px,6vw,72px)] font-semibold leading-none text-(--ink)">{stat.value}</dd>
         </div>
       ))}
@@ -83,7 +83,7 @@ const stats = [
     top: 16px;
     width: 9px;
     height: 9px;
-    border-radius: 50%;
+    border-radius: var(--radius-pill);
     background: var(--paper);
     border: 1px solid var(--accent);
   }

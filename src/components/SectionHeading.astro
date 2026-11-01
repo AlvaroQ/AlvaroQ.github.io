@@ -10,7 +10,7 @@ const { index, title, subtitle } = Astro.props;
 ---
 
 <header class="animate-on-scroll mb-10 lg:mb-12">
-  <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-(--accent)">{index}</p>
+  <p class="label-index text-(--accent)">{index}</p>
   <h2 class="mt-3 font-display text-[clamp(34px,4.4vw,56px)] leading-[1.05] tracking-[-0.01em] text-(--ink)">{title}</h2>
   {subtitle && <p class="mt-3 max-w-[60ch] text-[17px] leading-relaxed text-(--ink-muted)">{subtitle}</p>}
 </header>

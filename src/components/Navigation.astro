@@ -10,12 +10,12 @@ const { strings } = Astro.props;
 const items = navItems.map(({ id, navKey }) => ({ id, label: strings[navKey] }));
 ---
 
-<nav id="main-nav" class="fixed top-10 left-1/2 z-50 -translate-x-1/2 transition-[top] duration-300 max-md:left-4 max-md:right-[9rem] max-md:translate-x-0" aria-label={strings.a11yNavigation}>
+<nav id="main-nav" class="fixed top-10 left-1/2 z-50 -translate-x-1/2 transition-[top] duration-300 max-md:left-4 max-md:right-[9rem] max-md:translate-x-0 md:max-lg:left-4 md:max-lg:right-[10rem] md:max-lg:translate-x-0" aria-label={strings.a11yNavigation}>
   <div class="nav-pill flex gap-1 rounded-full border border-(--line) px-3 py-1.5 backdrop-blur-xl">
     {items.map(({ id, label }) => (
       <a
         href={`#${id}`}
-        class="nav-link flex min-h-[44px] items-center whitespace-nowrap rounded-full px-2 py-3 font-mono text-[11px] uppercase tracking-[0.08em] text-(--ink-muted) transition-colors duration-200 hover:text-(--ink) md:px-3"
+        class="nav-link flex min-h-[44px] items-center whitespace-nowrap rounded-full px-2 py-3 label-ui text-(--ink-muted) transition-colors duration-200 hover:text-(--ink) lg:px-3"
         data-section={id}
       >
         {label}
