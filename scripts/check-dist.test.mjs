@@ -29,7 +29,13 @@ const YEARS_CLAIM = /(\d+)\s*\+\s*(?:<[^>]+>\s*)*(?:años|years)|\+\s*(\d+)\s*(?
 test('a single years-of-experience figure across both pages', () => {
   const figures = new Set();
   for (const src of Object.values(html)) {
-    for (const m of src.matchAll(YEARS_CLAIM)) figures.add(m[1] ?? m[2] ?? m[3]);
+    for (const m of src.matchAll(YEARS_CLAIM)) {
+      // The "+8 años / en B-FY" stat is the tenure at the current company, not the experience
+      // figure; its label (dt) precedes the figure (dd) in the markup.
+      const before = src.slice(Math.max(0, m.index - 300), m.index).replace(/<[^>]+>/g, ' ');
+      if (/(en|at) B-FY\s*$/.test(before)) continue;
+      figures.add(m[1] ?? m[2] ?? m[3]);
+    }
   }
   assert.ok(figures.size > 0, 'no years claim found');
   assert.deepEqual([...figures], [[...figures][0]], `conflicting figures: ${[...figures].join(', ')}`);
@@ -331,3 +337,20 @@ test('the ripple never copies the project images', () => {
   const src = read(dom.es.querySelector('[data-ripple-module]').getAttribute('data-ripple-module').slice(1));
   assert.doesNotMatch(src, /texImage2D\([^)]*\b(img|image)\b/i);
 });
+
+// Career stats (figure + unit, then the label).
+const STATS = {
+  es: ['+15 años en Tech', '+8 años en B-FY', '4 entornos ANDROID · iOS · WEB · DESKTOP'],
+  en: ['+15 years in Tech', '+8 years at B-FY', '4 environments ANDROID · iOS · WEB · DESKTOP'],
+};
+for (const [lang, root] of Object.entries(dom)) {
+  test(`${lang}: career stats read figure, unit and label`, () => {
+    const stats = root.querySelectorAll('#career dl .stat').map((s) => {
+      const dd = s.querySelector('dd');
+      const unit = dd.querySelector('.stat-unit')?.textContent.trim() ?? '';
+      const value = dd.textContent.trim().slice(0, dd.textContent.trim().length - unit.length).trim();
+      return [value, unit, s.querySelector('dt').textContent.trim()].filter(Boolean).join(' ');
+    });
+    assert.deepEqual(stats, STATS[lang]);
+  });
+}

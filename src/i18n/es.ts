@@ -41,8 +41,9 @@ export const es = {
   careerTimeline: "Trayectoria",
   present: "hoy",
   careerSubtitle: "De desarrollador a ingeniero full-stack a especialista IA",
-  yearsInTechLabel: "Años en Tech",
-  yearsAtBfyLabel: "Años en B-FY",
+  yearsUnit: "años",
+  yearsInTechLabel: "en Tech",
+  yearsAtBfyLabel: "en B-FY",
 
   // AI Projects
   latestAiProjects: "Proyectos",

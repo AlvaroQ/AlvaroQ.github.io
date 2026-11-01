@@ -42,8 +42,9 @@ export const en: Strings = {
   careerTimeline: "Career",
   present: "present",
   careerSubtitle: "From startup developer to full-stack engineer to AI specialist",
-  yearsInTechLabel: "Years in Tech",
-  yearsAtBfyLabel: "Years at B-FY",
+  yearsUnit: "years",
+  yearsInTechLabel: "in Tech",
+  yearsAtBfyLabel: "at B-FY",
 
   // AI Projects
   latestAiProjects: "Projects",

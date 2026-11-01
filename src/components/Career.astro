@@ -17,8 +17,8 @@ const formatPeriod = ({ from, to }: Period) => (from === to ? String(from) : `${
 const logos = await Promise.all(career.map((node) => (node.logo ? fixed(node.logo, 28) : null)));
 
 const stats: { value: string; unit?: string; label: string }[] = [
-  { value: `+${YEARS_IN_TECH}`, label: strings.yearsInTechLabel },
-  { value: `+${YEARS_AT_COMPANY}`, label: strings.yearsAtBfyLabel },
+  { value: `+${YEARS_IN_TECH}`, unit: strings.yearsUnit, label: strings.yearsInTechLabel },
+  { value: `+${YEARS_AT_COMPANY}`, unit: strings.yearsUnit, label: strings.yearsAtBfyLabel },
   { value: strings.platformsNum, unit: strings.platformsUnit, label: strings.platformsLabel },
 ];
 ---
