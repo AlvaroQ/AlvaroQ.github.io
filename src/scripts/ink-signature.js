@@ -256,7 +256,8 @@ function setup(hero) {
   function updateButton() {
     if (!pauseBtn) return;
     const usable = !!s.gl && !s.disabled && !RM.matches;
-    pauseBtn.hidden = !usable;
+    // Not `hidden`: its UA display:none would reflow the row when the effect starts.
+    pauseBtn.dataset.usable = String(usable);
     pauseBtn.setAttribute('aria-pressed', String(s.paused));
     pauseBtn.textContent = (s.paused ? pauseBtn.dataset.labelResume : pauseBtn.dataset.labelPause) || '';
   }

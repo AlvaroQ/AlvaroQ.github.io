@@ -27,7 +27,7 @@ const lastName = rest.join(' ');
         class="ink-pause"
         type="button"
         aria-pressed="false"
-        hidden
+        data-usable="false"
         data-label-pause={strings.inkPause}
         data-label-resume={strings.inkResume}
       >{strings.inkPause}</button>
@@ -179,8 +179,17 @@ const lastName = rest.join(' ');
     cursor: pointer;
   }
 
-  .ink-pause[hidden] {
-    display: none;
+  /* The control appears once the effect starts: its slot stays reserved so the
+     row never reflows (it would shift the CTAs and everything below). */
+  .ink-pause[data-usable="false"] {
+    visibility: hidden;
+  }
+
+  /* The effect never starts under reduced motion: no slot needed. */
+  @media (prefers-reduced-motion: reduce) {
+    .ink-pause {
+      display: none;
+    }
   }
 
   .ink-pause[aria-pressed="true"] {
@@ -200,6 +209,14 @@ const lastName = rest.join(' ');
 
     .ink-name {
       font-size: clamp(56px, 17vw, 84px);
+    }
+
+    /* Own line for the pause control on phones: whether it fits next to the
+       platforms would depend on the mono font having loaded (layout shift). */
+    .platforms-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
     }
 
   }
