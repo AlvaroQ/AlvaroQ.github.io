@@ -15,7 +15,7 @@ const INK_KEY = 'portfolio_ink';
 const VERTEX_SHADER = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
 const FRAGMENT_SHADER = `precision mediump float;
 uniform vec2 uRes, uTexel, uLight;
-uniform float uLightZ, uRadius, uRest, uSpot, uBump, uFadeL, uTrans, uTransRest, uGuil, uInv, uHiA, uLoA;
+uniform float uLightZ, uRadius, uRest, uSpot, uBump, uFadeL, uTrans, uTransRest, uGuil, uInv, uHiA, uLoA, uCut;
 uniform sampler2D uH, uT;
 uniform vec3 uHi, uLo;
 float H(vec2 p){return texture2D(uH, p).r;}
@@ -35,6 +35,9 @@ void main(){
   vec2 q = (uv - vec2(.52, .5)) / vec2(.49, .49);
   float r = length(q);
   float win = (1. - smoothstep(.8, .98, r)) * smoothstep(0., uFadeL, uv.x);
+  // Feather into the hero's bottom edge (uCut = its height in canvas uv) instead of a hard clip.
+  float feather = smoothstep(uCut, uCut + .1, uv.y);
+  win *= feather;
   float k = uRest + spot * uSpot;
   // Backlit tone: a lamp behind the paper shows the portrait as a true watermark.
   float tone = pow(smoothstep(.04, .8, texture2D(uT, uv).r), .8);
@@ -46,7 +49,7 @@ void main(){
   float ang = atan(q.y, q.x);
   float g = abs(fract(r * 26. + .55 * sin(ang * 8.) + .25 * sin(ang * 13.)) - .5);
   float line = 1. - smoothstep(.03, .09, g);
-  float band = smoothstep(.9, .96, r) * (1. - smoothstep(1.02, 1.08, r)) * smoothstep(0., uFadeL * .8, uv.x);
+  float band = smoothstep(.9, .96, r) * (1. - smoothstep(1.02, 1.08, r)) * smoothstep(0., uFadeL * .8, uv.x) * feather;
   float gl = line * band * spot * uGuil;
   float hi = clamp(max(relief, 0.) * k * 2.4 * win, 0., 1.) * uHiA + tHi * uHiA * 1.15 + gl * (1. - uInv) * uHiA;
   float lo = clamp(max(-relief, 0.) * k * 2.4 * win, 0., 1.) * uLoA + tLo * uLoA * 1.1 + gl * uInv * uLoA;
@@ -56,7 +59,7 @@ void main(){
 }`;
 
 const UNIFORMS = ['uRes', 'uTexel', 'uLight', 'uLightZ', 'uRadius', 'uRest', 'uSpot', 'uBump', 'uFadeL', 'uTrans',
-  'uTransRest', 'uGuil', 'uInv', 'uH', 'uT', 'uHi', 'uLo', 'uHiA', 'uLoA'];
+  'uTransRest', 'uGuil', 'uInv', 'uH', 'uT', 'uHi', 'uLo', 'uHiA', 'uLoA', 'uCut'];
 
 /** Parse "url 600w, url 900w" into [{ url, w }] sorted by width. */
 function parseSrcset(value) {
@@ -238,6 +241,7 @@ function setup(hero) {
     gl.uniform3fv(U.uLo, dark ? [0, 0, 0] : s.colors.ink2);
     gl.uniform1f(U.uHiA, dark ? (s.lg ? 0.42 : 0.3) : 0.8);
     gl.uniform1f(U.uLoA, dark ? 0.22 : 0.3);
+    gl.uniform1f(U.uCut, Math.max(0, (s.rect.top + s.rect.h - s.hh) / s.rect.h));
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     if (glint) {
       // The same light catches the ink of the name; kept low on dark paper so it never reads as a disc.
