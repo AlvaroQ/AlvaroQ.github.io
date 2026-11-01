@@ -54,6 +54,21 @@ export const en: Strings = {
   discontinuedBadge: "Discontinued",
   viewDetails: "View Details",
 
+  // Case study modal
+  caseContentLabel: "Case study content",
+  caseHighlights: "Key highlights",
+  caseArchitecture: "Architecture",
+  caseTechStack: "Tech stack",
+  caseScreenshots: "Screenshots",
+  caseClose: "Close",
+  caseOpenDemo: "Open demo",
+  screenshotAlt: "Screenshot {n} of {title}",
+  lightboxLabel: "Enlarged screenshot",
+  lightboxPrev: "Previous image",
+  lightboxNext: "Next image",
+  lightboxClose: "Close image",
+  lightboxCounter: "{n} of {total}",
+
   // Chat widget
   chatTitle: "Chat with Álvaro",
   chatOpen: "Open chat",

@@ -53,6 +53,21 @@ export const es = {
   discontinuedBadge: "Descontinuado",
   viewDetails: "Ver Detalles",
 
+  // Case study modal
+  caseContentLabel: "Contenido del caso",
+  caseHighlights: "Aspectos clave",
+  caseArchitecture: "Arquitectura",
+  caseTechStack: "Stack tecnológico",
+  caseScreenshots: "Capturas",
+  caseClose: "Cerrar",
+  caseOpenDemo: "Abrir demo",
+  screenshotAlt: "Captura {n} de {title}",
+  lightboxLabel: "Captura ampliada",
+  lightboxPrev: "Imagen anterior",
+  lightboxNext: "Imagen siguiente",
+  lightboxClose: "Cerrar imagen",
+  lightboxCounter: "{n} de {total}",
+
   // Chat widget
   chatTitle: "Chat con Álvaro",
   chatOpen: "Abrir chat",

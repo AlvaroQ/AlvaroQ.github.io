@@ -3,7 +3,8 @@
 // 'compact' is a grid tile (media on top, no feature list). Both open the project modal.
 import type { Lang, Strings } from '../i18n';
 import type { Project } from '../data/projects';
-import { mediaFor, thumbFor, type MediaLayout } from '../lib/images';
+import { mediaFor, type MediaLayout } from '../lib/images';
+import ProjectCase from './ProjectCase.astro';
 
 interface Props {
   project: Project;
@@ -35,28 +36,16 @@ const LAYOUT: Record<Props['variant'], MediaLayout> = {
 const { caseStudy, links } = project;
 const keys = caseStudy.screenshots;
 const cover = keys[0] ? await mediaFor(keys[0], LAYOUT[variant]) : null;
-const thumbs = await Promise.all(keys.map((key) => thumbFor(key)));
 const number = String(index + 1).padStart(2, '0');
 ---
 
 <article
   class:list={['card media-zoom animate-on-scroll group cursor-pointer', `card-${variant}`]}
   style={`--stagger: ${(index % 3) * 80}ms`}
-  data-case={project.slug}
+  data-open-case={project.slug}
   role="button"
   tabindex="0"
   aria-label={`${strings.viewDetails}: ${project.title}`}
-  data-project-title={project.title}
-  data-project-subtitle={project.subtitle[lang]}
-  data-project-description={project.description[lang]}
-  data-project-long-desc={caseStudy.longDescription[lang]}
-  data-project-architecture={caseStudy.architecture[lang]}
-  data-project-screenshots={JSON.stringify(thumbs.map((t) => t.src))}
-  data-project-thumbs={JSON.stringify(thumbs.map(({ srcset, sizes, maxHeight }) => ({ srcset, sizes, maxHeight })))}
-  data-project-highlights={JSON.stringify(caseStudy.keyHighlights.map((h) => h[lang]))}
-  data-project-demo={links.demo ?? ''}
-  data-project-github={links.github ?? ''}
-  data-project-tech={JSON.stringify(project.techStack)}
 >
   <div class:list={['media relative overflow-hidden bg-(--paper-2)', cover?.fit === 'contain' && 'media-contain']}>
     {cover ? (
@@ -103,7 +92,6 @@ const number = String(index + 1).padStart(2, '0');
           rel="noopener noreferrer"
           class="link-grow text-(--ink-muted) hover:text-(--ink)"
           aria-label={`${strings.a11yOpenProject}: ${project.title}`}
-          onclick="event.stopPropagation()"
         >
           {strings.viewOnGithub}
         </a>
@@ -113,7 +101,6 @@ const number = String(index + 1).padStart(2, '0');
           type="button"
           class="link-grow open-chat-btn text-(--accent)"
           data-action="open-chat"
-          onclick="event.stopPropagation()"
           aria-label={`${strings.tryIt}: ${project.title}`}
         >
           {strings.tryIt}
@@ -121,6 +108,8 @@ const number = String(index + 1).padStart(2, '0');
       )}
     </div>
   </div>
+
+  <ProjectCase project={project} lang={lang} strings={strings} />
 </article>
 
 <style>

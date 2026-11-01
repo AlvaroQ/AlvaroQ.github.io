@@ -89,8 +89,15 @@ test('no source maps or .DS_Store in dist', () => {
   assert.deepEqual(stray, []);
 });
 
-// The chat widget is an Astro component with a native dialog (P5a).
+// Widgets are Astro components (P5a): native dialogs, case studies rendered at build time.
 for (const [lang, root] of Object.entries(dom)) {
+  test(`${lang}: one project dialog and one case template per project`, () => {
+    assert.equal(root.querySelectorAll('dialog#project-modal').length, 1);
+    const cases = root.querySelectorAll('template[data-case]');
+    assert.equal(cases.length, 9);
+    assert.equal(new Set(cases.map((t) => t.getAttribute('data-case'))).size, 9);
+  });
+
   test(`${lang}: the chat is a named dialog with a live log and a labelled input`, () => {
     const dialog = root.querySelector('dialog#chat-dialog');
     assert.ok(dialog, 'dialog#chat-dialog missing');
@@ -104,5 +111,11 @@ for (const [lang, root] of Object.entries(dom)) {
   test(`${lang}: chat strings are in the page language`, () => {
     const close = lang === 'es' ? 'Cerrar chat' : 'Close chat';
     assert.ok(html[lang].includes(close), `"${close}" not found`);
+  });
+
+  test(`${lang}: no public widget scripts and no inline event handlers`, () => {
+    assert.equal(root.querySelectorAll('script[src^="/scripts/"]').length, 0);
+    const handlers = root.querySelectorAll('*').flatMap((el) => Object.keys(el.attributes).filter((a) => /^on/i.test(a)).map((a) => `${el.tagName}[${a}]`));
+    assert.deepEqual(handlers, []);
   });
 }

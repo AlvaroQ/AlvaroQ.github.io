@@ -32,38 +32,3 @@ const rest = projects.slice(FEATURED);
       ))}
     </div>
 </Section>
-
-<script>
-  // Bridge to the public modal script until the modal becomes an Astro component.
-  type ModalWindow = Window & { projectModal?: { open(data: unknown): void } };
-
-  function openModal(card: HTMLElement) {
-    const modal = (window as ModalWindow).projectModal;
-    if (!modal) return;
-    const data = {
-      title: card.dataset.projectTitle,
-      subtitle: card.dataset.projectSubtitle,
-      description: card.dataset.projectDescription,
-      longDescription: card.dataset.projectLongDesc,
-      architecture: card.dataset.projectArchitecture,
-      screenshots: JSON.parse(card.dataset.projectScreenshots || '[]'),
-      thumbs: JSON.parse(card.dataset.projectThumbs || '[]'),
-      keyHighlights: JSON.parse(card.dataset.projectHighlights || '[]'),
-      demoUrl: card.dataset.projectDemo || null,
-      githubUrl: card.dataset.projectGithub || null,
-      techStack: JSON.parse(card.dataset.projectTech || '[]'),
-    };
-    modal.open(data);
-  }
-
-  document.querySelectorAll<HTMLElement>('[data-case]').forEach((card) => {
-    card.addEventListener('click', () => openModal(card));
-    card.addEventListener('keydown', (e) => {
-      if (e.target !== card) return;
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        openModal(card);
-      }
-    });
-  });
-</script>

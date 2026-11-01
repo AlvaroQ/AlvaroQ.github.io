@@ -1,0 +1,379 @@
+---
+// Full case study of one project, rendered at build time inside a <template>.
+// The modal script clones the template into the dialog on first open, so the
+// screenshots are not requested until the visitor asks for the case.
+import type { Lang, Strings } from '../i18n';
+import type { Project } from '../data/projects';
+import { thumbFor } from '../lib/images';
+
+interface Props {
+  project: Project;
+  lang: Lang;
+  strings: Strings;
+}
+
+const { project, lang, strings } = Astro.props;
+const { caseStudy, links } = project;
+
+// ---- Long description: paragraphs, "## " headings, "›" bullets and `code` spans ----
+type Span = { text: string; code: boolean };
+type Block =
+  | { kind: 'heading'; text: string }
+  | { kind: 'paragraph'; spans: Span[] }
+  | { kind: 'list'; items: Span[][] };
+
+function spansOf(text: string): Span[] {
+  return text
+    .split('`')
+    .map((part, i) => ({ text: part, code: i % 2 === 1 }))
+    .filter((span) => span.text !== '');
+}
+
+function blocksOf(source: string): Block[] {
+  const blocks: Block[] = [];
+  let paragraph: string[] = [];
+  const flush = () => {
+    if (paragraph.length) blocks.push({ kind: 'paragraph', spans: spansOf(paragraph.join(' ')) });
+    paragraph = [];
+  };
+  for (const raw of source.split('\n')) {
+    const line = raw.trim();
+    const last = blocks.at(-1);
+    if (line === '') {
+      flush();
+    } else if (line.startsWith('## ')) {
+      flush();
+      blocks.push({ kind: 'heading', text: line.slice(3) });
+    } else if (line.startsWith('›')) {
+      flush();
+      const item = spansOf(line.slice(1).trim());
+      if (last?.kind === 'list') last.items.push(item);
+      else blocks.push({ kind: 'list', items: [item] });
+    } else {
+      paragraph.push(line);
+    }
+  }
+  flush();
+  return blocks;
+}
+
+// ---- Architecture: "Key: value" lines ----
+function entriesOf(source: string): { term: string; detail: string }[] {
+  return source
+    .split('\n')
+    .filter((line) => line.trim() !== '')
+    .map((line) => {
+      const cut = line.indexOf(': ');
+      return cut === -1 ? { term: '', detail: line } : { term: line.slice(0, cut), detail: line.slice(cut + 2) };
+    });
+}
+
+const blocks = blocksOf(caseStudy.longDescription[lang]);
+const architecture = entriesOf(caseStudy.architecture[lang]);
+const highlights = caseStudy.keyHighlights.map((h) => h[lang]);
+const shots = await Promise.all(
+  caseStudy.screenshots.map(async (key, i) => ({
+    ...(await thumbFor(key)),
+    alt: strings.screenshotAlt.replace('{n}', String(i + 1)).replace('{title}', project.title),
+  })),
+);
+---
+
+<template data-case={project.slug}>
+  <header class="case-head">
+    <h2 id="project-modal-title" class="case-title">{project.title}</h2>
+    <p class="case-subtitle">{project.subtitle[lang]}</p>
+    {(links.demo || links.github) && (
+      <p class="case-links">
+        {links.demo && (
+          <a class="btn btn-solid" href={links.demo} target="_blank" rel="noopener noreferrer">{strings.caseOpenDemo}</a>
+        )}
+        {links.github && (
+          <a class="btn btn-ghost" href={links.github} target="_blank" rel="noopener noreferrer">{strings.viewOnGithub}</a>
+        )}
+      </p>
+    )}
+  </header>
+
+  <div class="case-body">
+    <div class="case-main">
+      <div class="case-prose">
+        {blocks.map((block) =>
+          block.kind === 'heading' ? (
+            <h3 class="case-subhead">{block.text}</h3>
+          ) : block.kind === 'list' ? (
+            <ul class="case-bullets">
+              {block.items.map((item) => (
+                <li>{item.map((span) => (span.code ? <code>{span.text}</code> : span.text))}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>{block.spans.map((span) => (span.code ? <code>{span.text}</code> : span.text))}</p>
+          ),
+        )}
+      </div>
+
+      <div class="case-section">
+        <h3 class="case-heading">{strings.caseHighlights}</h3>
+        <ul class="case-highlights">
+          {highlights.map((text) => <li>{text}</li>)}
+        </ul>
+      </div>
+
+      <div class="case-section">
+        <h3 class="case-heading">{strings.caseArchitecture}</h3>
+        <dl class="case-architecture">
+          {architecture.map((entry) => (
+            <div>
+              {entry.term && <dt>{entry.term}</dt>}
+              <dd>{entry.detail}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+
+    <div class="case-side">
+      {shots.length > 0 && (
+        <div class="case-section">
+          <h3 class="case-heading">{strings.caseScreenshots}</h3>
+          <ul class="case-shots">
+            {shots.map((shot, i) => (
+              <li>
+                <button type="button" class="case-shot">
+                  <img
+                    src={shot.src}
+                    srcset={shot.srcset}
+                    sizes={shot.sizes}
+                    alt={shot.alt}
+                    data-index={i}
+                    data-max-height={shot.maxHeight}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div class="case-section">
+        <h3 class="case-heading">{strings.caseTechStack}</h3>
+        <ul class="case-tech">
+          {project.techStack.map((tech) => <li class="tag">{tech}</li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style>
+  .case-head {
+    display: grid;
+    gap: 8px;
+    padding: 24px 76px 20px 24px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .case-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.05;
+    color: var(--ink);
+  }
+
+  .case-subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-muted);
+  }
+
+  .case-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 4px 0 0;
+  }
+
+  .case-body {
+    display: grid;
+    gap: 24px;
+    padding: 24px;
+  }
+
+  .case-main,
+  .case-side {
+    display: grid;
+    gap: 24px;
+    align-content: start;
+    min-width: 0;
+  }
+
+  .case-prose {
+    display: grid;
+    gap: 12px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+
+  .case-prose p,
+  .case-prose ul {
+    margin: 0;
+  }
+
+  .case-subhead,
+  .case-heading {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .case-subhead {
+    margin-top: 8px;
+  }
+
+  .case-bullets,
+  .case-highlights {
+    display: grid;
+    gap: 8px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .case-bullets li,
+  .case-highlights li {
+    position: relative;
+    padding-left: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .case-bullets li::before,
+  .case-highlights li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .case-section {
+    display: grid;
+    gap: 12px;
+  }
+
+  .case-architecture {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--paper);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .case-architecture div {
+    display: grid;
+    gap: 2px 12px;
+    grid-template-columns: 9.5rem 1fr;
+  }
+
+  .case-architecture dt {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+
+  .case-architecture dd {
+    margin: 0;
+    grid-column: 2;
+    color: var(--ink);
+  }
+
+  .case-architecture dt:empty {
+    display: none;
+  }
+
+  code {
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+
+  .case-shots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .case-shot {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--paper);
+    cursor: zoom-in;
+    overflow: hidden;
+  }
+
+  .case-shot img {
+    display: block;
+    width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+  }
+
+  .case-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (max-width: 600px) {
+    .case-head {
+      padding: 16px 68px 16px 20px;
+    }
+
+    .case-title {
+      font-size: 22px;
+    }
+
+    .case-body {
+      padding: 20px;
+    }
+
+    .case-shots {
+      grid-template-columns: 1fr;
+    }
+
+    .case-architecture div {
+      grid-template-columns: 1fr;
+    }
+
+    .case-architecture dd {
+      grid-column: 1;
+    }
+  }
+</style>
