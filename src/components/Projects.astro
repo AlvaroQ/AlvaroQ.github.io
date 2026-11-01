@@ -13,8 +13,8 @@ interface Props {
 const { strings, lang } = Astro.props;
 const total = String(projects.length).padStart(2, '0');
 
-// The first four projects are the editorial features; the rest form a three-column grid.
-const FEATURED = 4;
+// The first five projects are the editorial features; the other six fill two rows of the three-column grid.
+const FEATURED = 5;
 const featured = projects.slice(0, FEATURED);
 const rest = projects.slice(FEATURED);
 ---

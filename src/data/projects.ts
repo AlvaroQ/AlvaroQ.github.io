@@ -30,7 +30,7 @@ export interface Project {
 }
 
 export const projects: Project[] = [
-  // Featured rows: Gran Premio IA, invirtiendo.site, Adivina Perro, Chart Analyzer
+  // Featured rows: Gran Premio IA, invirtiendo.site, Briefing Mundial, Chart Analyzer, Adivina Perro
   {
     slug: "gran-premio-ia",
     title: "Gran Premio IA",
@@ -124,6 +124,86 @@ export const projects: Project[] = [
     }
   },
   {
+    slug: "briefing-mundial",
+    title: "Briefing Mundial",
+    subtitle: {
+      es: "Los mercados del mundo, resumidos en tu bandeja cada mañana",
+      en: "The world's markets, summed up in your inbox every morning"
+    },
+    description: {
+      es: "Un briefing diario que llega por email cada mañana a las 10:15 con todo lo que importa antes de que abra Wall Street: índices de Europa, EE. UU. y Asia, sectores y los mejores y peores del S&P 500, movimientos tras resultados, la agenda macro y alertas fuera de umbral. Claude rastrea las noticias de las empresas de mi cartera, resume los correos de las últimas 24 horas y condensa la actualidad económica, tecnológica y geopolítica, todo en un email HTML oscuro cuidado al detalle para Gmail.",
+      en: "A daily briefing that lands by email every morning at 10:15 with everything that matters before Wall Street opens: European, US and Asian indices, S&P 500 sectors and top and bottom movers, post-earnings moves, the macro calendar and out-of-range alerts. Claude tracks news on the companies in my portfolio, summarises the last 24 hours of email and condenses the economic, tech and geopolitical news, all in a dark HTML email crafted down to the detail for Gmail."
+    },
+    features: [
+      { es: "Cada Mañana a las 10:15", en: "Every Morning at 10:15" },
+      { es: "Noticias de Mi Cartera con IA", en: "AI News on My Portfolio" },
+      { es: "Correo de 24 h Resumido", en: "24 h of Email Summarised" },
+      { es: "Mercados, Macro y Alertas", en: "Markets, Macro & Alerts" }
+    ],
+    techStack: ["Python", "Claude Code", "Yahoo Finance", "Nasdaq", "ForexFactory", "Firestore", "Gmail", "cron"],
+    status: 'live',
+    links: {},
+    caseStudy: {
+      longDescription: {
+        es: "Briefing Mundial es el email que abro cada mañana: un job desatendido en un VPS que a las 10:15 reúne mercados, noticias, macro, mi cartera y mi correo, y me lo entrega como un informe oscuro, por secciones y legible de un vistazo en el móvil.\n\n## El Mundo en una Pantalla\nÍndices de Europa, EE. UU. y Asia con su bandera, futuros, VIX, EUR/USD, dólar, bitcoin, oro, plata, petróleo y los bonos de EE. UU. a 2 y 10 años, el sentimiento de Fear & Greed y AAII, los sectores del S&P 500 y los cinco mejores y peores de sus 503 empresas. Las alertas saltan cuando algo se sale de su umbral y un resumen ejecutivo lo condensa todo en tres líneas.\n\n## Resultados y Agenda\nMovimientos tras resultados en el S&P 500 y el Nasdaq-100 con el BPA frente a la estimación, el after-hours y una línea que explica el porqué, junto a una agenda de datos macro y resultados de las empresas que sigo.\n\n## Mi Cartera y Mi Correo\n«Tu cartera hoy» calcula el movimiento de la sesión ponderado por posición y su impacto en euros a partir de mis operaciones en Firestore. Claude filtra por relevancia las noticias de cada empresa que tengo o sigo, y resume por categorías los correos de las últimas 24 horas sin marcar ninguno como leído.\n\n## Ingeniería\nPython con solo la biblioteca estándar, resúmenes de Claude por lotes y cacheados por URL, con alternativa sin IA cuando algo falla. El email es HTML con tablas, compatible con Gmail: tema oscuro, tarjetas por sección, dos columnas que se apilan en el móvil y versión de texto, cubierto por más de 240 tests.",
+        en: "Briefing Mundial is the email I open every morning: an unattended job on a VPS that gathers markets, news, macro, my portfolio and my inbox at 10:15 and delivers them as a dark, sectioned report readable at a glance on a phone.\n\n## The World on One Screen\nEuropean, US and Asian indices with their flags, futures, VIX, EUR/USD, the dollar, bitcoin, gold, silver, oil and 2- and 10-year US Treasuries, Fear & Greed and AAII sentiment, the S&P 500 sectors and the five best and worst of its 503 companies. Alerts fire when anything leaves its range, and an executive summary condenses it all into three lines.\n\n## Earnings and Calendar\nPost-earnings moves across the S&P 500 and the Nasdaq-100 with EPS against the estimate, the after-hours move and a line explaining why, plus a calendar of macro releases and earnings from the companies I follow.\n\n## My Portfolio and My Inbox\n\"Tu cartera hoy\" works out the session's position-weighted move and its impact in euros from my trades in Firestore. Claude filters each holding's and watched company's news for relevance, and summarises the last 24 hours of email by category without marking a single message as read.\n\n## Engineering\nPython on the standard library alone, Claude summaries batched and cached by URL, with a no-AI fallback whenever something fails. The email is table-based HTML built for Gmail: dark theme, a card per section, two columns that stack on a phone and a plain-text version, covered by more than 240 tests."
+      },
+      architecture: {
+        es: "Job: cron diario a las 10:15 (Europe/Madrid) en un VPS\nLenguaje: Python 3, solo biblioteca estándar\nMercados: Yahoo Finance (cotizaciones y RSS), Nasdaq, US Treasury\nAgenda: ForexFactory + EODHD\nSentimiento y cartera: Firestore (lector Node con firebase-admin)\nIA: Claude Code en modo headless (claude -p) para resúmenes, títulos y relevancia\nCorreo: bandeja leída con himalaya sin marcar nada como leído\nEnvío: Gmail SMTP, HTML con tablas + versión de texto\nTesting: unittest (240+ tests)",
+        en: "Job: daily cron at 10:15 (Europe/Madrid) on a VPS\nLanguage: Python 3, standard library only\nMarkets: Yahoo Finance (quotes and RSS), Nasdaq, US Treasury\nCalendar: ForexFactory + EODHD\nSentiment and portfolio: Firestore (Node reader with firebase-admin)\nAI: Claude Code in headless mode (claude -p) for summaries, titles and relevance\nInbox: read with himalaya without marking anything as read\nDelivery: Gmail SMTP, table-based HTML + plain-text version\nTesting: unittest (240+ tests)"
+      },
+      screenshots: [
+        "projects/briefing-mundial-sp500.webp"
+      ],
+      keyHighlights: [
+        { es: "Llega solo cada mañana a las 10:15: un cron en un VPS, sin intervención", en: "Arrives on its own every morning at 10:15: a cron job on a VPS, hands-free" },
+        { es: "Índices de Europa, EE. UU. y Asia, divisas, materias primas, bitcoin y bonos", en: "European, US and Asian indices, currencies, commodities, bitcoin and Treasuries" },
+        { es: "Sectores y mejores y peores de las 503 empresas del S&P 500, con alertas fuera de umbral", en: "Sectors and best and worst of the S&P 500's 503 companies, with out-of-range alerts" },
+        { es: "Movimientos tras resultados con BPA frente a estimación y el porqué de cada uno", en: "Post-earnings moves with EPS against the estimate and the why behind each one" },
+        { es: "Noticias de las empresas de mi cartera filtradas por relevancia con Claude", en: "News on my portfolio companies filtered for relevance by Claude" },
+        { es: "Resumen por categorías del correo de las últimas 24 horas, sin marcar nada como leído", en: "The last 24 hours of email summarised by category, nothing marked as read" },
+        { es: "HTML oscuro con tablas pensado para Gmail en el móvil, con versión de texto", en: "Dark, table-based HTML designed for Gmail on a phone, with a plain-text version" },
+        { es: "Python con solo la biblioteca estándar y más de 240 tests con unittest", en: "Python on the standard library alone and more than 240 unittest tests" }
+      ],
+    }
+  },
+  {
+    slug: "chart-analyzer",
+    title: "Chart Analyzer",
+    subtitle: { es: "Inteligencia de Mercado en Tiempo Real", en: "Real-time Market Intelligence" },
+    description: {
+      es: "Plataforma full-stack de análisis financiero con dos agentes IA: uno rastrea en tiempo real las noticias de cualquier ticker y otro lee gráficos de velas para detectar patrones, soportes y resistencias. Eliges el proveedor en cada función (Gemini, Perplexity, Claude u OpenAI) con tu propia API key.",
+      en: "Full-stack financial analysis platform with two AI agents: one tracks real-time news for any ticker and the other reads candlestick charts to spot patterns, support and resistance. You pick the provider for each feature (Gemini, Perplexity, Claude or OpenAI) with your own API key."
+    },
+    features: [
+      { es: "Noticias IA en Tiempo Real", en: "Real-time News AI" },
+      { es: "Análisis de Gráficos", en: "Chart Analysis" },
+      { es: "Detección de Patrones", en: "Pattern Detection" },
+      { es: "4 Proveedores IA (BYOK)", en: "4 AI Providers (BYOK)" }
+    ],
+    techStack: ["Next.js", "React 19", "TypeScript", "Gemini", "Perplexity", "Claude", "OpenAI"],
+    status: 'live',
+    links: { github: "https://github.com/AlvaroQ/chart-analyzer-and-stock-news", demo: "https://chart-analyzer-and-stock-news.vercel.app/" },
+    caseStudy: {
+      longDescription: {
+        es: "Como inversor activo, necesitaba una herramienta que combinara análisis técnico con contexto de noticias en tiempo real. Este proyecto orquesta dos agentes IA, y cada usuario elige qué modelo potencia cada uno con su propia clave.",
+        en: "As an active investor, I needed a tool that combined technical analysis with real-time news context. This project orchestrates two AI agents, and each user chooses which model powers each one with their own key."
+      },
+      architecture: {
+        es: "Frontend: Next.js 16 App Router + React 19 + Tailwind CSS 4\nNews Agent: Perplexity sonar-pro, Claude u OpenAI (búsqueda web)\nChart Agent: Gemini 2.0 Flash, Claude u OpenAI (visión)\nClaves: BYOK en el navegador con un registro de proveedores\nDespliegue: Vercel",
+        en: "Frontend: Next.js 16 App Router + React 19 + Tailwind CSS 4\nNews Agent: Perplexity sonar-pro, Claude or OpenAI (web search)\nChart Agent: Gemini 2.0 Flash, Claude or OpenAI (vision)\nKeys: BYOK in the browser with a provider registry\nDeployment: Vercel"
+      },
+      screenshots: ["projects/chart-analyzer-and-stock-news.webp", "projects/chart-analyzer-claude-analysis.webp"],
+      keyHighlights: [
+        { es: "Análisis multimodal: texto (noticias) + visión (gráficos)", en: "Multimodal analysis: text (news) + vision (charts)" },
+        { es: "Trae tu propia clave: cada usuario usa su API key, guardada solo en su navegador", en: "Bring your own key: every user runs on their own API key, stored only in their browser" },
+        { es: "Detecta patrones: head & shoulders, triángulos, canales", en: "Detects patterns: head & shoulders, triangles, channels" },
+        { es: "Correlaciona noticias con movimientos de precio", en: "Correlates news with price movements" },
+        { es: "100% TypeScript con tipos estrictos", en: "100% TypeScript with strict types" }
+      ],
+    }
+  },
+  {
     slug: "adivina-perro",
     title: "Adivina Perro",
     subtitle: {
@@ -164,42 +244,6 @@ export const projects: Project[] = [
         { es: "Clean Architecture en 4 módulos KMP con interfaz BreedClassifier en commonMain", en: "Clean Architecture across 4 KMP modules with BreedClassifier interface in commonMain" },
         { es: "59 unit tests pasando en CI (32 ViewModels + 14 use cases + 13 data)", en: "59 unit tests passing in CI (32 ViewModels + 14 use cases + 13 data)" },
         { es: "SQLDelight como source of truth, Firebase como semilla — playable offline", en: "SQLDelight as source of truth, Firebase as seed — playable offline" }
-      ],
-    }
-  },
-  {
-    slug: "chart-analyzer",
-    title: "Chart Analyzer",
-    subtitle: { es: "Inteligencia de Mercado en Tiempo Real", en: "Real-time Market Intelligence" },
-    description: {
-      es: "Plataforma full-stack de análisis financiero con dos agentes IA: uno rastrea en tiempo real las noticias de cualquier ticker y otro lee gráficos de velas para detectar patrones, soportes y resistencias. Eliges el proveedor en cada función (Gemini, Perplexity, Claude u OpenAI) con tu propia API key.",
-      en: "Full-stack financial analysis platform with two AI agents: one tracks real-time news for any ticker and the other reads candlestick charts to spot patterns, support and resistance. You pick the provider for each feature (Gemini, Perplexity, Claude or OpenAI) with your own API key."
-    },
-    features: [
-      { es: "Noticias IA en Tiempo Real", en: "Real-time News AI" },
-      { es: "Análisis de Gráficos", en: "Chart Analysis" },
-      { es: "Detección de Patrones", en: "Pattern Detection" },
-      { es: "4 Proveedores IA (BYOK)", en: "4 AI Providers (BYOK)" }
-    ],
-    techStack: ["Next.js", "React 19", "TypeScript", "Gemini", "Perplexity", "Claude", "OpenAI"],
-    status: 'live',
-    links: { github: "https://github.com/AlvaroQ/chart-analyzer-and-stock-news", demo: "https://chart-analyzer-and-stock-news.vercel.app/" },
-    caseStudy: {
-      longDescription: {
-        es: "Como inversor activo, necesitaba una herramienta que combinara análisis técnico con contexto de noticias en tiempo real. Este proyecto orquesta dos agentes IA, y cada usuario elige qué modelo potencia cada uno con su propia clave.",
-        en: "As an active investor, I needed a tool that combined technical analysis with real-time news context. This project orchestrates two AI agents, and each user chooses which model powers each one with their own key."
-      },
-      architecture: {
-        es: "Frontend: Next.js 16 App Router + React 19 + Tailwind CSS 4\nNews Agent: Perplexity sonar-pro, Claude u OpenAI (búsqueda web)\nChart Agent: Gemini 2.0 Flash, Claude u OpenAI (visión)\nClaves: BYOK en el navegador con un registro de proveedores\nDespliegue: Vercel",
-        en: "Frontend: Next.js 16 App Router + React 19 + Tailwind CSS 4\nNews Agent: Perplexity sonar-pro, Claude or OpenAI (web search)\nChart Agent: Gemini 2.0 Flash, Claude or OpenAI (vision)\nKeys: BYOK in the browser with a provider registry\nDeployment: Vercel"
-      },
-      screenshots: ["projects/chart-analyzer-and-stock-news.webp", "projects/chart-analyzer-claude-analysis.webp"],
-      keyHighlights: [
-        { es: "Análisis multimodal: texto (noticias) + visión (gráficos)", en: "Multimodal analysis: text (news) + vision (charts)" },
-        { es: "Trae tu propia clave: cada usuario usa su API key, guardada solo en su navegador", en: "Bring your own key: every user runs on their own API key, stored only in their browser" },
-        { es: "Detecta patrones: head & shoulders, triángulos, canales", en: "Detects patterns: head & shoulders, triangles, channels" },
-        { es: "Correlaciona noticias con movimientos de precio", en: "Correlates news with price movements" },
-        { es: "100% TypeScript con tipos estrictos", en: "100% TypeScript with strict types" }
       ],
     }
   },

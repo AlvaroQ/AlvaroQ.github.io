@@ -95,7 +95,7 @@ test('no source maps or .DS_Store in dist', () => {
   assert.deepEqual(stray, []);
 });
 
-const PROJECTS = 10;
+const PROJECTS = 11;
 
 // Widgets are Astro components (P5a): native dialogs, case studies rendered at build time.
 for (const [lang, root] of Object.entries(dom)) {
@@ -254,7 +254,7 @@ for (const [lang, root] of Object.entries(dom)) {
 
   test(`${lang}: Gran Premio IA opens the list and invirtiendo.site replaces Cartera Investing`, () => {
     const titles = root.querySelectorAll('article.card h3 button').map((b) => b.textContent.trim());
-    assert.deepEqual(titles.slice(0, 5), ['Gran Premio IA', 'invirtiendo.site', 'Adivina Perro', 'Chart Analyzer', 'RAG Chatbot']);
+    assert.deepEqual(titles.slice(0, 6), ['Gran Premio IA', 'invirtiendo.site', 'Briefing Mundial', 'Chart Analyzer', 'Adivina Perro', 'RAG Chatbot']);
     assert.ok(titles.includes('invirtiendo.site'));
     assert.ok(!html[lang].includes('Cartera Investing'), 'old project name still on the page');
     const first = root.querySelector('article.card .label-ui span').textContent.replace(/\s+/g, ' ').trim();
@@ -271,6 +271,22 @@ for (const [lang, root] of Object.entries(dom)) {
     assert.ok(chart.toString().includes('href="https://chart-analyzer-and-stock-news.vercel.app/"'), 'new demo URL missing');
     assert.ok(chart.toString().includes('href="https://github.com/AlvaroQ/chart-analyzer-and-stock-news"'), 'GitHub link missing');
     assert.ok(!html[lang].includes('project-ia-three.vercel.app'), 'old demo URL still on the page');
+  });
+
+  test(`${lang}: the first five projects are featured rows and the sixth opens the compact grid`, () => {
+    const cards = root.querySelectorAll('article.card');
+    assert.equal(cards.length, PROJECTS);
+    cards.slice(0, 5).forEach((c, i) => assert.ok(c.classList.contains('card-feature'), `card ${i + 1} is not featured`));
+    assert.ok(cards[5].classList.contains('card-compact'), 'card 6 is not compact');
+    assert.equal(root.querySelectorAll('article.card-compact').length, PROJECTS - 5);
+  });
+
+  test(`${lang}: Briefing Mundial is a live project with no external links`, () => {
+    const card = root.querySelectorAll('article.card').find((c) => c.querySelector('h3 button')?.textContent.trim() === 'Briefing Mundial');
+    assert.ok(card, 'Briefing Mundial card missing');
+    assert.ok(card.querySelector('.badge-live'), 'no live badge');
+    assert.equal(card.querySelectorAll('a[href]').length, 0, 'card links out');
+    assert.equal(root.querySelectorAll('template[data-case="briefing-mundial"]').length, 1);
   });
 
   test(`${lang}: every project card has a responsive cover from the asset pipeline`, () => {
