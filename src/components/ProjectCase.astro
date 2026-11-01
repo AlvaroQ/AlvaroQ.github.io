@@ -71,6 +71,8 @@ function entriesOf(source: string): { term: string; detail: string }[] {
 const blocks = blocksOf(caseStudy.longDescription[lang]);
 const architecture = entriesOf(caseStudy.architecture[lang]);
 const highlights = caseStudy.keyHighlights.map((h) => h[lang]);
+// With a single screenshot the side column is short: the highlights move there to balance it.
+const highlightsInSide = caseStudy.screenshots.length === 1;
 const shots = await Promise.all(
   caseStudy.screenshots.map(async (key, i) => ({
     ...(await thumbFor(key)),
@@ -113,12 +115,14 @@ const shots = await Promise.all(
         )}
       </div>
 
-      <div class="case-section">
-        <h3 class="case-heading">{strings.caseHighlights}</h3>
-        <ul class="case-highlights">
-          {highlights.map((text) => <li>{text}</li>)}
-        </ul>
-      </div>
+      {!highlightsInSide && (
+        <div class="case-section">
+          <h3 class="case-heading">{strings.caseHighlights}</h3>
+          <ul class="case-highlights">
+            {highlights.map((text) => <li>{text}</li>)}
+          </ul>
+        </div>
+      )}
 
       <div class="case-section">
         <h3 class="case-heading">{strings.caseArchitecture}</h3>
@@ -154,6 +158,15 @@ const shots = await Promise.all(
                 </button>
               </li>
             ))}
+          </ul>
+        </div>
+      )}
+
+      {highlightsInSide && (
+        <div class="case-section">
+          <h3 class="case-heading">{strings.caseHighlights}</h3>
+          <ul class="case-highlights">
+            {highlights.map((text) => <li>{text}</li>)}
           </ul>
         </div>
       )}
@@ -376,4 +389,68 @@ const shots = await Promise.all(
       grid-column: 1;
     }
   }
+
+  /* ---- Wider modal (U13: less scrolling) ---- */
+  @media (min-width: 1024px) {
+    .case-head {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 6px 24px;
+      padding: 22px 76px 22px 32px;
+    }
+
+    .case-title {
+      font-size: 28px;
+    }
+
+    .case-subtitle {
+      grid-column: 1;
+    }
+
+    .case-links {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      margin: 0;
+    }
+
+    .case-body {
+      gap: 28px;
+      padding: 28px 32px;
+    }
+
+    .case-prose,
+    .case-highlights li {
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .case-prose,
+    .case-highlights {
+      max-width: 68ch;
+    }
+
+    /* 1024–1279: one column, screenshots as a strip of three */
+    .case-shots {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* From 1280: text 7 / gallery 5, the gallery stays in view while the text scrolls */
+  @media (min-width: 1280px) {
+    .case-body {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: 40px;
+    }
+
+    .case-side {
+      position: sticky;
+      top: 0;
+      align-self: start;
+    }
+
+    .case-shots {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
 </style>

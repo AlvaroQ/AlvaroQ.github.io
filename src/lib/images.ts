@@ -2,7 +2,7 @@
 // Keys are paths relative to src/assets, e.g. 'projects/rag-chatbot.webp'.
 import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import { fitFor, sizesFor, thumbSizes, type MediaLayout } from './media';
+import { fitFor, sizesFor, thumbSizes, type MediaLayout, type ThumbLayout } from './media';
 
 export { fitFor, PORTRAIT_RATIO, type MediaLayout, type Slot } from './media';
 
@@ -39,6 +39,16 @@ export async function fixed(key: string, width: number): Promise<ResponsiveImage
 
 const MEDIA_WIDTHS = [400, 600, 800, 1000, 1200, 1440];
 const MODAL_WIDTHS = [480, 800, 1200, 1600];
+/** Thumbnail cells of the case modal (ProjectModal/ProjectCase styles): keep in sync with the CSS. */
+const MODAL_THUMBS: ThumbLayout = {
+  maxHeight: 250,
+  maxWidth: 750,
+  mobileMaxWidth: 540,
+  // 5/12 of the 1200 px box minus its 2 × 32 px padding and the 40 px column gap
+  sideWidth: 456,
+  // A third of the box (viewport − 2rem) minus padding and two 12 px gaps
+  stripWidth: 'calc((100vw - 120px) / 3)',
+};
 
 /** Card media: responsive variants, cover/contain decision, `sizes` and the contain cap. */
 export async function mediaFor(key: string, layout: MediaLayout) {
@@ -49,7 +59,7 @@ export async function mediaFor(key: string, layout: MediaLayout) {
 }
 
 /** Case-study screenshot: the largest variant feeds the lightbox, the srcset the thumbnail. */
-export async function thumbFor(key: string, { maxHeight = 250, maxWidth = 750, mobileMaxWidth = 540 } = {}) {
+export async function thumbFor(key: string, layout: Partial<ThumbLayout> = {}) {
   const img = await responsive(key, MODAL_WIDTHS);
-  return { src: img.src, srcset: img.srcset, ...thumbSizes(img, { maxHeight, maxWidth, mobileMaxWidth }) };
+  return { src: img.src, srcset: img.srcset, ...thumbSizes(img, { ...MODAL_THUMBS, ...layout }) };
 }

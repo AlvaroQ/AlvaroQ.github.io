@@ -52,15 +52,29 @@ export function sizesFor(meta: Dimensions, layout: MediaLayout, fit: Fit): { siz
   return { sizes: `(min-width: 1024px) ${lg}px, (min-width: 768px) ${md}px, ${sm}px` };
 }
 
+export interface ThumbLayout {
+  /** Height cap of a thumbnail (CSS px). */
+  maxHeight: number;
+  /** Cell width in the single-column modal (up to 1023 px viewports). */
+  maxWidth: number;
+  /** Cell width on phones (≤ 600 px viewports). */
+  mobileMaxWidth: number;
+  /** Side column of the two-column modal (from 1280 px). */
+  sideWidth: number;
+  /** One cell of the strip of three (1024–1279 px): a CSS length, it follows the viewport. */
+  stripWidth: string;
+}
+
 /**
- * Modal thumbnail contained in a cell up to `maxWidth` px wide (`mobileMaxWidth` on phones) and
- * at most `maxHeight` px tall; capping the height at a third of the source keeps it ≤ 1x up to 3x.
+ * Modal thumbnail contained in its cell for each modal layout and at most `maxHeight` px tall;
+ * capping the height at a third of the source keeps it ≤ 1x up to 3x screens.
  */
-export function thumbSizes(meta: Dimensions, opts: { maxHeight: number; maxWidth: number; mobileMaxWidth: number }) {
+export function thumbSizes(meta: Dimensions, opts: ThumbLayout) {
   const maxHeight = Math.min(opts.maxHeight, Math.floor(meta.height / 3));
   const painted = Math.round((maxHeight * meta.width) / meta.height);
+  const at = (cell: number) => `${Math.min(painted, cell)}px`;
   return {
     maxHeight,
-    sizes: `(max-width: 600px) ${Math.min(painted, opts.mobileMaxWidth)}px, ${Math.min(painted, opts.maxWidth)}px`,
+    sizes: `(min-width: 1280px) ${at(opts.sideWidth)}, (min-width: 1024px) min(${painted}px, ${opts.stripWidth}), (max-width: 600px) ${at(opts.mobileMaxWidth)}, ${at(opts.maxWidth)}`,
   };
 }

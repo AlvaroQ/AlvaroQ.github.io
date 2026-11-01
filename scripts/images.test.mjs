@@ -28,9 +28,20 @@ test('sizesFor contain: never above half the source', () => {
   assert.equal(sizes, '(min-width: 1024px) 361px, (min-width: 768px) 306px, 215px');
 });
 
+const modal = { maxHeight: 250, maxWidth: 750, mobileMaxWidth: 540, sideWidth: 456, stripWidth: 'calc((100vw - 120px) / 3)' };
+
 test('thumbSizes: height capped at a third of the source', () => {
-  assert.deepEqual(thumbSizes({ width: 1376, height: 661 }, { maxHeight: 250, maxWidth: 750, mobileMaxWidth: 540 }), {
-    maxHeight: 220,
-    sizes: '(max-width: 600px) 458px, 458px',
-  });
+  assert.equal(thumbSizes({ width: 1376, height: 661 }, modal).maxHeight, 220);
+});
+
+test('thumbSizes: one slot per modal layout (side column, strip of three, phone, single column)', () => {
+  assert.equal(
+    thumbSizes({ width: 1376, height: 661 }, modal).sizes,
+    '(min-width: 1280px) 456px, (min-width: 1024px) min(458px, calc((100vw - 120px) / 3)), (max-width: 600px) 458px, 458px',
+  );
+  // A narrow portrait screenshot is never wider than its painted width.
+  assert.equal(
+    thumbSizes({ width: 540, height: 1155 }, modal).sizes,
+    '(min-width: 1280px) 117px, (min-width: 1024px) min(117px, calc((100vw - 120px) / 3)), (max-width: 600px) 117px, 117px',
+  );
 });

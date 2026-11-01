@@ -83,6 +83,15 @@ const { strings } = Astro.props;
     font-family: var(--font-ui);
   }
 
+  /* Wider box from 1024 px: one 1000-ish column up to 1279, two columns from 1280 (ProjectCase) */
+  @media (min-width: 1024px) {
+    #project-modal {
+      --box-radius: 6px;
+      max-width: 1200px;
+      max-height: 92dvh;
+    }
+  }
+
   #project-modal[open] {
     display: flex;
     flex-direction: column;
