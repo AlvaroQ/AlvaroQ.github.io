@@ -18,7 +18,7 @@ const sections = [
 ];
 ---
 
-<nav id="main-nav" class="fixed top-10 left-1/2 -translate-x-1/2 z-50 transition-[top] duration-300" aria-label={strings.a11yNavigation}>
+<nav id="main-nav" class="fixed top-10 left-1/2 z-50 -translate-x-1/2 transition-[top] duration-300 max-md:left-4 max-md:right-[9rem] max-md:translate-x-0" aria-label={strings.a11yNavigation}>
   <div class="nav-pill flex gap-1 rounded-full border border-(--line) px-3 py-1.5 backdrop-blur-xl">
     {sections.map(({ id, label }) => (
       <a
@@ -26,9 +26,7 @@ const sections = [
         class="nav-link flex min-h-[44px] items-center whitespace-nowrap rounded-full px-2 py-3 font-mono text-[11px] uppercase tracking-[0.08em] text-(--ink-muted) transition-colors duration-200 hover:text-(--ink) md:px-3"
         data-section={id}
       >
-        <span class="sr-only">{label}</span>
-        <span class="hidden md:inline" aria-hidden="true">{label}</span>
-        <span class="md:hidden" aria-hidden="true">{label.slice(0, 3)}</span>
+        {label}
       </a>
     ))}
   </div>
@@ -43,6 +41,26 @@ const sections = [
     color: var(--accent);
   }
 
+  /* Below md the pill shares the top band with the theme/language controls:
+     full labels scroll horizontally, with faded edges as a scroll hint. */
+  @media (max-width: 767px) {
+    .nav-pill {
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+      -webkit-mask-image: linear-gradient(to right, transparent, black 12px, black calc(100% - 20px), transparent);
+      mask-image: linear-gradient(to right, transparent, black 12px, black calc(100% - 20px), transparent);
+    }
+
+    .nav-pill::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-link {
+      scroll-snap-align: start;
+    }
+  }
 </style>
 
 <script is:inline>

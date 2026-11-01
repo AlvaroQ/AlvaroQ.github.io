@@ -64,10 +64,14 @@ const altPath = lang === 'es' ? '/en/' : '/';
     border-color: var(--ink);
   }
 
-  /* Below md the fixed nav pill spans the top row: drop the controls under it. */
+  /* Below md the controls share the top band with the (narrower) nav pill. */
   @media (max-width: 767px) {
     .header-controls {
-      top: 6.75rem;
+      gap: 6px;
+    }
+
+    .header-control {
+      padding: 0 10px;
     }
   }
 </style>

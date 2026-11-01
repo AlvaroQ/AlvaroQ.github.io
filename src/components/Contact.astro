@@ -8,6 +8,8 @@ interface Props {
 }
 
 const { strings } = Astro.props;
+// Each segment stays on one line so "Full-Stack" never splits at its hyphen.
+const availability = strings.availableFor.split(' • ');
 ---
 
 <section id="contact">
@@ -18,7 +20,11 @@ const { strings } = Astro.props;
       <!-- Editorial lead -->
       <div class="animate-on-scroll">
         <p class="font-display text-[clamp(26px,3vw,38px)] leading-[1.2] text-(--ink)">{strings.contactLead}</p>
-        <p class="mt-6 font-display text-[clamp(18px,1.8vw,22px)] italic leading-snug text-(--ink-2)">{strings.availableFor}</p>
+        <p class="mt-6 font-display text-[clamp(18px,1.8vw,22px)] italic leading-snug text-balance text-(--ink-2)">
+          {availability.map((part, i) => (
+            <Fragment>{i > 0 && ' • '}<span class="whitespace-nowrap">{part}</span></Fragment>
+          ))}
+        </p>
       </div>
 
       <!-- Terminal plate: the one mono-heavy block of the site -->

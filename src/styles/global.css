@@ -121,6 +121,19 @@ html.light {
     overflow-x: hidden;
     min-height: 100vh;
   }
+
+  /* No orphaned last words: balanced headings, "pretty" body text */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
 }
 
 /* ===== SCROLLBAR ===== */
