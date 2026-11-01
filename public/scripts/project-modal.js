@@ -847,6 +847,7 @@ class ProjectDetailModal {
 
     // Store screenshots for lightbox navigation
     this.screenshots = projectData.screenshots || [];
+    this.thumbs = projectData.thumbs || [];
 
     // Set accent color from project data
     if (projectData.accentColor) {
@@ -1001,9 +1002,12 @@ class ProjectDetailModal {
       const isFirst = index === 0;
       // Escape src for safe use in onclick handler
       const safeSrc = this.escapeAttr(src);
+      // Thumbnails pick a WebP variant from srcset; the lightbox keeps the largest one (src).
+      const srcset = this.thumbs[index] ? this.escapeAttr(this.thumbs[index]) : '';
+      const thumbAttrs = srcset ? ` srcset="${srcset}" sizes="(max-width: 600px) 90vw, 380px"` : '';
       const imgAttrs = isFirst
-        ? `src="${safeSrc}" onload="this.classList.add('loaded')"`
-        : `data-src="${safeSrc}"`;
+        ? `src="${safeSrc}"${thumbAttrs} onload="this.classList.add('loaded')"`
+        : `data-src="${safeSrc}"${srcset ? ` data-srcset="${srcset}" sizes="(max-width: 600px) 90vw, 380px"` : ''}`;
       return `<div class="modal-screenshot-container">
         <div class="modal-screenshot-skeleton"></div>
         <img ${imgAttrs} alt="Screenshot ${index + 1}" class="modal-screenshot-img" onclick="window.projectModal.openLightbox('${safeSrc}')" />
@@ -1036,6 +1040,7 @@ class ProjectDetailModal {
           const img = entry.target;
           const src = img.dataset.src;
           if (src) {
+            if (img.dataset.srcset) img.srcset = img.dataset.srcset;
             img.src = src;
             img.onload = () => {
               img.classList.add('loaded');
@@ -1044,6 +1049,7 @@ class ProjectDetailModal {
               img.classList.add('loaded'); // Hide skeleton even on error
             };
             delete img.dataset.src;
+            delete img.dataset.srcset;
             observer.unobserve(img);
           }
         }

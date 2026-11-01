@@ -2,6 +2,7 @@
 import type { Strings } from '../i18n/es';
 import { projects } from '../data/projects';
 import SectionHeading from './SectionHeading.astro';
+import { asset, fitFor, responsive, type Slot } from '../lib/images';
 
 interface Props {
   strings: Strings;
@@ -10,6 +11,52 @@ interface Props {
 
 const { strings, lang } = Astro.props;
 const total = String(projects.length).padStart(2, '0');
+
+// 16:10 media box per breakpoint: lg row half (600 px), md column (~470 px), mobile (342 px).
+const SLOTS: Slot[] = [
+  { w: 600, h: 375, dpr: 2 },
+  { w: 470, h: 294, dpr: 2 },
+  { w: 342, h: 214, dpr: 3 },
+];
+const MEDIA_WIDTHS = [480, 720, 960, 1200, 1440];
+const MODAL_WIDTHS = [480, 800, 1200, 1600];
+
+// Width the image actually paints in a slot when shown whole (contain + cap at natural ÷ 2).
+const containWidth = (slot: Slot, w: number, h: number) => Math.round(Math.min(slot.w, (slot.h * w) / h, w / 2));
+
+const media = await Promise.all(
+  projects.map(async (project) => {
+    const key = project.detailedInfo?.screenshots[0];
+    if (!key) return null;
+    const meta = asset(key);
+    const fit = fitFor(meta, SLOTS);
+    const img = await responsive(key, MEDIA_WIDTHS);
+    if (fit === 'cover') {
+      // A source wider than 16:10 is painted wider than its box (cropped at the sides).
+      const k = Math.max(1, meta.width / meta.height / (16 / 10)).toFixed(3);
+      const lg = Math.round(600 * Number(k));
+      return {
+        ...img,
+        fit,
+        cap: undefined,
+        sizes: `(min-width: 1024px) ${lg}px, (min-width: 768px) calc((100vw - 88px) / 2 * ${k}), calc((100vw - 48px) * ${k})`,
+      };
+    }
+    const [lg, md, sm] = SLOTS.map((slot) => containWidth(slot, meta.width, meta.height));
+    return {
+      ...img,
+      fit,
+      // Never painted larger than half the source, so it stays at or under 1x on 2x screens.
+      cap: `max-width: ${Math.floor(meta.width / 2)}px; max-height: ${Math.floor(meta.height / 2)}px`,
+      sizes: `(min-width: 1024px) ${lg}px, (min-width: 768px) ${md}px, ${sm}px`,
+    };
+  }),
+);
+
+// Modal gallery: the largest variant feeds the lightbox, the srcset feeds the thumbnails.
+const galleries = await Promise.all(
+  projects.map((project) => Promise.all((project.detailedInfo?.screenshots ?? []).map((key) => responsive(key, MODAL_WIDTHS)))),
+);
 ---
 
 <section id="projects">
@@ -18,7 +65,8 @@ const total = String(projects.length).padStart(2, '0');
 
     <div class="cards grid gap-10 md:grid-cols-2 lg:grid-cols-1 lg:gap-0">
       {projects.map((project, i) => {
-        const cover = project.detailedInfo?.screenshots[0];
+        const cover = media[i];
+        const gallery = galleries[i];
         const number = String(i + 1).padStart(2, '0');
         return (
           <article
@@ -33,16 +81,28 @@ const total = String(projects.length).padStart(2, '0');
             data-project-accent={project.accentColor}
             data-project-long-desc={project.detailedInfo?.longDescription[lang] || ''}
             data-project-architecture={project.detailedInfo?.architecture[lang] || ''}
-            data-project-screenshots={JSON.stringify(project.detailedInfo?.screenshots || [])}
+            data-project-screenshots={JSON.stringify(gallery.map((g) => g.src))}
+            data-project-thumbs={JSON.stringify(gallery.map((g) => g.srcset))}
             data-project-highlights={JSON.stringify(project.detailedInfo?.keyHighlights.map(h => h[lang]) || [])}
             data-project-demo={project.detailedInfo?.demoUrl || ''}
             data-project-github={project.detailedInfo?.githubUrl || ''}
             data-project-tech={JSON.stringify(project.techStack)}
             data-project-featured={project.isFeatured ? 'true' : 'false'}
           >
-            <div class="media relative overflow-hidden bg-(--paper-2)">
+            <div class:list={['media relative overflow-hidden bg-(--paper-2)', cover?.fit === 'contain' && 'media-contain']}>
               {cover ? (
-                <img src={cover} alt="" class="h-full w-full object-cover" loading="lazy" decoding="async" />
+                <img
+                  src={cover.src}
+                  srcset={cover.srcset}
+                  sizes={cover.sizes}
+                  width={cover.width}
+                  height={cover.height}
+                  style={cover.cap}
+                  alt=""
+                  class={cover.fit === 'cover' ? 'h-full w-full object-cover object-top' : 'max-h-full max-w-full object-contain'}
+                  loading="lazy"
+                  decoding="async"
+                />
               ) : (
                 <span class="plate font-display text-(--ink-muted)" aria-hidden="true">{project.title.charAt(0)}</span>
               )}
@@ -107,6 +167,18 @@ const total = String(projects.length).padStart(2, '0');
     aspect-ratio: 16 / 10;
   }
 
+  /* Shown whole on the plate when the source cannot fill the box without upscaling */
+  .media-contain {
+    display: grid;
+    place-items: center;
+    padding: 16px;
+  }
+
+  .media-contain img {
+    height: auto;
+    width: auto;
+  }
+
   .media img {
     filter: sepia(0.25) contrast(1.05);
   }
@@ -150,11 +222,11 @@ const total = String(projects.length).padStart(2, '0');
     }
 
     .media {
-      aspect-ratio: auto;
-      min-height: 340px;
+      align-self: center;
     }
 
     .body {
+      align-self: center;
       padding: 40px 0 40px 48px;
     }
 
@@ -180,6 +252,7 @@ const total = String(projects.length).padStart(2, '0');
         architecture: card.dataset.projectArchitecture,
         accentColor: card.dataset.projectAccent,
         screenshots: JSON.parse(card.dataset.projectScreenshots || '[]'),
+        thumbs: JSON.parse(card.dataset.projectThumbs || '[]'),
         keyHighlights: JSON.parse(card.dataset.projectHighlights || '[]'),
         demoUrl: card.dataset.projectDemo || null,
         githubUrl: card.dataset.projectGithub || null,

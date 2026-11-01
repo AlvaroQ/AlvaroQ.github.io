@@ -1,6 +1,7 @@
 export interface ProjectDetails {
   longDescription: { es: string; en: string };
   architecture: { es: string; en: string };
+  /** Image keys relative to src/assets, e.g. "projects/rag-chatbot.webp". */
   screenshots: string[];
   keyHighlights: { es: string; en: string }[];
   demoUrl?: string;
@@ -54,7 +55,7 @@ export const projects: AIProject[] = [
         en: "Language: Kotlin Multiplatform 2.3.20\nUI: Compose Multiplatform (BOM 2026.03.01) + Material3\nPlatforms: Android (API 23+) + iOS (iosArm64 + iosSimulatorArm64)\nArchitecture: Clean Architecture, 4 KMP modules (app, usecases, data, core) + MVVM\nState: StateFlow + SharedFlow (Coroutines 1.10.2)\nNavigation: Navigation Compose KMP type-safe 2.9.2\nDI: Koin Multiplatform 4.2.1\nOn-device AI: TensorFlow Lite 2.17.0 (MobileNet V2 — 120 breeds)\nCamera: CameraX (Android)\nPersistence: SQLDelight 2.0.2 (Multiplatform)\nBackend: Firebase BOM 34.12.0 (Firestore, Realtime DB, Auth, Analytics, Crashlytics)\nMonetisation: AdMob 25.2.0 (banner + rewarded + interstitial) + UMP 4.0.0\nTesting: 59 unit tests JVM (JUnit 4 + MockK + Turbine)"
       },
       screenshots: [
-        "/images/projects/adivina-perro-banner.png"
+        "projects/adivina-perro-banner.webp"
       ],
       keyHighlights: [
         { es: "Reconocimiento de raza 100% on-device con TFLite — sin red, sin coste por petición", en: "100% on-device breed recognition with TFLite — no network, no per-request cost" },
@@ -99,9 +100,9 @@ export const projects: AIProject[] = [
         en: "Frontend: Next.js 16 App Router + React 19 + React Compiler\nUI: Tailwind CSS 4 + shadcn/ui + Recharts\nState: Zustand (client) + TanStack React Query (server)\nAnimations: Framer Motion\nBackend: Firebase (Auth + Firestore)\nData: Python bot on Synology NAS (auto-downloads CSV from Investing) + manual CSV upload\nDeployment: Vercel\nTesting: Vitest + Playwright"
       },
       screenshots: [
-        "/images/projects/sesion-investing.webp",
-        "/images/projects/cartera-investing.webp",
-        "/images/projects/comparativa-investing.webp"
+        "projects/sesion-investing.webp",
+        "projects/cartera-investing.webp",
+        "projects/comparativa-investing.webp"
       ],
       keyHighlights: [
         { es: "37+ módulos analytics independientes como bounded contexts", en: "37+ independent analytics modules as bounded contexts" },
@@ -142,7 +143,7 @@ export const projects: AIProject[] = [
         es: "Frontend: Widget JS embebido en portfolio\nBackend: Cloudflare Workers (Edge Computing)\nVector DB: Cloudflare Vectorize\nLLM: Llama 3.1 via Workers AI\nEmbeddings: BGE-base-en-v1.5\nDatos: Markdown con CV, proyectos y skills",
         en: "Frontend: JS widget embedded in portfolio\nBackend: Cloudflare Workers (Edge Computing)\nVector DB: Cloudflare Vectorize\nLLM: Llama 3.1 via Workers AI\nEmbeddings: BGE-base-en-v1.5\nData: Markdown with CV, projects and skills"
       },
-      screenshots: ["/images/projects/rag-chatbot.webp"],
+      screenshots: ["projects/rag-chatbot.webp"],
       keyHighlights: [
         { es: "Latencia <500ms gracias a edge computing", en: "Latency <500ms thanks to edge computing" },
         { es: "Coste $0 - 100% en free tier de Cloudflare", en: "Cost $0 - 100% on Cloudflare free tier" },
@@ -177,7 +178,7 @@ export const projects: AIProject[] = [
         es: "UI: Python + Tkinter (cross-platform)\nTTS Engine: Kokoro-82M (neural voices)\nTranslation: NLLB-200 (Meta AI)\nOptimización: ONNX Runtime para inferencia rápida\nFormatos: PDF, DOCX, TXT, EPUB",
         en: "UI: Python + Tkinter (cross-platform)\nTTS Engine: Kokoro-82M (neural voices)\nTranslation: NLLB-200 (Meta AI)\nOptimization: ONNX Runtime for fast inference\nFormats: PDF, DOCX, TXT, EPUB"
       },
-      screenshots: ["/images/projects/translation-and-voice-locally.webp"],
+      screenshots: ["projects/translation-and-voice-locally.webp"],
       keyHighlights: [
         { es: "Voces neurales indistinguibles de humanos", en: "Neural voices indistinguishable from humans" },
         { es: "Traduce entre 200+ idiomas antes de sintetizar", en: "Translates between 200+ languages before synthesis" },
@@ -218,10 +219,10 @@ export const projects: AIProject[] = [
         en: "Frontend: Next.js 15 App Router + React Server Components\nUI: TailwindCSS + Shadcn/ui + TradingView Charts\nBackend: Firebase (Auth, Firestore, Cloud Functions as middleware)\nAutomation: Docker + n8n on Synology NAS (daily/weekly alerts)\nAI Analysis: Gemini 2.0 Flash (fundamentals + charts)\nAI News: Perplexity AI (sonar-pro)\nSecurity: Cloud Functions validate and protect all APIs\nDeployment: Vercel + Firebase"
       },
       screenshots: [
-        "/images/projects/portfolio-and-stock-dashboard.webp",
-        "/images/projects/portfolio-and-stock-cartera.webp",
-        "/images/projects/portfolio-and-stock-stock.webp",
-        "/images/projects/portfolio-and-stock-informe.webp"
+        "projects/portfolio-and-stock-dashboard.webp",
+        "projects/portfolio-and-stock-cartera.webp",
+        "projects/portfolio-and-stock-stock.webp",
+        "projects/portfolio-and-stock-informe.webp"
       ],
       keyHighlights: [
         { es: "Alertas automáticas: precios objetivo y análisis de movimientos vía n8n + Docker", en: "Automated alerts: target prices and movement analysis via n8n + Docker" },
@@ -260,7 +261,7 @@ export const projects: AIProject[] = [
         es: "Backend: Python + FastAPI\nScraping: Playwright (headless browser)\nAnti-bot: Camoufox (Firefox stealth)\nExport: PDF, HTML, TXT, JSON\nDespliegue: Docker containerizado",
         en: "Backend: Python + FastAPI\nScraping: Playwright (headless browser)\nAnti-bot: Camoufox (Firefox stealth)\nExport: PDF, HTML, TXT, JSON\nDeployment: Docker containerized"
       },
-      screenshots: ["/images/projects/scrapper_pro_preview.webp"],
+      screenshots: ["projects/scrapper_pro_preview.webp"],
       keyHighlights: [
         { es: "Captura páginas con contenido renderizado por JavaScript", en: "Captures pages with JavaScript-rendered content" },
         { es: "Sistema anti-detección con Camoufox para sitios protegidos", en: "Anti-detection system with Camoufox for protected sites" },
@@ -295,8 +296,8 @@ export const projects: AIProject[] = [
         en: "UI: Compose Multiplatform (Android + Desktop)\nOCR: PaddleOCR Lite optimized for mobile\nInference: ONNX Runtime for cross-platform\nDB: SQLDelight (type-safe SQL)\nDI: Koin Multiplatform\nAsync: Kotlin Coroutines + Flow"
       },
       screenshots: [
-        "/images/projects/lotto-scan-camera.webp",
-        "/images/projects/lotto-scan-preview.webp"
+        "projects/lotto-scan-camera.webp",
+        "projects/lotto-scan-preview.webp"
       ],
       keyHighlights: [
         { es: "KMP real: mismo código en Android y Desktop", en: "Real KMP: same code on Android and Desktop" },
@@ -333,7 +334,7 @@ export const projects: AIProject[] = [
         es: "Backend: Python + FastAPI\nDescarga: yt-dlp\nIA: Perplexity AI para resúmenes\nFrontend: HTML/CSS/JavaScript con glassmorphism\nFormatos: MP4, MP3, WebM, múltiples calidades",
         en: "Backend: Python + FastAPI\nDownload: yt-dlp\nAI: Perplexity AI for summaries\nFrontend: HTML/CSS/JavaScript with glassmorphism\nFormats: MP4, MP3, WebM, multiple qualities"
       },
-      screenshots: ["/images/projects/youtube_downloader_preview.webp"],
+      screenshots: ["projects/youtube_downloader_preview.webp"],
       keyHighlights: [
         { es: "Resúmenes automáticos de videos con Perplexity AI", en: "Automatic video summaries with Perplexity AI" },
         { es: "Extracción de audio para podcasts y música", en: "Audio extraction for podcasts and music" },
@@ -367,7 +368,7 @@ export const projects: AIProject[] = [
         es: "Frontend: Next.js 14 App Router + TailwindCSS\nNews Agent: Perplexity AI API (sonar-pro)\nChart Agent: Gemini 2.0 Flash (vision)\nOrquestación: API Routes con streaming\nDespliegue: Vercel Edge Functions",
         en: "Frontend: Next.js 14 App Router + TailwindCSS\nNews Agent: Perplexity AI API (sonar-pro)\nChart Agent: Gemini 2.0 Flash (vision)\nOrchestration: API Routes with streaming\nDeployment: Vercel Edge Functions"
       },
-      screenshots: ["/images/projects/chart-analyzer-and-stock-news.webp"],
+      screenshots: ["projects/chart-analyzer-and-stock-news.webp"],
       keyHighlights: [
         { es: "Análisis multimodal: texto (noticias) + visión (gráficos)", en: "Multimodal analysis: text (news) + vision (charts)" },
         { es: "Streaming de respuestas para UX fluida", en: "Response streaming for fluid UX" },
