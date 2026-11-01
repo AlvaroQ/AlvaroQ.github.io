@@ -1,8 +1,7 @@
-// GLSL sources for the project-card ripple (WebGL 1).
-// A heightfield is simulated at a few CSS px per cell (wave + drop passes, ping-pong textures);
-// the render pass refracts a copy of the cover image where the water moves and draws faint ink
-// rings over the rest of the card. Where the surface is flat the output is fully transparent,
-// so the real <img> underneath stays visible pixel for pixel.
+// GLSL sources for the Projects ripple (WebGL 1).
+// A heightfield covering the whole section is simulated at a few CSS px per cell (wave + drop
+// passes, ping-pong textures); the render pass draws faint ink rings over the visible window of
+// the section and nothing over the project images, so they stay pixel for pixel.
 
 const HEAD = `#ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
@@ -31,54 +30,32 @@ void main(){
   gl_FragColor=vec4(h,0.,0.,1.);
 }`;
 
+/** Most image boxes the render pass can leave untouched (cards on screen at once, with margin). */
+export const MAX_HOLES = 16;
+
 /**
- * Render pass. Coordinates are canvas CSS px with y down; the canvas covers the whole card.
- * uClip: visible media box (x0, y0, x1, y1). uEl: untransformed <img> box (x, y, w, h).
- * uFit: displayed bitmap inside the element (ox, oy, w, h). uZoom: the hover scale of the <img>.
- * Output is premultiplied alpha.
+ * Render pass over the visible window of the section. Coordinates are section CSS px, y down.
+ * uWin: window top and height inside the section. uSection: section size.
+ * uHoles: image boxes (x0, y0, x1, y1) where nothing is drawn. Output is premultiplied alpha.
  */
-export const RENDER_SHADER = `${HEAD}uniform sampler2D uH,uImg;uniform vec2 uT,uSize;
-uniform vec4 uClip,uEl,uFit;
-uniform float uZoom,uHasImg,uLight,uForce;
-uniform vec3 uInk;
-uniform float uRefr,uSpec,uShade,uRing;
-// CSS filter: sepia(.25) contrast(1.05), as on the card image.
-vec3 filt(vec3 c){
-  vec3 s=vec3(dot(c,vec3(.393,.769,.189)),dot(c,vec3(.349,.686,.168)),dot(c,vec3(.272,.534,.131)));
-  c=mix(c,min(s,1.),.25);return clamp((c-.5)*1.05+.5,0.,1.);
-}
-vec4 image(vec2 p){
-  vec2 c=uEl.xy+uEl.zw*.5;vec2 q=c+(p-c)/uZoom-uEl.xy;
-  vec2 t=(q-uFit.xy)/uFit.zw;
-  float inside=step(0.,t.x)*step(t.x,1.)*step(0.,t.y)*step(t.y,1.);
-  return vec4(filt(texture2D(uImg,clamp(t,0.,1.)).rgb),inside);
-}
+export const RENDER_SHADER = `${HEAD}uniform sampler2D uH;uniform vec2 uT,uSection,uWin;
+uniform vec4 uHoles[${MAX_HOLES}];uniform float uHoleCount;
+uniform vec3 uInk;uniform float uShade,uRing;
 void main(){
-  float h=texture2D(uH,v).r;
-  float dx=texture2D(uH,v+vec2(uT.x,0.)).r-texture2D(uH,v-vec2(uT.x,0.)).r;
-  float dy=texture2D(uH,v+vec2(0.,uT.y)).r-texture2D(uH,v-vec2(0.,uT.y)).r;
-  vec3 N=normalize(vec3(-dx*6.,-dy*6.,1.));
-  vec3 L=normalize(vec3(-.35,.45,1.));vec3 H=normalize(L+vec3(0.,0.,1.));
-  // Specular relative to the flat surface, so still water adds no light.
-  float base=pow(H.z,70.);
-  float spec=max(pow(max(dot(N,H),0.),70.)-base,0.)/(1.-base);
-  float slope=dot(N,L)-L.z;
-  // How much the water moves here: 0 on a flat surface, so the real image shows through.
-  float wet=max(uForce,smoothstep(.004,.04,length(vec2(dx,dy))+abs(h)*.1));
-  vec2 p=vec2(v.x,1.-v.y)*uSize;
-  bool inImg=uHasImg>.5&&p.x>=uClip.x&&p.x<=uClip.z&&p.y>=uClip.y&&p.y<=uClip.w;
-  vec4 o=vec4(0.);
-  if(inImg){
-    // The edge fade keeps the refraction from pulling pixels across the frame.
-    float e=min(min(p.x-uClip.x,uClip.z-p.x),min(p.y-uClip.y,uClip.w-p.y));
-    float k=smoothstep(0.,14.,e);
-    vec4 im=image(p+vec2(dx,-dy)*uRefr*k);
-    vec3 col=im.rgb+(uLight>.5?vec3(1.):uInk)*spec*uSpec*k;
-    col*=1.+slope*uShade*k;
-    o=vec4(col,1.)*im.a*wet;
-  }else{
-    float a=clamp(abs(slope)*uShade*uRing,0.,.12);
-    o=vec4(uInk*a,a);
+  vec2 p=vec2(v.x*uSection.x,uWin.x+(1.-v.y)*uWin.y);
+  for(int i=0;i<${MAX_HOLES};i++){
+    if(float(i)>=uHoleCount)break;
+    vec4 b=uHoles[i];
+    if(p.x>=b.x&&p.x<=b.z&&p.y>=b.y&&p.y<=b.w){gl_FragColor=vec4(0.);return;}
   }
-  gl_FragColor=o;
+  vec2 t=vec2(p.x/uSection.x,1.-p.y/uSection.y);
+  float dx=texture2D(uH,t+vec2(uT.x,0.)).r-texture2D(uH,t-vec2(uT.x,0.)).r;
+  float dy=texture2D(uH,t+vec2(0.,uT.y)).r-texture2D(uH,t-vec2(0.,uT.y)).r;
+  vec3 N=normalize(vec3(-dx*6.,-dy*6.,1.));
+  vec3 L=normalize(vec3(-.35,.45,1.));
+  float slope=dot(N,L)-L.z;
+  // Fade at the section's top and bottom edges, where the waves reflect.
+  float edge=smoothstep(0.,80.,min(p.y,uSection.y-p.y));
+  float a=clamp(abs(slope)*uShade*uRing,0.,.12)*edge;
+  gl_FragColor=vec4(uInk*a,a);
 }`;

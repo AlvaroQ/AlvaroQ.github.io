@@ -318,3 +318,16 @@ for (const [lang, root] of Object.entries(dom)) {
     assert.deepEqual(external.sort(), ['InkName', 'InkWatermark']);
   });
 }
+
+// Full-width ripple without images (project-ripple L6).
+for (const [lang, root] of Object.entries(dom)) {
+  test(`${lang}: the ripple scope spans the whole Projects section`, () => {
+    const scope = root.querySelector('[data-ripple-module]');
+    assert.equal(scope.querySelector('section')?.id, 'projects');
+  });
+}
+
+test('the ripple never copies the project images', () => {
+  const src = read(dom.es.querySelector('[data-ripple-module]').getAttribute('data-ripple-module').slice(1));
+  assert.doesNotMatch(src, /texImage2D\([^)]*\b(img|image)\b/i);
+});

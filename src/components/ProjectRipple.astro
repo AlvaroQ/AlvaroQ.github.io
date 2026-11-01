@@ -1,25 +1,36 @@
 ---
-// Water-drop ripple scope around the project cards. The effect and its dependencies are emitted
-// as their own files and imported by URL on the first mouse hover over a card: the loader below
-// has no static imports, so Astro inlines it and the initial load requests no ripple code.
-// Off with coarse pointers, reduced motion and forced colours; without WebGL nothing changes.
+// Water-drop ripple scope around the whole Projects section: faint ink rings across the full
+// width, behind the content and never over the project images. The effect and its dependencies
+// are emitted as their own files and imported by URL on the first mouse hover over the section:
+// the loader below has no static imports, so Astro inlines it and the initial load requests no
+// ripple code. Off with coarse pointers, reduced motion and forced colours; without WebGL nothing
+// changes.
 import rippleModule from '../scripts/project-ripple.js?url';
 import rippleShader from '../scripts/ripple-shader.js?url';
 import rippleColor from '../scripts/ink-color.js?url';
 ---
 
-<div data-ripple-module={rippleModule} data-ripple-shader={rippleShader} data-ripple-color={rippleColor}>
+<div class="ripple-scope" data-ripple-module={rippleModule} data-ripple-shader={rippleShader} data-ripple-color={rippleColor}>
   <slot />
 </div>
 
+<style>
+  /* Own stacking context: the canvas (z-index -1) paints above the page background and below
+     every card, so the rings run under the text and the images cover them. */
+  .ripple-scope {
+    position: relative;
+    isolation: isolate;
+  }
+</style>
+
 <style is:global>
-  /* Created by src/scripts/project-ripple.js inside the hovered card (position: relative). */
+  /* Created by src/scripts/project-ripple.js; height and offset follow the viewport (CSSOM). */
   .ripple-canvas {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 100%;
-    z-index: 3;
+    z-index: -1;
     pointer-events: none;
     opacity: 0;
     transition: opacity 300ms var(--ease-ink);
@@ -31,27 +42,24 @@ import rippleColor from '../scripts/ink-color.js?url';
 </style>
 
 <script>
-  type Ripple = { enter(card: HTMLElement): void } | null;
+  type Ripple = { start(e?: PointerEvent): void } | null;
 
   const scope = document.querySelector<HTMLElement>('[data-ripple-module]');
   const off = ['(pointer: coarse)', '(prefers-reduced-motion: reduce)', '(forced-colors: active)'].some((q) => matchMedia(q).matches);
 
   if (scope && !off) {
-    const cards = [...scope.querySelectorAll<HTMLElement>('article.card')];
     const { rippleModule, rippleShader, rippleColor } = scope.dataset;
-    let pending: Promise<Ripple> | null = null;
 
     const first = (e: PointerEvent) => {
       if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
-      const card = e.currentTarget as HTMLElement;
-      for (const c of cards) c.removeEventListener('pointerenter', first);
-      pending ??= Promise.all([rippleModule, rippleShader, rippleColor].map((url) => import(/* @vite-ignore */ url as string)))
-        .then(([ripple, shader, color]) => (ripple as typeof import('../scripts/project-ripple.js')).init(cards, { shader, color }))
-        .catch(() => null);
-      void pending.then((fx) => {
-        if (fx && card.matches(':hover')) fx.enter(card);
-      });
+      scope.removeEventListener('pointerenter', first);
+      Promise.all([rippleModule, rippleShader, rippleColor].map((url) => import(/* @vite-ignore */ url as string)))
+        .then(([ripple, shader, color]) => (ripple as typeof import('../scripts/project-ripple.js')).init(scope, { shader, color }))
+        .catch((): Ripple => null)
+        .then((fx) => {
+          if (fx && scope.matches(':hover')) fx.start();
+        });
     };
-    for (const c of cards) c.addEventListener('pointerenter', first);
+    scope.addEventListener('pointerenter', first);
   }
 </script>

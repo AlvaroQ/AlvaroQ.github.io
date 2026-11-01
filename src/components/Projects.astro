@@ -19,19 +19,18 @@ const featured = projects.slice(0, FEATURED);
 const rest = projects.slice(FEATURED);
 ---
 
-<Section id="projects" strings={strings} subtitle={strings.showcasingProjects}>
-
-  <ProjectRipple>
+<ProjectRipple>
+  <Section id="projects" strings={strings} subtitle={strings.showcasingProjects}>
     <div class="featured border-b border-(--line)">
-        {featured.map((project, i) => (
-          <ProjectCard project={project} index={i} total={total} variant="feature" stagger={i % 3} strings={strings} lang={lang} />
-        ))}
-      </div>
+      {featured.map((project, i) => (
+        <ProjectCard project={project} index={i} total={total} variant="feature" stagger={i % 3} strings={strings} lang={lang} />
+      ))}
+    </div>
 
-      <div class="mt-12 grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
-        {rest.map((project, i) => (
-          <ProjectCard project={project} index={FEATURED + i} total={total} variant="compact" stagger={i % 3} strings={strings} lang={lang} />
-        ))}
-      </div>
-  </ProjectRipple>
-</Section>
+    <div class="mt-12 grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
+      {rest.map((project, i) => (
+        <ProjectCard project={project} index={FEATURED + i} total={total} variant="compact" stagger={i % 3} strings={strings} lang={lang} />
+      ))}
+    </div>
+  </Section>
+</ProjectRipple>

@@ -46,8 +46,8 @@ src/
 │   ├── SectionHeading.astro
 │   ├── Presentation.astro  # Sobre mi
 │   ├── Career.astro        # Trayectoria
-│   ├── Projects.astro      # Proyectos (ProjectRipple > ProjectCard)
-│   ├── ProjectRipple.astro # Gota de agua al hover (src/scripts/project-ripple.js perezoso)
+│   ├── Projects.astro      # Proyectos (ProjectRipple > Section > ProjectCard)
+│   ├── ProjectRipple.astro # Anillos de agua a todo el ancho, bajo el contenido y nunca sobre imagenes (project-ripple.js perezoso)
 │   ├── ProjectCard.astro   # Tarjeta: enlace extendido + <ProjectCase> en un <template>
 │   ├── ProjectCase.astro   # Caso completo renderizado en build
 │   ├── ProjectModal.astro  # <dialog> del caso + lightbox (src/scripts/project-modal.js perezoso)

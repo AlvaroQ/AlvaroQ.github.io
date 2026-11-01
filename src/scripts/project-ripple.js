@@ -1,28 +1,31 @@
-// Water-drop ripple over the project cards (variant c: soft refraction of the cover + faint ink
-// rings over the rest of the card). One WebGL context for the whole page; its canvas moves into
-// the card under the pointer. Imported by URL from ProjectRipple.astro on the first hover, so it
-// cannot have static imports: the GLSL module and the colour helpers are passed to init().
-// The loop runs only while the water moves on a visible card in a visible tab.
+// Water-drop ripple over the Projects section: faint ink rings across the full width, never over
+// the project images. One WebGL context and one canvas for the whole section; the heightfield
+// covers the section, the canvas only the visible window of it (moved on scroll with CSSOM).
+// Imported by URL from ProjectRipple.astro on the first hover, so it cannot have static imports:
+// the GLSL module and the colour helpers are passed to init().
+// The loop runs only while the water moves on a visible section in a visible tab.
 
-/** Tuning (CSS px): sim cell size, refraction, light, drop strength and damping. */
-const TUNE = { sim: 3, refr: 12, spec: 0.2, shade: 0.55, drop: 0.26, damp: 0.965 };
-/** Ring strength over the card body per theme (alpha is capped at 0.12 in the shader). */
+/** Tuning (CSS px): sim cell size, light, drop strength and damping. */
+const TUNE = { sim: 3, shade: 0.55, drop: 0.26, damp: 0.965 };
+/** Ring strength per theme (alpha is capped at 0.12 in the shader). */
 const RING = { light: 0.42, dark: 0.9 };
-/** Frames the water keeps moving after the pointer leaves (~2.5 s at 60 Hz). */
+/** Frames the water keeps moving after the last drop (~2.5 s at 60 Hz). */
 const SETTLE_FRAMES = 150;
+/** Device-pixel cap for the canvas: the rings are soft, 1.5× is indistinguishable from 2×. */
+const MAX_DPR = 1.5;
 
 /** Counters read by the CDP probes; never used by the page itself. */
-export const probe = { frames: 0, texture: null, bench: null, force: null };
+export const probe = { frames: 0, bench: null };
 
 const DISABLED = ['(pointer: coarse)', '(prefers-reduced-motion: reduce)', '(forced-colors: active)'];
 
 /**
- * @param {HTMLElement[]} cards
+ * @param {HTMLElement} scope positioned element around the section
  * @param {{ shader: typeof import('./ripple-shader.js'), color: typeof import('./ink-color.js') }} deps
- * @returns {{ enter(card: HTMLElement): void } | null} null when the effect cannot run
+ * @returns {{ start(e?: PointerEvent): void } | null} null when the effect cannot run
  */
-export function init(cards, { shader, color }) {
-  if (!cards.length || DISABLED.some((q) => matchMedia(q).matches)) return null;
+export function init(scope, { shader, color }) {
+  if (DISABLED.some((q) => matchMedia(q).matches)) return null;
 
   const canvas = document.createElement('canvas');
   canvas.className = 'ripple-canvas';
@@ -55,7 +58,7 @@ export function init(cards, { shader, color }) {
   try {
     wave = program(shader.WAVE_SHADER, ['uP', 'uC', 'uT', 'uD']);
     drop = program(shader.DROP_SHADER, ['uS', 'uSize', 'uDrop']);
-    rend = program(shader.RENDER_SHADER, ['uH', 'uImg', 'uT', 'uSize', 'uClip', 'uEl', 'uFit', 'uZoom', 'uHasImg', 'uLight', 'uForce', 'uInk', 'uRefr', 'uSpec', 'uShade', 'uRing']);
+    rend = program(shader.RENDER_SHADER, ['uH', 'uT', 'uSection', 'uWin', 'uHoles', 'uHoleCount', 'uInk', 'uShade', 'uRing']);
   } catch {
     return null;
   }
@@ -64,44 +67,32 @@ export function init(cards, { shader, color }) {
   gl.enableVertexAttribArray(0);
   gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
 
-  const params = (target, filter) => {
-    for (const k of [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER]) gl.texParameteri(target, k, filter);
-    for (const k of [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T]) gl.texParameteri(target, k, gl.CLAMP_TO_EDGE);
-  };
-  // Three heightfield targets: previous, current, next.
+  // Three heightfield targets over the whole section: previous, current, next.
   let tex = [], fbs = [], order = [0, 1, 2], simW = 0, simH = 0;
-  const clearTargets = () => {
-    gl.clearColor(0, 0, 0, 0);
-    for (const f of fbs) {
-      gl.bindFramebuffer(gl.FRAMEBUFFER, f);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-    }
-  };
   const resizeTargets = (w, h) => {
-    if (w === simW && h === simH) return clearTargets();
+    if (w === simW && h === simH) return;
     tex.forEach((t) => gl.deleteTexture(t));
     fbs.forEach((f) => gl.deleteFramebuffer(f));
     tex = [0, 1, 2].map(() => {
       const t = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, t);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, TYPE, null);
-      params(gl.TEXTURE_2D, gl.LINEAR);
+      for (const k of [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER]) gl.texParameteri(gl.TEXTURE_2D, k, gl.LINEAR);
+      for (const k of [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T]) gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE);
       return t;
     });
     fbs = tex.map((t) => {
       const f = gl.createFramebuffer();
       gl.bindFramebuffer(gl.FRAMEBUFFER, f);
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, t, 0);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
       return f;
     });
     simW = w;
     simH = h;
     order = [0, 1, 2];
-    clearTargets();
   };
-  const imgTex = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, imgTex);
-  params(gl.TEXTURE_2D, gl.LINEAR);
 
   let ink = [1, 1, 1], light = false;
   const readTheme = () => {
@@ -111,71 +102,45 @@ export function init(cards, { shader, color }) {
   readTheme();
   document.addEventListener('themechange', readTheme);
 
-  /** @type {HTMLElement | null} */
-  let card = null;
-  /** @type {HTMLImageElement | null} */
-  let img = null;
-  let hasImg = false, box = { w: 1, h: 1 }, geo = null;
-  let hovering = false, running = false, raf = 0, quiet = 0, onScreen = true, dead = false;
+  let size = { w: 1, h: 1 }, win = { top: -1, h: 1 };
+  /** Image boxes in section px: the rings never draw over them. */
+  let holes = [];
+  let running = false, raf = 0, quiet = SETTLE_FRAMES + 1, onScreen = true, dead = false;
   const drops = [];
   let last = null;
 
-  function layout() {
-    if (!card) return;
-    // The canvas sits in the card's padding box (feature cards have a top border), so its own
-    // box is the origin of every coordinate below.
-    const r = canvas.getBoundingClientRect();
-    box = { w: r.width, h: r.height };
-    const dpr = Math.min(devicePixelRatio || 1, 2);
-    canvas.width = Math.round(box.w * dpr);
-    canvas.height = Math.round(box.h * dpr);
-    resizeTargets(Math.max(2, Math.round(box.w / TUNE.sim)), Math.max(2, Math.round(box.h / TUNE.sim)));
-    geo = null;
-    const media = card.querySelector('.media');
-    if (!img || !hasImg || !media) return;
-    const m = media.getBoundingClientRect();
-    // Fractional untransformed <img> box (the shader applies the hover scale around its centre):
-    // integer offset* sizes misregister the copy by up to a device pixel.
-    const style = getComputedStyle(img);
-    const scale = new DOMMatrixReadOnly(style.transform).a || 1;
-    const ir = img.getBoundingClientRect();
-    const ew = ir.width / scale, eh = ir.height / scale;
-    // The browser paints the card and the image on the device-pixel grid: snap both origins the
-    // same way, or a media box at a fractional offset inside the card is copied a pixel off.
-    const px = devicePixelRatio || 1;
-    const snap = (v) => Math.round(v * px) / px;
-    const ox = snap(r.left), oy = snap(r.top);
-    const ex = snap(ir.left + ir.width / 2 - ew / 2) - ox, ey = snap(ir.top + ir.height / 2 - eh / 2) - oy;
-    const nw = img.naturalWidth, nh = img.naturalHeight;
-    let fit = [0, 0, ew, eh];
-    if (style.objectFit === 'cover') {
-      const s = Math.max(ew / nw, eh / nh);
-      const [posX, posY] = style.objectPosition.split(' ').map((v) => parseFloat(v) / 100);
-      fit = [(ew - nw * s) * (posX ?? 0.5), (eh - nh * s) * (posY ?? 0.5), nw * s, nh * s];
-    }
-    geo = { el: [ex, ey, ew, eh], fit, clip: [snap(m.left) - ox, snap(m.top) - oy, snap(m.right) - ox, snap(m.bottom) - oy] };
+  /** Section size, simulation targets and the image boxes (section px). */
+  function measure() {
+    const r = scope.getBoundingClientRect();
+    size = { w: r.width, h: r.height };
+    resizeTargets(Math.max(2, Math.round(size.w / TUNE.sim)), Math.max(2, Math.round(size.h / TUNE.sim)));
+    holes = [...scope.querySelectorAll('.media')].map((m) => {
+      const b = m.getBoundingClientRect();
+      return [b.left - r.left, b.top - r.top, b.right - r.left, b.bottom - r.top];
+    });
   }
 
-  function setImage() {
-    img = card?.querySelector('.media img') ?? null;
-    hasImg = false;
-    if (!img) return;
-    if (!img.complete || !img.naturalWidth) {
-      img.addEventListener('load', () => { if (img && card?.contains(img)) { setImage(); layout(); } }, { once: true });
-      return;
+  /** The canvas covers the visible part of the section: size and offset follow the viewport. */
+  function place() {
+    const r = scope.getBoundingClientRect();
+    const h = Math.max(1, Math.min(innerHeight, size.h));
+    const top = Math.min(Math.max(-r.top, 0), size.h - h);
+    const dpr = Math.min(devicePixelRatio || 1, MAX_DPR);
+    const w = Math.round(size.w * dpr), hh = Math.round(h * dpr);
+    if (canvas.width !== w || canvas.height !== hh) {
+      canvas.width = w;
+      canvas.height = hh;
+      canvas.style.height = `${h}px`;
     }
-    // The decoded file the browser chose (currentSrc), never a larger source.
-    gl.bindTexture(gl.TEXTURE_2D, imgTex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-    hasImg = true;
-    probe.texture = { src: img.currentSrc, width: img.naturalWidth, height: img.naturalHeight };
+    if (top !== win.top) canvas.style.transform = `translateY(${top}px)`;
+    win = { top, h };
   }
 
   const quad = () => gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   function addDrops() {
     if (!drops.length) return;
     const data = new Float32Array(16);
-    drops.splice(0, 4).forEach((d, i) => data.set([d.x / TUNE.sim, (box.h - d.y) / TUNE.sim, d.r / TUNE.sim, d.s], i * 4));
+    drops.splice(0, 4).forEach((d, i) => data.set([d.x / TUNE.sim, (size.h - d.y) / TUNE.sim, d.r / TUNE.sim, d.s], i * 4));
     gl.useProgram(drop.p);
     gl.viewport(0, 0, simW, simH);
     gl.activeTexture(gl.TEXTURE0);
@@ -203,6 +168,7 @@ export function init(cards, { shader, color }) {
     order = [order[1], order[2], order[0]];
   }
   function render() {
+    place();
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(0, 0, 0, 0);
@@ -212,23 +178,16 @@ export function init(cards, { shader, color }) {
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, tex[order[1]]);
     gl.uniform1i(u.uH, 0);
-    gl.activeTexture(gl.TEXTURE1);
-    gl.bindTexture(gl.TEXTURE_2D, imgTex);
-    gl.uniform1i(u.uImg, 1);
     gl.uniform2f(u.uT, 1 / simW, 1 / simH);
-    gl.uniform2f(u.uSize, box.w, box.h);
-    const g = geo ?? { el: [0, 0, 1, 1], fit: [0, 0, 1, 1], clip: [0, 0, 0, 0] };
-    gl.uniform4fv(u.uClip, g.clip);
-    gl.uniform4fv(u.uEl, g.el);
-    gl.uniform4fv(u.uFit, g.fit);
-    const zoom = img ? new DOMMatrixReadOnly(getComputedStyle(img).transform).a : 1;
-    gl.uniform1f(u.uZoom, zoom || 1);
-    gl.uniform1f(u.uHasImg, geo ? 1 : 0);
-    gl.uniform1f(u.uLight, light ? 1 : 0);
-    gl.uniform1f(u.uForce, probe.force ? 1 : 0);
+    gl.uniform2f(u.uSection, size.w, size.h);
+    gl.uniform2f(u.uWin, win.top, win.h);
+    // Only the image boxes that overlap the window, up to the shader's limit.
+    const visible = holes.filter((b) => b[3] > win.top && b[1] < win.top + win.h).slice(0, shader.MAX_HOLES);
+    const data = new Float32Array(shader.MAX_HOLES * 4);
+    visible.forEach((b, i) => data.set(b, i * 4));
+    gl.uniform4fv(u.uHoles, data);
+    gl.uniform1f(u.uHoleCount, visible.length);
     gl.uniform3fv(u.uInk, ink);
-    gl.uniform1f(u.uRefr, TUNE.refr);
-    gl.uniform1f(u.uSpec, light ? TUNE.spec * 0.8 : TUNE.spec);
     gl.uniform1f(u.uShade, light ? TUNE.shade * 0.7 : TUNE.shade);
     gl.uniform1f(u.uRing, light ? RING.light : RING.dark);
     quad();
@@ -242,8 +201,8 @@ export function init(cards, { shader, color }) {
     step();
     render();
     probe.frames++;
-    quiet = hovering ? 0 : quiet + 1;
-    if (quiet > SETTLE_FRAMES) {
+    // A resting pointer adds no drops: the loop stops once the water settles, hover or not.
+    if (++quiet > SETTLE_FRAMES) {
       stop();
       canvas.classList.remove('is-on');
       return;
@@ -260,46 +219,38 @@ export function init(cards, { shader, color }) {
     if (raf) cancelAnimationFrame(raf);
     raf = 0;
   }
-  const settled = () => !hovering && quiet > SETTLE_FRAMES;
+  const settled = () => quiet > SETTLE_FRAMES;
 
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (e.target !== card) continue;
-      onScreen = e.isIntersecting;
-      if (!onScreen) stop();
-      else if (!settled()) start();
-    }
+  const io = new IntersectionObserver(([e]) => {
+    onScreen = e.isIntersecting;
+    if (!onScreen) stop();
+    else if (!settled()) start();
   });
+  io.observe(scope);
   document.addEventListener('visibilitychange', () => (document.hidden ? stop() : !settled() && start()));
-  addEventListener('resize', layout);
+  // Card heights change with the viewport (and the fonts): keep the section map in sync.
+  const ro = new ResizeObserver(() => measure());
+  ro.observe(scope);
 
-  // Context loss: give the card back exactly as it is without the effect.
+  // Context loss: the section goes back to exactly how it is without the effect.
   canvas.addEventListener('webglcontextlost', () => {
     dead = true;
     stop();
     io.disconnect();
+    ro.disconnect();
     canvas.remove();
   });
 
   const isMouse = (e) => e.pointerType === 'mouse' || e.pointerType === 'pen';
   const local = (e) => {
-    const r = canvas.getBoundingClientRect();
+    const r = scope.getBoundingClientRect();
     return { x: e.clientX - r.left, y: e.clientY - r.top };
   };
-
-  function enter(next) {
+  /** Queue a drop and wake the loop. */
+  function splash(d) {
     if (dead) return;
-    if (card !== next) {
-      if (card) io.unobserve(card);
-      card = next;
-      card.appendChild(canvas);
-      setImage();
-      layout();
-      io.observe(card);
-    }
-    hovering = true;
+    drops.push(d);
     quiet = 0;
-    last = null;
     canvas.classList.add('is-on');
     start();
   }
@@ -309,25 +260,31 @@ export function init(cards, { shader, color }) {
       const dx = x - last.x, dy = y - last.y, d = Math.hypot(dx, dy);
       if (d < 6) return;
       const n = Math.min(Math.ceil(d / 18), 4);
-      for (let i = 1; i <= n; i++) drops.push({ x: last.x + (dx * i) / n, y: last.y + (dy * i) / n, r: 16, s: TUNE.drop });
+      for (let i = 1; i <= n; i++) splash({ x: last.x + (dx * i) / n, y: last.y + (dy * i) / n, r: 16, s: TUNE.drop });
     } else {
-      drops.push({ x, y, r: 22, s: TUNE.drop * 1.6 });
+      splash({ x, y, r: 22, s: TUNE.drop * 1.6 });
     }
     last = { x, y };
   }
-
-  for (const c of cards) {
-    c.addEventListener('pointerenter', (e) => isMouse(e) && enter(c));
-    c.addEventListener('pointermove', (e) => { if (card === c && isMouse(e) && !dead) { if (!hovering) enter(c); move(e); } });
-    c.addEventListener('pointerleave', () => { if (card === c) { hovering = false; last = null; } });
-    c.addEventListener('pointerdown', (e) => {
-      if (card !== c || !isMouse(e) || dead) return;
-      const { x, y } = local(e);
-      drops.push({ x, y, r: 34, s: TUNE.drop * 3 });
-    });
+  /** First drop where the pointer enters (or comes back). */
+  function enter(e) {
+    last = null;
+    if (e) move(e);
   }
 
-  // Probe hook: n frames with drops, each wrapped in a GPU timer query when available.
+  scope.addEventListener('pointerenter', (e) => isMouse(e) && enter(e));
+  scope.addEventListener('pointermove', (e) => isMouse(e) && move(e));
+  scope.addEventListener('pointerleave', () => (last = null));
+  scope.addEventListener('pointerdown', (e) => {
+    if (!isMouse(e)) return;
+    const { x, y } = local(e);
+    splash({ x, y, r: 34, s: TUNE.drop * 3 });
+  });
+
+  measure();
+  scope.prepend(canvas);
+
+  // Probe hook: n frames with drops in the visible window, each in a GPU timer query when available.
   probe.bench = async (n = 120) => {
     const ext = gl.getExtension('EXT_disjoint_timer_query');
     const was = running;
@@ -335,7 +292,7 @@ export function init(cards, { shader, color }) {
     const queries = [];
     const t0 = performance.now();
     for (let i = 0; i < n; i++) {
-      if (i % 4 === 0) drops.push({ x: box.w * (0.2 + 0.6 * Math.random()), y: box.h * (0.2 + 0.6 * Math.random()), r: 18, s: TUNE.drop });
+      if (i % 4 === 0) drops.push({ x: size.w * (0.1 + 0.8 * Math.random()), y: win.top + win.h * (0.2 + 0.6 * Math.random()), r: 18, s: TUNE.drop });
       const q = ext?.createQueryEXT();
       if (q) ext.beginQueryEXT(ext.TIME_ELAPSED_EXT, q);
       addDrops();
@@ -354,7 +311,6 @@ export function init(cards, { shader, color }) {
     if (was) start();
     return { gpuMedian: ms[ms.length >> 1], gpuP95: ms[Math.floor(ms.length * 0.95)], samples: ms.length, wallPerFrame: wall, canvas: [canvas.width, canvas.height], sim: [simW, simH] };
   };
-  probe.render = () => render();
 
-  return { enter };
+  return { start: enter };
 }
