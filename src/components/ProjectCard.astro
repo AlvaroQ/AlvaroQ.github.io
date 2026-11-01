@@ -42,7 +42,8 @@ const number = String(index + 1).padStart(2, '0');
 <article
   class:list={['card media-zoom animate-on-scroll group cursor-pointer', `card-${variant}`, `stagger-${index % 3}`]}
 >
-  <div class:list={['media relative overflow-hidden bg-(--paper-2)', cover?.fit === 'contain' && 'media-contain']}>
+  <!-- Contained images sit on the card itself (no plate), so short screenshots do not show an empty box -->
+  <div class:list={['media relative overflow-hidden', cover?.fit === 'contain' ? 'media-contain' : 'bg-(--paper-2)']}>
     {cover ? (
       <img
         src={cover.src}

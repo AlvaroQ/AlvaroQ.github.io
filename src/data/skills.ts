@@ -40,12 +40,12 @@ export const skillCategories: SkillCategory[] = [
   {
     title: { es: "IA y DevOps", en: "AI & DevOps" },
     skills: [
-      { name: "Claude / Anthropic", years: 2, depth: 'core' },
+      { name: "Claude / Codex", years: 2, depth: 'core' },
       { name: "Prompt Engineering", years: 2, depth: 'core' },
-      { name: "Docker / CI-CD", years: 8, depth: 'core' },
+      { name: "Pen-testing", years: 3, depth: 'core' },
+      { name: "Gemini / Grok / …", years: 2, depth: 'solid' },
       { name: "LangChain", years: 2, depth: 'solid' },
-      { name: "MCP / RAG", years: 2, depth: 'solid' },
-      { name: "n8n / Pen-testing", years: 3, depth: 'solid' }
+      { name: "MCP / RAG", years: 2, depth: 'solid' }
     ]
   }
 ];
