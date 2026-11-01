@@ -53,6 +53,31 @@ export function openCase(dialog, slug, trigger) {
   history.pushState({ projectModal: true }, '');
 }
 
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+/**
+ * Keeps Tab inside an open dialog: showModal() alone lets focus leave for the browser UI at the
+ * wrap point. Same rule as the chat module; each lazy module is emitted on its own (loaded by
+ * URL), so they cannot share an import without adding requests before the LCP.
+ * @param {HTMLDialogElement} root
+ */
+function trapTab(root) {
+  root.addEventListener('keydown', (event) => {
+    if (event.key !== 'Tab') return;
+    const items = [...root.querySelectorAll(FOCUSABLE)].filter((el) => el.getClientRects().length > 0);
+    const first = /** @type {HTMLElement | undefined} */ (items[0]);
+    const last = /** @type {HTMLElement | undefined} */ (items[items.length - 1]);
+    if (!first || !last) return;
+    if (event.shiftKey && (document.activeElement === first || document.activeElement === root)) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+}
+
 function wire() {
   if (wired || !modal || !content) return;
   wired = true;
@@ -62,6 +87,8 @@ function wire() {
   lightbox = light;
 
   window.addEventListener('popstate', onPopState);
+  trapTab(dialog);
+  trapTab(light);
 
   // Backdrop click: the dialog has no padding, so a click on itself is a click outside the box.
   dialog.addEventListener('click', (e) => {
