@@ -44,15 +44,16 @@ src/
 │   ├── InkWatermark.astro  # Filigrana en relieve (scripts/ink-watermark.js)
 │   ├── Section.astro       # <section id> + contenedor + SectionHeading
 │   ├── SectionHeading.astro
-│   ├── Presentation.astro  # 01 Sobre mi
-│   ├── Career.astro        # 02 Trayectoria
-│   ├── Projects.astro      # 03 Proyectos (ProjectCard)
+│   ├── Presentation.astro  # Sobre mi
+│   ├── Career.astro        # Trayectoria
+│   ├── Projects.astro      # Proyectos (ProjectRipple > ProjectCard)
+│   ├── ProjectRipple.astro # Gota de agua al hover (src/scripts/project-ripple.js perezoso)
 │   ├── ProjectCard.astro   # Tarjeta: enlace extendido + <ProjectCase> en un <template>
 │   ├── ProjectCase.astro   # Caso completo renderizado en build
 │   ├── ProjectModal.astro  # <dialog> del caso + lightbox (src/scripts/project-modal.js perezoso)
 │   ├── ChatWidget.astro    # FAB + <dialog> del chat (src/scripts/chat-widget.js perezoso)
-│   ├── Skills.astro        # 04 Habilidades
-│   └── Contact.astro       # 05 Contacto
+│   ├── Skills.astro        # Habilidades
+│   └── Contact.astro       # Contacto
 ├── data/                   # Datos tipados; textos por idioma como Localized
 │   ├── site.ts             # Cifras (anos), URLs y email compartidos
 │   ├── seo.ts              # JSON-LD localizado (Person, WebSite, ProfilePage)
@@ -70,7 +71,8 @@ src/
 ├── scripts/                # Modulos cliente (Vite)
 │   ├── theme.js            # getTheme / setTheme / onThemeChange + evento 'themechange'
 │   ├── anti-fouc.mjs       # Unico script inline (tema antes de pintar)
-│   ├── project-modal.js · chat-widget.js  # Modulos perezosos (import por URL)
+│   ├── project-modal.js · chat-widget.js · project-ripple.js  # Modulos perezosos (import por URL, sin imports estaticos)
+│   ├── ripple-shader.js    # GLSL de la gota de agua (se inyecta en project-ripple.js)
 │   ├── ink-signature.js · ink-watermark.js · ink-shader.js · ink-color.js
 │   └── scroll-animations.js
 └── styles/global.css · animations.css
@@ -281,6 +283,7 @@ Los merges a master/main son responsabilidad exclusiva del usuario.
 - **`<script>` en Astro**: Se procesa por Vite y se bundlea. Para scripts sin procesar usar `is:inline`.
 - **i18n routing**: Default locale (`es`) NO tiene prefijo. Solo `/en` tiene prefijo.
 - **Sin PWA**: no hay manifest ni service worker propio.
+- **Modulos `?url`**: Vite los emite en crudo (sin resolver imports); sus dependencias se importan aparte y se inyectan. `assetsInlineLimit` no inlinea `src/scripts/*.js` como `data:` (la CSP los bloquearia).
 - **Tema**: la clase `light` en `<html>` es la unica fuente; escuchar `themechange` (no leer localStorage).
 
 ---

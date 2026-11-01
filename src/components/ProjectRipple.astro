@@ -1,0 +1,57 @@
+---
+// Water-drop ripple scope around the project cards. The effect and its dependencies are emitted
+// as their own files and imported by URL on the first mouse hover over a card: the loader below
+// has no static imports, so Astro inlines it and the initial load requests no ripple code.
+// Off with coarse pointers, reduced motion and forced colours; without WebGL nothing changes.
+import rippleModule from '../scripts/project-ripple.js?url';
+import rippleShader from '../scripts/ripple-shader.js?url';
+import rippleColor from '../scripts/ink-color.js?url';
+---
+
+<div data-ripple-module={rippleModule} data-ripple-shader={rippleShader} data-ripple-color={rippleColor}>
+  <slot />
+</div>
+
+<style is:global>
+  /* Created by src/scripts/project-ripple.js inside the hovered card (position: relative). */
+  .ripple-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 300ms var(--ease-ink);
+  }
+
+  .ripple-canvas.is-on {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  type Ripple = { enter(card: HTMLElement): void } | null;
+
+  const scope = document.querySelector<HTMLElement>('[data-ripple-module]');
+  const off = ['(pointer: coarse)', '(prefers-reduced-motion: reduce)', '(forced-colors: active)'].some((q) => matchMedia(q).matches);
+
+  if (scope && !off) {
+    const cards = [...scope.querySelectorAll<HTMLElement>('article.card')];
+    const { rippleModule, rippleShader, rippleColor } = scope.dataset;
+    let pending: Promise<Ripple> | null = null;
+
+    const first = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
+      const card = e.currentTarget as HTMLElement;
+      for (const c of cards) c.removeEventListener('pointerenter', first);
+      pending ??= Promise.all([rippleModule, rippleShader, rippleColor].map((url) => import(/* @vite-ignore */ url as string)))
+        .then(([ripple, shader, color]) => (ripple as typeof import('../scripts/project-ripple.js')).init(cards, { shader, color }))
+        .catch(() => null);
+      void pending.then((fx) => {
+        if (fx && card.matches(':hover')) fx.enter(card);
+      });
+    };
+    for (const c of cards) c.addEventListener('pointerenter', first);
+  }
+</script>

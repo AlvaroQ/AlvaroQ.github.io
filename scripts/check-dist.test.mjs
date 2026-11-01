@@ -269,3 +269,52 @@ test('personal notes and pasted images are not published', () => {
   const stray = walk(dist).filter((f) => /new_proyect\.md$|orca-paste-/.test(f));
   assert.deepEqual(stray, []);
 });
+
+// Project ripple (project-ripple T2): the effect is imported by URL on the first hover only.
+const RIPPLE_ATTRS = ['data-ripple-module', 'data-ripple-shader', 'data-ripple-color'];
+
+for (const [lang, root] of Object.entries(dom)) {
+  test(`${lang}: the ripple scope wraps every project card and names its lazy modules`, () => {
+    const scopes = root.querySelectorAll('[data-ripple-module]');
+    assert.equal(scopes.length, 1);
+    assert.equal(scopes[0].querySelectorAll('article.card').length, PROJECTS);
+    for (const attr of RIPPLE_ATTRS) {
+      const url = scopes[0].getAttribute(attr);
+      assert.match(url ?? '', /^\/_astro\/.+\.js$/, attr);
+      assert.ok(existsSync(dist + url.slice(1)), `${attr}: ${url} not emitted`);
+    }
+  });
+
+  test(`${lang}: no ripple code is requested on the initial load`, () => {
+    const scope = root.querySelector('[data-ripple-module]');
+    const urls = RIPPLE_ATTRS.map((a) => scope.getAttribute(a));
+    const requested = [
+      ...root.querySelectorAll('script[src]').map((s) => s.getAttribute('src')),
+      ...root.querySelectorAll('link[href]').map((l) => l.getAttribute('href')),
+    ];
+    for (const url of urls) assert.ok(!requested.includes(url), `${url} is loaded eagerly`);
+    const inline = root.querySelectorAll('script:not([src])').map((s) => s.textContent).join('\n');
+    assert.doesNotMatch(inline, /import\s*[{*\w][^(]*from|import\s*["']/, 'an inline script has a static import');
+  });
+
+  test(`${lang}: the anti-FOUC snippet is the only classic inline script`, () => {
+    const classic = root.querySelectorAll('script:not([src])').filter((s) => !['module', 'application/ld+json'].includes(s.getAttribute('type')));
+    assert.equal(classic.length, 1);
+  });
+}
+
+test('modules imported by URL have no static imports (they are emitted raw)', () => {
+  const scope = dom.es.querySelector('[data-ripple-module]');
+  const modal = dom.es.querySelector('dialog#project-modal')?.getAttribute('data-module');
+  for (const url of [...RIPPLE_ATTRS.map((a) => scope.getAttribute(a)), modal]) {
+    const src = read(url.slice(1));
+    assert.doesNotMatch(src, /^\s*import\s/m, url);
+  }
+});
+
+for (const [lang, root] of Object.entries(dom)) {
+  test(`${lang}: small component scripts stay inline (only the hero effects are external)`, () => {
+    const external = root.querySelectorAll('script[src]').map((s) => s.getAttribute('src').replace(/^\/_astro\/|\.astro_astro.*$/g, ''));
+    assert.deepEqual(external.sort(), ['InkName', 'InkWatermark']);
+  });
+}

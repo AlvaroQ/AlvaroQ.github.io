@@ -37,7 +37,12 @@ export default defineConfig({
     }
   },
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    build: {
+      // Client modules imported with ?url must stay files (a data: URL would be blocked by
+      // script-src); everything else, including Astro's small component scripts, keeps the default.
+      assetsInlineLimit: (file) => (/[\\/]src[\\/]scripts[\\/][^\\/]+\.js$/.test(file) ? false : undefined),
+    },
   },
   integrations: [
     pruneMasters(),
