@@ -8,9 +8,12 @@ export interface CaseStudy {
   keyHighlights: Localized[];
 }
 
+/** External links must be https (checked by TypeScript here and by check-dist on the output). */
+type HttpsUrl = `https://${string}`;
+
 export interface ProjectLinks {
-  github?: string;
-  demo?: string;
+  github?: HttpsUrl;
+  demo?: HttpsUrl;
 }
 
 export interface Project {

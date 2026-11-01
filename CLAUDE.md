@@ -18,7 +18,7 @@
 | **SEO** | @astrojs/sitemap | ^3.7.1 |
 | **Types** | TypeScript (strict mode) | via astro |
 | **Deploy** | GitHub Pages (GitHub Actions) | upload-pages-artifact + deploy-pages |
-| **Node** | >=22.12.0 | LTS |
+| **Node** | >=22.18.0 (type stripping for the tests) | LTS |
 
 ### Estandares de Codigo
 
@@ -277,5 +277,7 @@ Los merges a master/main son responsabilidad exclusiva del usuario.
 GitHub Pages via GitHub Actions:
 - **Trigger**: Push a `main` o dispatch manual.
 - **Workflow**: `.github/workflows/deploy.yml` (`npm ci` → `npm run verify` → artefacto `dist/` → deploy-pages).
+- **CSP**: `security.csp` en `astro.config.mjs` (meta con hashes). Nada de `style=""`, `on*` ni scripts inline nuevos: el unico inline es `src/scripts/anti-fouc.mjs`, cuyo hash calcula la config.
+- **`public/sw.js`**: kill switch del service worker del sitio anterior (limpia caches, se desregistra). Retirarlo a partir de mayo de 2027.
 - **URL**: https://alvaroq.github.io
 

@@ -19,15 +19,13 @@ test('fitFor: cover only when every slot stays at or below 1x', () => {
 });
 
 test('sizesFor cover: wider-than-16:10 sources scale every slot by the crop factor', () => {
-  const { sizes, cap } = sizesFor({ width: 2000, height: 1000 }, feature, 'cover');
-  assert.equal(cap, undefined);
+  const { sizes } = sizesFor({ width: 2000, height: 1000 }, feature, 'cover');
   assert.equal(sizes, '(min-width: 1024px) 750px, (min-width: 768px) calc(calc((100vw - 48px) / 2) * 1.250), calc((100vw - 48px) * 1.250)');
 });
 
-test('sizesFor contain: never above half the source, with an inline cap', () => {
-  const { sizes, cap } = sizesFor({ width: 722, height: 720 }, feature, 'contain');
+test('sizesFor contain: never above half the source', () => {
+  const { sizes } = sizesFor({ width: 722, height: 720 }, feature, 'contain');
   assert.equal(sizes, '(min-width: 1024px) 361px, (min-width: 768px) 306px, 215px');
-  assert.equal(cap, 'max-width: 361px; max-height: 360px');
 });
 
 test('thumbSizes: height capped at a third of the source', () => {

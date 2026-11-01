@@ -6,8 +6,8 @@
 }
 
 /* ===== SCROLL REVEAL =====
-   Fade + 24px rise. Stagger with an inline --stagger custom property
-   (multiples of 80ms) set in the markup. */
+   Fade + 24px rise. Stagger with the .stagger-N classes (multiples of 80ms): classes, not
+   inline styles, because the strict CSP blocks style attributes. */
 .animate-on-scroll {
   opacity: 0;
   transform: translateY(24px);
@@ -16,6 +16,11 @@
     transform 600ms var(--ease-ink);
   transition-delay: var(--stagger, 0ms);
 }
+
+.stagger-1 { --stagger: 80ms; }
+.stagger-2 { --stagger: 160ms; }
+.stagger-3 { --stagger: 240ms; }
+.stagger-4 { --stagger: 320ms; }
 
 .animate-on-scroll.fade-in {
   transform: none;
@@ -54,6 +59,11 @@
   animation: ink-settle 700ms var(--ease-ink) both;
   animation-delay: calc(var(--step, 0) * 120ms);
 }
+
+/* Entrance order (0 is the default) */
+.step-1 { --step: 1; }
+.step-2 { --step: 2; }
+.step-3 { --step: 3; }
 
 /* ===== LINK UNDERLINE GROW ===== */
 .link-grow {

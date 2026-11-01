@@ -40,8 +40,7 @@ const number = String(index + 1).padStart(2, '0');
 ---
 
 <article
-  class:list={['card media-zoom animate-on-scroll group cursor-pointer', `card-${variant}`]}
-  style={`--stagger: ${(index % 3) * 80}ms`}
+  class:list={['card media-zoom animate-on-scroll group cursor-pointer', `card-${variant}`, `stagger-${index % 3}`]}
   data-open-case={project.slug}
   role="button"
   tabindex="0"
@@ -55,7 +54,6 @@ const number = String(index + 1).padStart(2, '0');
         sizes={cover.sizes}
         width={cover.width}
         height={cover.height}
-        style={cover.cap}
         alt=""
         class={cover.fit === 'cover' ? 'h-full w-full object-cover object-top' : 'max-h-full max-w-full object-contain'}
         loading="lazy"

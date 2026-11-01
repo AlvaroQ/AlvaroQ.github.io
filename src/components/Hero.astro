@@ -14,10 +14,10 @@ const { strings } = Astro.props;
 
 <div class="hero" data-ink>
   <div class="hero-inner">
-    <p class="eyebrow hero-enter" style="--step: 0">{strings.heroEyebrow}</p>
+    <p class="eyebrow hero-enter">{strings.heroEyebrow}</p>
     <InkName name={strings.name} />
-    <p class="headline hero-enter" style="--step: 2">{strings.heroHeadline} <em>{strings.heroHeadlineEm}</em></p>
-    <div class="platforms-row hero-enter" style="--step: 2">
+    <p class="headline hero-enter step-2">{strings.heroHeadline} <em>{strings.heroHeadlineEm}</em></p>
+    <div class="platforms-row hero-enter step-2">
       <p class="platforms">{strings.platforms}</p>
       <button
         class="control ink-pause"
@@ -28,7 +28,7 @@ const { strings } = Astro.props;
         data-label-resume={strings.inkResume}
       >{strings.inkPause}</button>
     </div>
-    <div class="ctas hero-enter" style="--step: 3">
+    <div class="ctas hero-enter step-3">
       <a class="btn btn-solid" href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label={strings.a11yOpenLinkedIn}>{strings.linkedIn}</a>
       <a class="btn btn-ghost" href={contact.githubUrl} target="_blank" rel="noopener noreferrer" aria-label={strings.a11yOpenGitHub}>{strings.github}</a>
     </div>

@@ -119,3 +119,58 @@ for (const [lang, root] of Object.entries(dom)) {
     assert.deepEqual(handlers, []);
   });
 }
+
+// Strict CSP (P2): Astro's security.csp meta, hashes for every inline script and style.
+import { createHash } from 'node:crypto';
+
+const CHAT_ORIGIN = 'https://portfolio-chatbot.alvaroq-dev.workers.dev';
+const sha256 = (text) => `'sha256-${createHash('sha256').update(text).digest('base64')}'`;
+
+function policy(root) {
+  const metas = root.querySelectorAll('meta[http-equiv="content-security-policy" i]');
+  assert.equal(metas.length, 1, 'expected exactly one CSP meta');
+  return Object.fromEntries(
+    metas[0].getAttribute('content').split(';').map((d) => d.trim()).filter(Boolean).map((d) => {
+      const [name, ...values] = d.split(/\s+/);
+      return [name, values];
+    }),
+  );
+}
+
+for (const [lang, root] of Object.entries(dom)) {
+  test(`${lang}: strict CSP`, () => {
+    const csp = policy(root);
+    assert.deepEqual(csp['default-src'], ["'none'"]);
+    for (const d of ['script-src', 'style-src']) {
+      assert.ok(csp[d], `${d} missing`);
+      assert.ok(!csp[d].includes("'unsafe-inline'") && !csp[d].includes("'unsafe-eval'"), `${d} is not strict`);
+    }
+    assert.deepEqual(csp['connect-src'], [CHAT_ORIGIN]);
+    for (const d of ['base-uri', 'object-src', 'form-action']) assert.deepEqual(csp[d], ["'none'"], d);
+    assert.ok('upgrade-insecure-requests' in csp);
+  });
+
+  test(`${lang}: every inline script and style is allowed by hash`, () => {
+    const csp = policy(root);
+    const scripts = root.querySelectorAll('script:not([src])').filter((s) => s.getAttribute('type') !== 'application/ld+json');
+    assert.ok(scripts.length > 0);
+    for (const s of scripts) assert.ok(csp['script-src'].includes(sha256(s.textContent)), `inline script not hashed: ${s.textContent.slice(0, 60)}`);
+    for (const s of root.querySelectorAll('style')) assert.ok(csp['style-src'].includes(sha256(s.textContent)), 'inline style not hashed');
+  });
+
+  test(`${lang}: no style attributes (a hashed style-src blocks them)`, () => {
+    const styled = root.querySelectorAll('[style]').map((el) => `${el.tagName}[style="${el.getAttribute('style')}"]`);
+    assert.deepEqual(styled, []);
+  });
+
+  test(`${lang}: referrer policy`, () => {
+    assert.equal(root.querySelector('meta[name="referrer"]')?.getAttribute('content'), 'strict-origin-when-cross-origin');
+  });
+}
+
+for (const [lang, root] of Object.entries(dom)) {
+  test(`${lang}: external links use https`, () => {
+    const insecure = root.querySelectorAll('a[href]').map((a) => a.getAttribute('href')).filter((h) => /^[a-z]+:/i.test(h) && !/^(https:|mailto:)/i.test(h));
+    assert.deepEqual(insecure, []);
+  });
+}

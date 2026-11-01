@@ -7,7 +7,7 @@ Personal portfolio of Álvaro Quintana — a static, bilingual (es/en) single pa
 
 | Command | What it does |
 |---|---|
-| `npm install` | Install dependencies (Node >= 22.12) |
+| `npm install` | Install dependencies (Node >= 22.18) |
 | `npm run dev` | Dev server at `localhost:4321` |
 | `npm run build` | Production build in `dist/` |
 | `npm run preview` | Serve the build locally |

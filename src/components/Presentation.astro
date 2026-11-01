@@ -42,14 +42,14 @@ const bio = [strings.bioP1, strings.bioP2, strings.bioP3, strings.bioP4, strings
           {strings.jobTitle}
         </p>
 
-        <div class="bio animate-on-scroll mt-6 space-y-5" style="--stagger: 80ms">
+        <div class="bio animate-on-scroll stagger-1 mt-6 space-y-5">
           {bio.map((html) => <p class="bio-text" set:html={html} />)}
         </div>
       </div>
 
       <!-- Stack: rows under the portrait on lg (fills the column); from xl a full-width band with the
            Career stats rule, label in the portrait column and three columns under the bio -->
-      <div class="stack animate-on-scroll mt-6 min-w-0 border-t border-(--line) pt-8 lg:col-start-1 lg:row-start-2 lg:mt-0 lg:self-start xl:col-span-2 xl:mt-6 xl:grid xl:grid-cols-subgrid xl:gap-x-20" style="--stagger: 160ms">
+      <div class="stack animate-on-scroll stagger-2 mt-6 min-w-0 border-t border-(--line) pt-8 lg:col-start-1 lg:row-start-2 lg:mt-0 lg:self-start xl:col-span-2 xl:mt-6 xl:grid xl:grid-cols-subgrid xl:gap-x-20">
         <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-(--ink-muted)">{strings.stackLabel}</p>
         <ol class="stack-list mt-5 grid md:max-lg:grid-cols-3 xl:col-start-2 xl:mt-0 xl:grid-cols-3">
           {stack.map((col) => (

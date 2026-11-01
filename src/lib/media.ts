@@ -34,8 +34,12 @@ export function fitFor(meta: Dimensions, slots: Slot[]): Fit {
   return fits ? 'cover' : 'contain';
 }
 
-/** `sizes` for a media box and, when shown whole, the inline size cap. */
-export function sizesFor(meta: Dimensions, layout: MediaLayout, fit: Fit): { sizes: string; cap?: string } {
+/**
+ * `sizes` for a media box. With w-descriptors the painted (intrinsic) width is the `sizes` value,
+ * so capping it at half the source keeps a contained image ≤ 1x on 2x screens without any inline
+ * style.
+ */
+export function sizesFor(meta: Dimensions, layout: MediaLayout, fit: Fit): { sizes: string } {
   if (fit === 'cover') {
     // A source wider than 16:10 is painted wider than its box (cropped at the sides).
     const k = Math.max(1, meta.width / meta.height / (16 / 10)).toFixed(3);
@@ -45,10 +49,7 @@ export function sizesFor(meta: Dimensions, layout: MediaLayout, fit: Fit): { siz
   }
   // Shown whole on the plate, never larger than half the source (≤ 1x on 2x screens).
   const [lg, md, sm] = layout.slots.map((s) => Math.round(Math.min(s.w, (s.h * meta.width) / meta.height, meta.width / 2)));
-  return {
-    sizes: `(min-width: 1024px) ${lg}px, (min-width: 768px) ${md}px, ${sm}px`,
-    cap: `max-width: ${Math.floor(meta.width / 2)}px; max-height: ${Math.floor(meta.height / 2)}px`,
-  };
+  return { sizes: `(min-width: 1024px) ${lg}px, (min-width: 768px) ${md}px, ${sm}px` };
 }
 
 /**

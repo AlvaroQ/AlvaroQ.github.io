@@ -28,7 +28,7 @@ const stats = [
     <!-- Timeline: vertical below lg, horizontal from lg -->
     <ol class="timeline relative grid gap-10 lg:grid-cols-5 lg:gap-8">
       {career.map((node, i) => (
-        <li class="entry animate-on-scroll relative" style={`--stagger: ${i * 80}ms`}>
+        <li class={`entry animate-on-scroll relative stagger-${i}`}>
           <span class="dot" aria-hidden="true"></span>
           <div class="flex items-center gap-3">
             <span class="logo flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-(--paper-2) font-mono text-[11px] text-(--ink-muted)">

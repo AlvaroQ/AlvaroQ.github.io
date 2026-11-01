@@ -4,6 +4,7 @@ import '../styles/animations.css';
 import { t, type Lang } from '../i18n';
 import { jsonLd } from '../data/seo';
 import { responsive } from '../lib/images';
+import { ANTI_FOUC } from '../scripts/anti-fouc.mjs';
 
 interface Props {
   lang: Lang;
@@ -36,6 +37,7 @@ const altURL = new URL(altPath, Astro.site);
   <meta name="description" content={description} />
   <meta name="author" content="Alvaro Quintana" />
   <meta name="robots" content="index, follow" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="canonical" href={canonicalURL} />
 
   <!-- i18n alternates -->
@@ -78,9 +80,7 @@ const altURL = new URL(altPath, Astro.site);
   <script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />
 
   <!-- Anti-FOUC: the only inline script; sets the theme class before paint (theme.js owns the rest) -->
-  <script is:inline>
-    try { if (localStorage.getItem('portfolio_theme') === 'light') document.documentElement.classList.replace('dark', 'light'); } catch (e) {}
-  </script>
+  <script is:inline set:html={ANTI_FOUC} />
 </head>
 <body>
   <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-(--ink) focus:text-(--paper) focus:rounded focus:font-bold focus:text-sm">

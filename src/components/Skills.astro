@@ -20,7 +20,7 @@ const depthLabel: Record<SkillDepth, string> = {
 
     <div class="grid gap-12 md:grid-cols-3 md:gap-10">
       {skillCategories.map((cat, i) => (
-        <div class="animate-on-scroll" style={`--stagger: ${i * 80}ms`}>
+        <div class={`animate-on-scroll stagger-${i}`}>
           <h3 class="border-b border-(--line) pb-3 font-mono text-[11px] uppercase tracking-[0.14em] text-(--ink-muted)">{cat.title[lang]}</h3>
           <ul>
             {cat.skills.map((skill) => (
