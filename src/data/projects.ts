@@ -30,7 +30,7 @@ export interface Project {
 }
 
 export const projects: Project[] = [
-  // Featured rows: Gran Premio IA, invirtiendo.site, Adivina Perro, RAG Chatbot
+  // Featured rows: Gran Premio IA, invirtiendo.site, Adivina Perro, Chart Analyzer
   {
     slug: "gran-premio-ia",
     title: "Gran Premio IA",
@@ -168,6 +168,43 @@ export const projects: Project[] = [
     }
   },
   {
+    slug: "chart-analyzer",
+    title: "Chart Analyzer",
+    subtitle: { es: "Inteligencia de Mercado en Tiempo Real", en: "Real-time Market Intelligence" },
+    description: {
+      es: "Plataforma full-stack de análisis financiero con dos agentes IA: uno rastrea en tiempo real las noticias de cualquier ticker y otro lee gráficos de velas para detectar patrones, soportes y resistencias. Eliges el proveedor en cada función (Gemini, Perplexity, Claude u OpenAI) con tu propia API key.",
+      en: "Full-stack financial analysis platform with two AI agents: one tracks real-time news for any ticker and the other reads candlestick charts to spot patterns, support and resistance. You pick the provider for each feature (Gemini, Perplexity, Claude or OpenAI) with your own API key."
+    },
+    features: [
+      { es: "Noticias IA en Tiempo Real", en: "Real-time News AI" },
+      { es: "Análisis de Gráficos", en: "Chart Analysis" },
+      { es: "Detección de Patrones", en: "Pattern Detection" },
+      { es: "4 Proveedores IA (BYOK)", en: "4 AI Providers (BYOK)" }
+    ],
+    techStack: ["Next.js", "React 19", "TypeScript", "Gemini", "Perplexity", "Claude", "OpenAI"],
+    status: 'live',
+    links: { github: "https://github.com/AlvaroQ/chart-analyzer-and-stock-news", demo: "https://chart-analyzer-and-stock-news.vercel.app/" },
+    caseStudy: {
+      longDescription: {
+        es: "Como inversor activo, necesitaba una herramienta que combinara análisis técnico con contexto de noticias en tiempo real. Este proyecto orquesta dos agentes IA, y cada usuario elige qué modelo potencia cada uno con su propia clave.",
+        en: "As an active investor, I needed a tool that combined technical analysis with real-time news context. This project orchestrates two AI agents, and each user chooses which model powers each one with their own key."
+      },
+      architecture: {
+        es: "Frontend: Next.js 16 App Router + React 19 + Tailwind CSS 4\nNews Agent: Perplexity sonar-pro, Claude u OpenAI (búsqueda web)\nChart Agent: Gemini 2.0 Flash, Claude u OpenAI (visión)\nClaves: BYOK en el navegador con un registro de proveedores\nDespliegue: Vercel",
+        en: "Frontend: Next.js 16 App Router + React 19 + Tailwind CSS 4\nNews Agent: Perplexity sonar-pro, Claude or OpenAI (web search)\nChart Agent: Gemini 2.0 Flash, Claude or OpenAI (vision)\nKeys: BYOK in the browser with a provider registry\nDeployment: Vercel"
+      },
+      screenshots: ["projects/chart-analyzer-and-stock-news.webp"],
+      keyHighlights: [
+        { es: "Análisis multimodal: texto (noticias) + visión (gráficos)", en: "Multimodal analysis: text (news) + vision (charts)" },
+        { es: "Trae tu propia clave: cada usuario usa su API key, guardada solo en su navegador", en: "Bring your own key: every user runs on their own API key, stored only in their browser" },
+        { es: "Detecta patrones: head & shoulders, triángulos, canales", en: "Detects patterns: head & shoulders, triangles, channels" },
+        { es: "Correlaciona noticias con movimientos de precio", en: "Correlates news with price movements" },
+        { es: "100% TypeScript con tipos estrictos", en: "100% TypeScript with strict types" }
+      ],
+    }
+  },
+  // Compact grid, row 1: RAG Chatbot, Translation & Voice AI, Portfolio & Stock
+  {
     slug: "rag-chatbot",
     title: "RAG Chatbot",
     subtitle: { es: "Asistente IA", en: "AI Assistant" },
@@ -238,7 +275,6 @@ export const projects: Project[] = [
       ]
     }
   },
-  // Fila 2: Portfolio & Stock, Web Scraper Pro, Lotto Scan
   {
     slug: "portfolio-stock",
     title: "Portfolio & Stock",
@@ -286,6 +322,7 @@ export const projects: Project[] = [
       ]
     }
   },
+  // Compact grid, row 2: Web Scraper Pro, Lotto Scan, YouTube Downloader
   {
     slug: "web-scraper-pro",
     title: "Web Scraper Pro",
@@ -358,7 +395,6 @@ export const projects: Project[] = [
       ]
     }
   },
-  // Fila 3: YouTube Downloader, Chart Analyzer
   {
     slug: "youtube-downloader",
     title: "YouTube Downloader",
@@ -391,41 +427,6 @@ export const projects: Project[] = [
         { es: "Interfaz moderna con efecto glassmorphism", en: "Modern interface with glassmorphism effect" },
         { es: "Soporte para múltiples formatos y calidades", en: "Support for multiple formats and qualities" }
       ]
-    }
-  },
-  {
-    slug: "chart-analyzer",
-    title: "Chart Analyzer",
-    subtitle: { es: "Inteligencia de Mercado en Tiempo Real", en: "Real-time Market Intelligence" },
-    description: {
-      es: "Plataforma full-stack que integra agentes IA para análisis financiero. Combina búsqueda de noticias con análisis técnico de gráficos para inversores.",
-      en: "Full-stack platform integrating AI agents for financial analysis. Combines news search with technical chart analysis for investors."
-    },
-    features: [
-      { es: "Noticias IA en Tiempo Real", en: "Real-time News AI" },
-      { es: "Análisis de Gráficos", en: "Chart Analysis" },
-      { es: "Detección de Patrones", en: "Pattern Detection" },
-      { es: "Indicadores Técnicos", en: "Technical Indicators" }
-    ],
-    techStack: ["Next.js", "Perplexity AI", "Gemini 2.0", "TypeScript"],
-    links: { github: "https://github.com/AlvaroQ/chart-analyzer-and-stock-news", demo: "https://project-ia-three.vercel.app/" },
-    caseStudy: {
-      longDescription: {
-        es: "Como inversor activo, necesitaba una herramienta que combinara análisis técnico con contexto de noticias en tiempo real. Este proyecto orquesta dos agentes IA.",
-        en: "As an active investor, I needed a tool that combined technical analysis with real-time news context. This project orchestrates two AI agents."
-      },
-      architecture: {
-        es: "Frontend: Next.js 14 App Router + TailwindCSS\nNews Agent: Perplexity AI API (sonar-pro)\nChart Agent: Gemini 2.0 Flash (vision)\nOrquestación: API Routes con streaming\nDespliegue: Vercel Edge Functions",
-        en: "Frontend: Next.js 14 App Router + TailwindCSS\nNews Agent: Perplexity AI API (sonar-pro)\nChart Agent: Gemini 2.0 Flash (vision)\nOrchestration: API Routes with streaming\nDeployment: Vercel Edge Functions"
-      },
-      screenshots: ["projects/chart-analyzer-and-stock-news.webp"],
-      keyHighlights: [
-        { es: "Análisis multimodal: texto (noticias) + visión (gráficos)", en: "Multimodal analysis: text (news) + vision (charts)" },
-        { es: "Streaming de respuestas para UX fluida", en: "Response streaming for fluid UX" },
-        { es: "Detecta patrones: head & shoulders, triángulos, canales", en: "Detects patterns: head & shoulders, triangles, channels" },
-        { es: "Correlaciona noticias con movimientos de precio", en: "Correlates news with price movements" },
-        { es: "100% TypeScript con tipos estrictos", en: "100% TypeScript with strict types" }
-      ],
     }
   }
 ];

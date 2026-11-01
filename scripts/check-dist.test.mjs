@@ -254,11 +254,23 @@ for (const [lang, root] of Object.entries(dom)) {
 
   test(`${lang}: Gran Premio IA opens the list and invirtiendo.site replaces Cartera Investing`, () => {
     const titles = root.querySelectorAll('article.card h3 button').map((b) => b.textContent.trim());
-    assert.deepEqual(titles.slice(0, 3), ['Gran Premio IA', 'invirtiendo.site', 'Adivina Perro']);
+    assert.deepEqual(titles.slice(0, 5), ['Gran Premio IA', 'invirtiendo.site', 'Adivina Perro', 'Chart Analyzer', 'RAG Chatbot']);
     assert.ok(titles.includes('invirtiendo.site'));
     assert.ok(!html[lang].includes('Cartera Investing'), 'old project name still on the page');
     const first = root.querySelector('article.card .label-ui span').textContent.replace(/\s+/g, ' ').trim();
     assert.match(first, new RegExp(`01 / ${PROJECTS}$`));
+  });
+
+  test(`${lang}: Chart Analyzer is a live featured project on its new deployment, RAG Chatbot is compact`, () => {
+    const cards = root.querySelectorAll('article.card');
+    const byTitle = (title) => cards.find((c) => c.querySelector('h3 button')?.textContent.trim() === title);
+    const chart = byTitle('Chart Analyzer');
+    assert.ok(chart.classList.contains('card-feature'), 'Chart Analyzer is not a featured row');
+    assert.ok(byTitle('RAG Chatbot').classList.contains('card-compact'), 'RAG Chatbot is not in the compact grid');
+    assert.ok(chart.querySelector('.badge-live'), 'Chart Analyzer has no live badge');
+    assert.ok(chart.toString().includes('href="https://chart-analyzer-and-stock-news.vercel.app/"'), 'new demo URL missing');
+    assert.ok(chart.toString().includes('href="https://github.com/AlvaroQ/chart-analyzer-and-stock-news"'), 'GitHub link missing');
+    assert.ok(!html[lang].includes('project-ia-three.vercel.app'), 'old demo URL still on the page');
   });
 
   test(`${lang}: every project card has a responsive cover from the asset pipeline`, () => {
