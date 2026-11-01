@@ -378,6 +378,13 @@ for (const [lang, root] of Object.entries(dom)) {
     assert.deepEqual(shots, INVIRTIENDO_SHOTS);
   });
 
+  test(`${lang}: Chart Analyzer case adds the Claude analysis screenshot after the cover`, () => {
+    const shots = root
+      .querySelectorAll('template[data-case="chart-analyzer"] .case-shot img')
+      .map((img) => img.getAttribute('src').match(/\/_astro\/([\w-]+)\./)?.[1]);
+    assert.deepEqual(shots, ['chart-analyzer-and-stock-news', 'chart-analyzer-claude-analysis']);
+  });
+
   test(`${lang}: every case lists its tech stack in the left column`, () => {
     for (const tpl of root.querySelectorAll('template[data-case]')) {
       const slug = tpl.getAttribute('data-case');

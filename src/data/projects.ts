@@ -193,7 +193,7 @@ export const projects: Project[] = [
         es: "Frontend: Next.js 16 App Router + React 19 + Tailwind CSS 4\nNews Agent: Perplexity sonar-pro, Claude u OpenAI (búsqueda web)\nChart Agent: Gemini 2.0 Flash, Claude u OpenAI (visión)\nClaves: BYOK en el navegador con un registro de proveedores\nDespliegue: Vercel",
         en: "Frontend: Next.js 16 App Router + React 19 + Tailwind CSS 4\nNews Agent: Perplexity sonar-pro, Claude or OpenAI (web search)\nChart Agent: Gemini 2.0 Flash, Claude or OpenAI (vision)\nKeys: BYOK in the browser with a provider registry\nDeployment: Vercel"
       },
-      screenshots: ["projects/chart-analyzer-and-stock-news.webp"],
+      screenshots: ["projects/chart-analyzer-and-stock-news.webp", "projects/chart-analyzer-claude-analysis.webp"],
       keyHighlights: [
         { es: "Análisis multimodal: texto (noticias) + visión (gráficos)", en: "Multimodal analysis: text (news) + vision (charts)" },
         { es: "Trae tu propia clave: cada usuario usa su API key, guardada solo en su navegador", en: "Bring your own key: every user runs on their own API key, stored only in their browser" },
