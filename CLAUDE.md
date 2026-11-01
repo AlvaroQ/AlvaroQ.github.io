@@ -102,7 +102,7 @@ Para agregar/editar contenido del portfolio:
 npm run dev       # Servidor desarrollo (localhost:4321)
 npm run build     # Build produccion (dist/)
 npm run preview   # Preview del build
-npm run verify    # astro check && astro build && node --test scripts/ (lo mismo que CI)
+npm run verify    # astro check && astro build && node --test 'scripts/*.test.mjs' (lo mismo que CI)
 npm run assets:icons   # Regenera favicon, apple-touch-icon y las OG (Chrome del sistema, CHROME_PATH)
 npm run assets:relief  # Regenera el mapa de relieve de la filigrana tras cambiar el retrato
 npx astro check   # Type checking
