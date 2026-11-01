@@ -6,6 +6,7 @@ export const es = {
   pageDescription: `Álvaro Quintana, ingeniero Full-Stack sénior en Madrid con más de ${YEARS_IN_TECH} años creando apps Android, iOS y KMP, plataformas web y sistemas de agentes de IA.`,
   skipLink: "Saltar al contenido",
   portraitAlt: "Álvaro Quintana, ingeniero Full-Stack sénior, en Madrid",
+  ogImageAlt: "Álvaro Quintana en tinta sobre papel oscuro: ingeniero Full-Stack, Mobile, Web e IA, en Madrid",
   location: "Madrid, España (remoto)",
 
   // Header (ink signature hero)

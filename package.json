@@ -10,7 +10,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "verify": "astro check && astro build && node --test scripts/"
+    "verify": "astro check && astro build && node --test scripts/",
+    "assets:icons": "node scripts/assets/icons.mjs",
+    "assets:relief": "node scripts/assets/relief.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.1",

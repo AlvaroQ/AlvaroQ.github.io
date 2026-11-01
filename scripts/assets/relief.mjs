@@ -1,11 +1,13 @@
+// @ts-check
 // Builds the height map of the hero watermark from the profile portrait:
 //   portrait-relief-height.jpg  local-contrast tone × softened silhouette (the embossed relief)
 // 1200×1600 master; astro:assets serves 600/900/1200 WebP variants.
-// Run after changing the portrait: node generate-relief.js
+// Run after changing the portrait: npm run assets:relief   (not part of the build)
+import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
-const SRC = './src/assets/profile/portrait.jpg';
-const OUT = './src/assets/profile';
+const SRC = fileURLToPath(new URL('../../src/assets/profile/portrait.jpg', import.meta.url));
+const OUT = fileURLToPath(new URL('../../src/assets/profile', import.meta.url));
 const W = 1200;
 const H = 1600;
 
@@ -15,12 +17,14 @@ async function matte() {
   const w = 300;
   const h = 400;
   const { data } = await sharp(SRC).resize(w, h).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  /** @param {number} x @param {number} y */
   const px = (x, y) => {
     const i = (y * w + x) * 3;
     return [data[i], data[i + 1], data[i + 2]];
   };
   // Backdrop colour per row from the left border; the studio gradient stops at 55 % height.
   const lim = Math.round(h * 0.55);
+  /** @type {number[][]} */
   const ref = [];
   for (let y = 0; y < h; y++) {
     const yy = Math.min(y, lim);
@@ -35,6 +39,7 @@ async function matte() {
     }
     ref.push([r / 6, g / 6, b / 6]);
   }
+  /** @param {number} x @param {number} y */
   const isBackdrop = (x, y) => {
     const [r, g, b] = px(x, y);
     const R = ref[y];
@@ -43,11 +48,12 @@ async function matte() {
     return Math.hypot(r - R[0], g - R[1], b - R[2]) < 16 && sat < 0.07;
   };
   const bg = new Uint8Array(w * h);
+  /** @type {[number, number][]} */
   const stack = [];
   for (let x = 0; x < w; x++) stack.push([x, 0]);
   for (let y = 0; y < h; y++) stack.push([0, y], [w - 1, y]);
   while (stack.length) {
-    const [x, y] = stack.pop();
+    const [x, y] = /** @type {[number, number]} */ (stack.pop());
     if (x < 0 || y < 0 || x >= w || y >= h) continue;
     const k = y * w + x;
     if (bg[k] || !isBackdrop(x, y)) continue;

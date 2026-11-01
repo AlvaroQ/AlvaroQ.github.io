@@ -7,6 +7,7 @@ export const en: Strings = {
   pageDescription: `Álvaro Quintana, senior Full-Stack engineer in Madrid with over ${YEARS_IN_TECH} years building Android, iOS and KMP apps, web platforms and AI agent systems.`,
   skipLink: "Skip to content",
   portraitAlt: "Álvaro Quintana, senior Full-Stack engineer, in Madrid",
+  ogImageAlt: "Álvaro Quintana in ink on dark paper: Full-Stack engineer, Mobile, Web and AI, in Madrid",
   location: "Madrid, Spain (remote)",
 
   // Header (ink signature hero)

@@ -17,6 +17,7 @@ const title = strings.pageTitle;
 const description = strings.pageDescription;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const portrait = await responsive('profile/portrait.jpg', [600]);
+const ogImage = new URL(lang === 'es' ? '/images/og-image.png' : `/images/og-image-${lang}.png`, Astro.site);
 const structuredData = jsonLd(lang, strings, canonicalURL.href, new URL(portrait.src, Astro.site).href);
 const altLang = lang === 'es' ? 'en' : 'es';
 const altPath = lang === 'es' ? '/en/' : '/';
@@ -28,6 +29,7 @@ const altURL = new URL(altPath, Astro.site);
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -56,18 +58,18 @@ const altURL = new URL(altPath, Astro.site);
   <meta property="og:site_name" content="Alvaro Quintana Portfolio" />
   <meta property="og:locale" content={lang === 'es' ? 'es_ES' : 'en_US'} />
   <meta property="og:locale:alternate" content={lang === 'es' ? 'en_US' : 'es_ES'} />
-  <meta property="og:image" content={new URL('/images/og-image.png', Astro.site)} />
+  <meta property="og:image" content={ogImage} />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content={`${title} — Portfolio`} />
+  <meta property="og:image:alt" content={strings.ogImageAlt} />
   <meta property="og:image:type" content="image/png" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
-  <meta name="twitter:image" content={new URL('/images/og-image.png', Astro.site)} />
-  <meta name="twitter:image:alt" content={`${title} — Portfolio`} />
+  <meta name="twitter:image" content={ogImage} />
+  <meta name="twitter:image:alt" content={strings.ogImageAlt} />
 
   <!-- Preload critical assets -->
   <link rel="preload" href="/fonts/Fraunces-900-latin.woff2" as="font" type="font/woff2" crossorigin />

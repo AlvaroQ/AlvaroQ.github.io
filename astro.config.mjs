@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import { ANTI_FOUC } from './src/scripts/anti-fouc.mjs';
 import { cspHash } from './scripts/csp-hash.mjs';
+import pruneMasters from './scripts/prune-masters.mjs';
 import { CHAT_API_URL } from './src/data/site.ts';
 
 // https://astro.build/config
@@ -39,6 +40,7 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
   integrations: [
+    pruneMasters(),
     sitemap({
       // Build date as lastmod: the site is a single page per locale rebuilt on every deploy.
       lastmod: new Date(),

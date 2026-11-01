@@ -36,7 +36,7 @@
 ```
 src/
 ├── components/
-│   ├── PageContent.astro   # Compone la pagina (secciones + widgets)
+│   ├── PageContent.astro   # Compone la pagina (secciones + ProjectModal + ChatWidget)
 │   ├── Navigation.astro    # Pildora fija; itera data/sections.ts
 │   ├── Header.astro        # Banner, controles de tema/idioma y <Hero>
 │   ├── Hero.astro          # Hero: eyebrow, titular, pausa, CTAs
@@ -47,7 +47,10 @@ src/
 │   ├── Presentation.astro  # 01 Sobre mi
 │   ├── Career.astro        # 02 Trayectoria
 │   ├── Projects.astro      # 03 Proyectos (ProjectCard)
-│   ├── ProjectCard.astro
+│   ├── ProjectCard.astro   # Tarjeta: enlace extendido + <ProjectCase> en un <template>
+│   ├── ProjectCase.astro   # Caso completo renderizado en build
+│   ├── ProjectModal.astro  # <dialog> del caso + lightbox (src/scripts/project-modal.js perezoso)
+│   ├── ChatWidget.astro    # FAB + <dialog> del chat (src/scripts/chat-widget.js perezoso)
 │   ├── Skills.astro        # 04 Habilidades
 │   └── Contact.astro       # 05 Contacto
 ├── data/                   # Datos tipados; textos por idioma como Localized
@@ -66,11 +69,19 @@ src/
 ├── pages/index.astro · pages/en/index.astro
 ├── scripts/                # Modulos cliente (Vite)
 │   ├── theme.js            # getTheme / setTheme / onThemeChange + evento 'themechange'
+│   ├── anti-fouc.mjs       # Unico script inline (tema antes de pintar)
+│   ├── project-modal.js · chat-widget.js  # Modulos perezosos (import por URL)
 │   ├── ink-signature.js · ink-watermark.js · ink-shader.js · ink-color.js
 │   └── scroll-animations.js
 └── styles/global.css · animations.css
-scripts/                    # Tests (node --test) sobre dist/ y la matematica de imagenes
-public/scripts/             # Widgets heredados (modal y chat) hasta P5a de site-review-360
+scripts/
+├── check-dist.test.mjs     # Tests deterministas sobre dist/ (SEO, CSP, a11y estatica, activos)
+├── images.test.mjs         # Tests de src/lib/media.ts
+├── csp-hash.mjs            # Hash CSP del anti-FOUC (lo usa astro.config.mjs)
+├── prune-masters.mjs       # Integracion astro:build:done: borra masters sin referencia
+└── assets/                 # Generadores manuales (fuera del build)
+    ├── icons.mjs           # favicon.svg/.ico/32, apple-touch-icon, og-image(-en).png
+    └── relief.mjs          # Mapa de alturas de la filigrana desde el retrato
 ```
 
 ### Agregar Contenido
@@ -90,6 +101,8 @@ npm run dev       # Servidor desarrollo (localhost:4321)
 npm run build     # Build produccion (dist/)
 npm run preview   # Preview del build
 npm run verify    # astro check && astro build && node --test scripts/ (lo mismo que CI)
+npm run assets:icons   # Regenera favicon, apple-touch-icon y las OG (Chrome del sistema, CHROME_PATH)
+npm run assets:relief  # Regenera el mapa de relieve de la filigrana tras cambiar el retrato
 npx astro check   # Type checking
 ```
 

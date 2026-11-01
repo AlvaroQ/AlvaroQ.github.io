@@ -209,3 +209,25 @@ for (const [lang, root] of Object.entries(dom)) {
     assert.deepEqual(bad, []);
   });
 }
+
+// Assets (P5b): no orphan image masters, linked icons exist, one OG image per language.
+test('no unreferenced images in dist/_astro', () => {
+  const text = walk(dist).filter((f) => /\.(html|css|js)$/.test(f)).map((f) => readFileSync(f, 'utf8')).join('\n');
+  const orphans = walk(`${dist}_astro/`).filter((f) => /\.(jpe?g|png|webp|avif)$/.test(f)).map((f) => f.split('/').pop()).filter((name) => !text.includes(name));
+  assert.deepEqual(orphans, []);
+});
+
+for (const [lang, root] of Object.entries(dom)) {
+  test(`${lang}: linked icons and the OG image exist`, () => {
+    const hrefs = [
+      ...root.querySelectorAll('link[rel~="icon"], link[rel="apple-touch-icon"]').map((l) => l.getAttribute('href')),
+      root.querySelector('meta[property="og:image"]').getAttribute('content'),
+    ];
+    for (const href of hrefs) assert.ok(existsSync(dist + new URL(href, SITE).pathname.slice(1)), `missing ${href}`);
+  });
+}
+
+test('each language has its own OG image', () => {
+  const og = (root) => root.querySelector('meta[property="og:image"]').getAttribute('content');
+  assert.notEqual(og(dom.es), og(dom.en));
+});

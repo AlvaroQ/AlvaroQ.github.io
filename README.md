@@ -12,6 +12,8 @@ Personal portfolio of Álvaro Quintana — a static, bilingual (es/en) single pa
 | `npm run build` | Production build in `dist/` |
 | `npm run preview` | Serve the build locally |
 | `npm run verify` | `astro check`, build and the `node --test scripts/` checks (same as CI) |
+| `npm run assets:icons` | Regenerate favicons and the per-language Open Graph images (needs Chrome) |
+| `npm run assets:relief` | Regenerate the hero watermark height map from the portrait |
 
 ## Structure
 
@@ -21,7 +23,8 @@ Personal portfolio of Álvaro Quintana — a static, bilingual (es/en) single pa
 - `src/i18n/` — `es.ts` / `en.ts` strings and the `t(lang)` helper.
 - `src/lib/` — responsive images through `astro:assets` (sharp at build time).
 - `src/scripts/` — client modules: theme, the live-ink hero and the watermark (WebGL).
-- `scripts/` — deterministic tests over `dist/` and the image-sizing math.
+- `scripts/` — deterministic tests over `dist/`, the image-sizing math, the CSP hash helper,
+  the post-build master pruning and the manual asset generators (`scripts/assets/`).
 
 ## Content
 
