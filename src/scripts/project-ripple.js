@@ -13,7 +13,7 @@
  * drop (how many rings a stroke leaves). shade, drop: ring light and drop strength. alpha: overall
  * opacity of the rings, so they stay in the background.
  */
-export const TUNE = { sim: 3, wave: 0.3, damp: 0.975, spacing: 28, shade: 0.55, drop: 0.26, alpha: 0.45 };
+export const TUNE = { sim: 3, wave: 0.3, damp: 0.975, spacing: 28, shade: 0.55, drop: 0.26, alpha: 0.4 };
 /** Ring strength per theme (alpha is capped at 0.12 in the shader). */
 const RING = { light: 0.42, dark: 0.9 };
 /** Simulation step: 60 ticks per second whatever the refresh rate. */

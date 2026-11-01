@@ -50,8 +50,8 @@ test('the wave coefficient is a uniform, not a constant in the shader', () => {
 });
 
 // L14: "añade un alpha a las ondas para que no destaque tanto".
-test('the rings carry an overall alpha below 1 (peak alpha 0.12 × 0.45)', () => {
-  assert.equal(TUNE.alpha, 0.45);
+test('the rings carry an overall alpha below 1 (peak alpha 0.12 × 0.4)', () => {
+  assert.equal(TUNE.alpha, 0.4);
   assert.match(RENDER_SHADER, /uniform[^;]*\buAlpha\b/);
   assert.match(RENDER_SHADER, /\*\s*uAlpha/);
 });
