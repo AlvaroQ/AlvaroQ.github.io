@@ -89,13 +89,15 @@ test('no source maps or .DS_Store in dist', () => {
   assert.deepEqual(stray, []);
 });
 
+const PROJECTS = 10;
+
 // Widgets are Astro components (P5a): native dialogs, case studies rendered at build time.
 for (const [lang, root] of Object.entries(dom)) {
   test(`${lang}: one project dialog and one case template per project`, () => {
     assert.equal(root.querySelectorAll('dialog#project-modal').length, 1);
     const cases = root.querySelectorAll('template[data-case]');
-    assert.equal(cases.length, 9);
-    assert.equal(new Set(cases.map((t) => t.getAttribute('data-case'))).size, 9);
+    assert.equal(cases.length, PROJECTS);
+    assert.equal(new Set(cases.map((t) => t.getAttribute('data-case'))).size, PROJECTS);
   });
 
   test(`${lang}: the chat is a named dialog with a live log and a labelled input`, () => {
@@ -189,7 +191,7 @@ for (const [lang, root] of Object.entries(dom)) {
 
   test(`${lang}: one case button inside the heading of each card`, () => {
     const cards = root.querySelectorAll('article.card');
-    assert.equal(cards.length, 9);
+    assert.equal(cards.length, PROJECTS);
     for (const card of cards) {
       const buttons = card.querySelectorAll('h3 button[data-open-case]');
       assert.equal(buttons.length, 1, card.querySelector('h3')?.textContent);
@@ -230,4 +232,40 @@ for (const [lang, root] of Object.entries(dom)) {
 test('each language has its own OG image', () => {
   const og = (root) => root.querySelector('meta[property="og:image"]').getAttribute('content');
   assert.notEqual(og(dom.es), og(dom.en));
+});
+
+// Content refresh (project-ripple T1): unnumbered sections, project list and covers.
+for (const [lang, root] of Object.entries(dom)) {
+  test(`${lang}: section headings and navigation carry no numbers`, () => {
+    for (const section of root.querySelectorAll('section[id]')) {
+      const heading = section.querySelector('h2')?.parentNode;
+      if (!heading) continue;
+      const numbered = heading.querySelectorAll('p, span').filter((el) => /^\s*\d{1,2}\s*$/.test(el.textContent));
+      assert.deepEqual(numbered.map((el) => el.textContent.trim()), [], `#${section.id}`);
+    }
+    for (const link of root.querySelectorAll('#main-nav a')) assert.doesNotMatch(link.textContent.trim(), /^\d/);
+  });
+
+  test(`${lang}: Gran Premio IA opens the list and invirtiendo.site replaces Cartera Investing`, () => {
+    const titles = root.querySelectorAll('article.card h3 button').map((b) => b.textContent.trim());
+    assert.equal(titles[0], 'Gran Premio IA');
+    assert.ok(titles.includes('invirtiendo.site'));
+    assert.ok(!html[lang].includes('Cartera Investing'), 'old project name still on the page');
+    const first = root.querySelector('article.card .label-ui span').textContent.replace(/\s+/g, ' ').trim();
+    assert.match(first, new RegExp(`01 / ${PROJECTS}$`));
+  });
+
+  test(`${lang}: every project card has a responsive cover from the asset pipeline`, () => {
+    for (const card of root.querySelectorAll('article.card')) {
+      const img = card.querySelector('.media img');
+      assert.ok(img, card.querySelector('h3')?.textContent.trim());
+      assert.match(img.getAttribute('src'), /^\/_astro\//);
+      assert.ok(img.getAttribute('srcset') && img.getAttribute('sizes'));
+    }
+  });
+}
+
+test('personal notes and pasted images are not published', () => {
+  const stray = walk(dist).filter((f) => /new_proyect\.md$|orca-paste-/.test(f));
+  assert.deepEqual(stray, []);
 });

@@ -13,11 +13,13 @@ interface Props {
   /** Zero-padded project count, e.g. "09". */
   total: string;
   variant: 'feature' | 'compact';
+  /** Entrance delay step (0–2) within its row. */
+  stagger: number;
   strings: Strings;
   lang: Lang;
 }
 
-const { project, index, total, variant, strings, lang } = Astro.props;
+const { project, index, total, variant, stagger, strings, lang } = Astro.props;
 
 // 16:10 media box per breakpoint (CSS px): lg, md, mobile.
 const LAYOUT: Record<Props['variant'], MediaLayout> = {
@@ -40,7 +42,7 @@ const number = String(index + 1).padStart(2, '0');
 ---
 
 <article
-  class:list={['card media-zoom animate-on-scroll group cursor-pointer', `card-${variant}`, `stagger-${index % 3}`]}
+  class:list={['card media-zoom animate-on-scroll group cursor-pointer', `card-${variant}`, `stagger-${stagger}`]}
 >
   <!-- Contained images sit on the card itself (no plate), so short screenshots do not show an empty box -->
   <div class:list={['media relative overflow-hidden', cover?.fit === 'contain' ? 'media-contain' : 'bg-(--paper-2)']}>

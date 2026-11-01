@@ -42,7 +42,7 @@ src/
 │   ├── Hero.astro          # Hero: eyebrow, titular, pausa, CTAs
 │   ├── InkName.astro       # h1 + canvas de tinta viva (scripts/ink-signature.js)
 │   ├── InkWatermark.astro  # Filigrana en relieve (scripts/ink-watermark.js)
-│   ├── Section.astro       # <section id> + contenedor + SectionHeading numerado
+│   ├── Section.astro       # <section id> + contenedor + SectionHeading
 │   ├── SectionHeading.astro
 │   ├── Presentation.astro  # 01 Sobre mi
 │   ├── Career.astro        # 02 Trayectoria
@@ -56,7 +56,7 @@ src/
 ├── data/                   # Datos tipados; textos por idioma como Localized
 │   ├── site.ts             # Cifras (anos), URLs y email compartidos
 │   ├── seo.ts              # JSON-LD localizado (Person, WebSite, ProfilePage)
-│   ├── sections.ts         # Orden, indices y claves de navegacion/titulo
+│   ├── sections.ts         # Orden y claves de navegacion/titulo
 │   ├── projects.ts         # Project { slug, status?, links, caseStudy }
 │   ├── career.ts · skills.ts · stack.ts · contact.ts
 ├── i18n/

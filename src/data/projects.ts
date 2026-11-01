@@ -30,7 +30,51 @@ export interface Project {
 }
 
 export const projects: Project[] = [
-  // Fila 1: Adivina Perro, Cartera Investing, RAG Chatbot
+  // Featured rows: Gran Premio IA, Adivina Perro, invirtiendo.site, RAG Chatbot
+  {
+    slug: "gran-premio-ia",
+    title: "Gran Premio IA",
+    subtitle: {
+      es: "Cinco IAs compiten en bolsa como en la Fórmula 1",
+      en: "Five AIs race the stock market, Formula 1 style"
+    },
+    description: {
+      es: "Una simulación real de bolsa narrada como una carrera de Fórmula 1: cinco modelos de IA de frontera (GPT, Gemini, Claude, Grok y Muse) eligen cada uno una cartera de 8 acciones con 100.000 € y las mismas reglas, y compiten contra el S&P 500 con precios reales de mercado. Cada sesión de Wall Street es una vuelta reproducida con datos intradía, y un pipeline desatendido guioniza, locuta, renderiza y sube a YouTube el vídeo de cada vuelta.",
+      en: "A real stock-market simulation told as a Formula 1 race: five frontier AI models (GPT, Gemini, Claude, Grok and Muse) each pick an 8-stock portfolio with €100,000 under the same rules and race the S&P 500 on real market prices. Every Wall Street session is a lap replayed from intraday data, and an unattended pipeline scripts, voices, renders and uploads each lap's video to YouTube."
+    },
+    features: [
+      { es: "5 IAs contra el S&P 500", en: "5 AIs vs the S&P 500" },
+      { es: "Cada Sesión, una Vuelta", en: "Every Session a Lap" },
+      { es: "Vídeos Automáticos en YouTube", en: "Automated YouTube Videos" },
+      { es: "Precios Reales de Mercado", en: "Real Market Prices" }
+    ],
+    techStack: ["Next.js 16", "React 19", "TanStack Query", "Recharts", "Yahoo Finance", "Claude Code", "Remotion", "Vercel"],
+    status: 'live',
+    links: { demo: "https://www.granpremioia.online/" },
+    caseStudy: {
+      longDescription: {
+        es: "Gran Premio IA convierte la bolsa en un campeonato: cinco modelos de IA de frontera reciben las mismas reglas y 100.000 € cada uno, eligen una cartera de 8 acciones y compiten con precios reales contra el S&P 500, que hace de safety car.\n\n## La Carrera\nLa parrilla queda congelada en la salida: pesos y precios de entrada no cambian y una validación lo comprueba en cada build. Cada mes es un Gran Premio con su propio circuito y cada sesión de la NYSE es una vuelta; la clasificación es la rentabilidad acumulada en euros frente al S&P 500.\n\n## Replay de Cada Sesión\nCada vuelta se reproduce a partir de velas intradía de 5 minutos: el safety car recorre la sesión de 09:30 a 16:00 (Nueva York) y cada coche va por delante o por detrás según su diferencia. Un adelantamiento solo cuenta si la diferencia se sostiene, para que el ruido no invente pasadas.\n\n## Crónica Diaria con IA\nCada día laborable, tras el cierre, un agente en la nube investiga la sesión con fuentes, redacta los eventos de carrera, pasa type-check, lint, tests y build, y lo despliega en producción.\n\n## Del Cierre a YouTube sin Teclado\nUn pipeline desatendido arranca en cuanto llega la crónica: exporta los datos de la vuelta, Claude escribe el guion y los metadatos, la voz se sintetiza y se valida con Whisper, Remotion renderiza en 16:9 y 9:16 con el mismo circuito que la web y el vídeo se sube a YouTube con miniatura y capítulos.",
+        en: "Gran Premio IA turns the stock market into a championship: five frontier AI models get the same rules and €100,000 each, pick an 8-stock portfolio and race on real prices against the S&P 500, which plays the safety car.\n\n## The Race\nThe grid is frozen at the start: weights and entry prices never change, and a validation checks it on every build. Each month is a Grand Prix on its own circuit and each NYSE session is a lap; the standings are the cumulative return in euros against the S&P 500.\n\n## Every Session Replayed\nEach lap is replayed from 5-minute intraday bars: the safety car drives the session from 09:30 to 16:00 (New York) and every car runs ahead or behind it by its gap. An overtake only counts when the gap holds, so noise never invents a pass.\n\n## Daily AI Race Report\nEvery weekday after the close, a cloud agent researches the session with sources, writes the race events, passes type-check, lint, tests and build, and ships it to production.\n\n## From the Close to YouTube, Hands-Free\nAn unattended pipeline starts as soon as the report lands: it exports the lap data, Claude writes the script and metadata, the voice is synthesised and checked with Whisper, Remotion renders 16:9 and 9:16 cuts on the same circuit as the website, and the video is uploaded to YouTube with thumbnail and chapters."
+      },
+      architecture: {
+        es: "Frontend: Next.js 16 App Router + React 19 + React Compiler\nDatos: Yahoo Finance en servidor + TanStack Query, caché coordinada servidor/CDN/cliente\nGráficos: Recharts + circuitos propios en SVG\nDominio: matemática de carrera pura y validada, sin base de datos\nCrónica: agente Claude en la nube cada día laborable tras el cierre\nVídeo: Claude + síntesis de voz + Whisper + Remotion, subida a YouTube\nDespliegue: Vercel\nTesting: Vitest (300+ tests)",
+        en: "Frontend: Next.js 16 App Router + React 19 + React Compiler\nData: Yahoo Finance on the server + TanStack Query, coordinated server/CDN/client caching\nCharts: Recharts + custom SVG circuits\nDomain: pure, validated race maths, no database\nRace report: Claude cloud agent every weekday after the close\nVideo: Claude + speech synthesis + Whisper + Remotion, uploaded to YouTube\nDeployment: Vercel\nTesting: Vitest (300+ tests)"
+      },
+      screenshots: [
+        "projects/gran-premio-ia.webp"
+      ],
+      keyHighlights: [
+        { es: "Cinco modelos de IA de frontera compiten con carteras reales frente al S&P 500", en: "Five frontier AI models race real-priced portfolios against the S&P 500" },
+        { es: "Parrilla congelada y validada: mismas reglas, 100.000 € y 8 acciones por escudería", en: "Frozen, validated grid: same rules, €100,000 and 8 stocks per team" },
+        { es: "Cada sesión de la NYSE se reproduce como una vuelta con velas intradía de 5 minutos", en: "Every NYSE session replayed as a lap from 5-minute intraday bars" },
+        { es: "Adelantamientos con histéresis: el ruido del mercado no inventa pasadas", en: "Overtakes with hysteresis: market noise never invents a pass" },
+        { es: "Agente en la nube que redacta la crónica de cada sesión y la despliega tras pasar todos los checks", en: "Cloud agent that writes each session's report and ships it after every check passes" },
+        { es: "Pipeline desatendido: guion con Claude, voz sintetizada, render en Remotion y subida a YouTube", en: "Unattended pipeline: Claude script, synthesised voice, Remotion render and YouTube upload" },
+        { es: "Vídeos 16:9 y 9:16 con el mismo circuito que la web", en: "16:9 and 9:16 videos on the same circuit as the website" },
+        { es: "Matemática de carrera pura con caché coordinada entre servidor, CDN y cliente", en: "Pure race maths with caching coordinated across server, CDN and client" }
+      ],
+    }
+  },
   {
     slug: "adivina-perro",
     title: "Adivina Perro",
@@ -76,48 +120,49 @@ export const projects: Project[] = [
     }
   },
   {
-    slug: "cartera-investing",
-    title: "Cartera Investing",
+    slug: "invirtiendo-site",
+    title: "invirtiendo.site",
     subtitle: {
-      es: "Dashboard Financiero Personal",
-      en: "Personal Financial Dashboard"
+      es: "Monitor de Mercado y Cartera en Tiempo Real",
+      en: "Real-Time Market Monitor & Portfolio Tracker"
     },
     description: {
-      es: "Dashboard financiero completo con 37+ módulos especializados: heatmaps sectoriales, análisis de concentración, equity curve, tracking de decisiones, informes fiscales y más. Doble vía de datos: carga automática desde NAS via bot Python que descarga CSVs de Investing, o subida manual de ficheros CSV para el área pública.",
-      en: "Comprehensive financial dashboard with 37+ specialized modules: sector heatmaps, concentration analysis, equity curve, decision tracking, tax reports and more. Dual data pipeline: automated loading from NAS via Python bot that downloads CSVs from Investing, or manual CSV file upload for the public area."
+      es: "Lo que empezó como el dashboard de mi cartera es hoy un centro de mando del mercado en tiempo real: índices globales, amplitud del S&P 500, rotación sectorial de ~436 empresas, macro y valoración de un vistazo, sin login. Rastrea las mejores oportunidades con un ranking GARP semanal, señales técnicas, el smart money de los 13F y mercados de predicción, y sigue tu cartera de acciones y ETFs al detalle: CAGR, Sharpe, drawdown, rayos X de ETFs y solapamientos.",
+      en: "What began as my portfolio dashboard is now a real-time market command centre: global indices, S&P 500 breadth, sector rotation across ~436 companies, macro and valuation at a glance, no login. It tracks the best opportunities with a weekly GARP ranking, technical signals, 13F smart money and prediction markets, and follows your stock and ETF portfolio in depth: CAGR, Sharpe, drawdown, ETF X-ray and overlap."
     },
     features: [
-      { es: "37+ Módulos Analytics", en: "37+ Analytics Modules" },
-      { es: "Heatmap Sectorial", en: "Sector Heatmap" },
-      { es: "Equity Curve & CAGR", en: "Equity Curve & CAGR" },
-      { es: "Informes Fiscales", en: "Tax Reports" }
+      { es: "Mercado en Tiempo Real", en: "Real-Time Market" },
+      { es: "Ranking GARP y Señales", en: "GARP Ranking & Signals" },
+      { es: "Smart Money 13F", en: "13F Smart Money" },
+      { es: "Cartera y Rayos X de ETFs", en: "Portfolio & ETF X-Ray" }
     ],
-    techStack: ["Next.js 16", "React 19", "Firebase", "Recharts", "Zustand", "Tailwind CSS 4", "TypeScript", "Framer Motion"],
+    techStack: ["Next.js 16", "React 19", "Firebase", "TanStack Query", "Zustand", "Lightweight Charts", "Yahoo Finance", "SEC EDGAR"],
     status: 'live',
     links: { demo: "https://www.invirtiendo.site/" },
     caseStudy: {
       longDescription: {
-        es: "Plataforma de analytics financiero diseñada para inversores individuales que quieren entender su cartera en profundidad.\n\n## Dashboard Modular\n37+ feature modules independientes organizados como bounded contexts: heatmap sectorial, análisis de concentración y riesgo, equity curve con CAGR, tracking de decisiones de compra/venta, dividendos, comparativa con índices y más.\n\n## Doble Vía de Datos\nPara el usuario propietario, un bot en Python desplegado en un Synology NAS descarga automáticamente los CSVs de Investing y los almacena como snapshots históricos. La app implementa carga progresiva: primero renderiza el último snapshot para mostrar el dashboard en segundos, luego descarga el historial completo en background.\n\nPara el área pública, los usuarios pueden adjuntar manualmente sus ficheros CSV exportados desde su broker y explorar el dashboard con sus propios datos.\n\n## Modo Demo\nLanding page pública con datos demo para que cualquiera pueda explorar las capacidades del dashboard sin necesidad de autenticación.\n\n## Arquitectura\nFeature-based architecture con 37+ módulos, cada uno con su propio types/services/hooks/components. State management con Zustand + React Query. Container queries para layouts responsive por panel.",
-        en: "Financial analytics platform designed for individual investors who want to deeply understand their portfolio.\n\n## Modular Dashboard\n37+ independent feature modules organized as bounded contexts: sector heatmap, concentration and risk analysis, equity curve with CAGR, buy/sell decision tracking, dividends, index comparison and more.\n\n## Dual Data Pipeline\nFor the owner user, a Python bot deployed on a Synology NAS automatically downloads CSVs from Investing and stores them as historical snapshots. The app implements progressive loading: first renders the latest snapshot to show the dashboard in seconds, then downloads the full history in the background.\n\nFor the public area, users can manually attach their CSV files exported from their broker and explore the dashboard with their own data.\n\n## Demo Mode\nPublic landing page with demo data so anyone can explore the dashboard capabilities without authentication.\n\n## Architecture\nFeature-based architecture with 37+ modules, each with its own types/services/hooks/components. State management with Zustand + React Query. Container queries for responsive per-panel layouts."
+        es: "invirtiendo.site nació como el dashboard de mi cartera y ha crecido hasta convertirse en un monitor completo del mercado: qué se mueve, por qué y dónde están las mejores oportunidades, junto a un seguimiento a fondo de una cartera de acciones o ETFs.\n\n## El Mercado de un Vistazo\nÍndices globales, amplitud del S&P 500, rotación sectorial, macroeconomía y valoración en una sola pantalla y sin login. El mapa sectorial cubre 19 industrias y ~436 empresas cotizadas en EE. UU. con valoración Fair PE relativa, y cada empresa tiene su ficha con DCF interactivo y tesis de inversión.\n\n## Rastreo de Oportunidades\nRanking GARP cuantitativo recalculado cada semana (crecimiento, valoración, calidad y momentum), señales técnicas de compra (golden cross, ruptura de 52 semanas, pullback, recuperación de RSI, MACD alcista), movimientos de los superinversores en sus 13F, probabilidades de los mercados de predicción y una agenda de Fed, BCE, macro y resultados.\n\n## Tu Cartera al Detalle\nImporta tu CSV y obtén CAGR, volatilidad, Sharpe y máximo drawdown, rayos X de ETFs con detección de solapamientos, exposición a divisas, correlaciones, alertas de precio y tax-loss harvesting, con exportación a PDF y Excel.\n\n## Ingeniería\n85 módulos de feature con la misma estructura (tipos, servicios, hooks y componentes), pipelines de datos nocturnos y semanales que alimentan Firestore y un quality gate con type-check, lint, tests, escaneo de secretos y presupuestos de rendimiento en Playwright.",
+        en: "invirtiendo.site started as my portfolio dashboard and has grown into a complete market monitor: what is moving, why, and where the best opportunities are, together with in-depth tracking of a stock or ETF portfolio.\n\n## The Market at a Glance\nGlobal indices, S&P 500 breadth, sector rotation, macroeconomics and valuation on a single screen, no login. The sector map covers 19 industries and ~436 US-listed companies valued on relative Fair P/E, and every company has its own page with an interactive DCF and an investment thesis.\n\n## Opportunity Tracking\nA quantitative GARP ranking recalculated every week (growth, valuation, quality and momentum), technical buy signals (golden cross, 52-week breakout, pullback, RSI recovery, bullish MACD), superinvestor moves from their 13F filings, prediction-market odds and a calendar of Fed, ECB, macro and earnings events.\n\n## Your Portfolio in Depth\nImport your CSV and get CAGR, volatility, Sharpe and maximum drawdown, an ETF X-ray with overlap detection, currency exposure, correlations, price alerts and tax-loss harvesting, with PDF and Excel export.\n\n## Engineering\n85 feature modules with the same structure (types, services, hooks and components), nightly and weekly data pipelines feeding Firestore, and a quality gate with type-check, lint, tests, secret scanning and Playwright performance budgets."
       },
       architecture: {
-        es: "Frontend: Next.js 16 App Router + React 19 + React Compiler\nUI: Tailwind CSS 4 + shadcn/ui + Recharts\nState: Zustand (client) + TanStack React Query (server)\nAnimaciones: Framer Motion\nBackend: Firebase (Auth + Firestore)\nDatos: Bot Python en Synology NAS (auto-descarga CSV de Investing) + subida manual CSV\nDespliegue: Vercel\nTesting: Vitest + Playwright",
-        en: "Frontend: Next.js 16 App Router + React 19 + React Compiler\nUI: Tailwind CSS 4 + shadcn/ui + Recharts\nState: Zustand (client) + TanStack React Query (server)\nAnimations: Framer Motion\nBackend: Firebase (Auth + Firestore)\nData: Python bot on Synology NAS (auto-downloads CSV from Investing) + manual CSV upload\nDeployment: Vercel\nTesting: Vitest + Playwright"
+        es: "Frontend: Next.js 16 App Router + React 19 + React Compiler\nUI: Tailwind CSS 4 + Lightweight Charts + Recharts + Framer Motion\nEstado: Zustand (cliente) + TanStack Query (servidor)\nBackend: Firebase (Auth + Firestore, reglas con tests en emulador)\nDatos: Yahoo Finance, SEC EDGAR (13F), FRED, EODHD, Polymarket, AAII y RSS\nPipelines: jobs nocturnos en VPS + GitHub Actions semanales\nDespliegue: Vercel (PWA)\nTesting: Vitest (~650 ficheros de test) + Playwright con presupuestos de rendimiento",
+        en: "Frontend: Next.js 16 App Router + React 19 + React Compiler\nUI: Tailwind CSS 4 + Lightweight Charts + Recharts + Framer Motion\nState: Zustand (client) + TanStack Query (server)\nBackend: Firebase (Auth + Firestore, rules tested in the emulator)\nData: Yahoo Finance, SEC EDGAR (13F), FRED, EODHD, Polymarket, AAII and RSS\nPipelines: nightly jobs on a VPS + weekly GitHub Actions\nDeployment: Vercel (PWA)\nTesting: Vitest (~650 test files) + Playwright with performance budgets"
       },
       screenshots: [
+        "projects/invirtiendo-site.webp",
         "projects/sesion-investing.webp",
         "projects/cartera-investing.webp",
         "projects/comparativa-investing.webp"
       ],
       keyHighlights: [
-        { es: "37+ módulos analytics independientes como bounded contexts", en: "37+ independent analytics modules as bounded contexts" },
-        { es: "Bot Python en NAS descarga CSVs de Investing automáticamente; área pública con subida manual de CSV", en: "Python bot on NAS auto-downloads CSVs from Investing; public area with manual CSV upload" },
-        { es: "Heatmap sectorial interactivo con análisis de concentración", en: "Interactive sector heatmap with concentration analysis" },
-        { es: "Equity curve con cálculo de CAGR y comparativa vs índices", en: "Equity curve with CAGR calculation and index comparison" },
-        { es: "Tracking de decisiones de inversión con timeline visual", en: "Investment decision tracking with visual timeline" },
-        { es: "Modo demo público para explorar sin autenticación", en: "Public demo mode to explore without authentication" },
-        { es: "Container queries para layouts responsive por panel", en: "Container queries for responsive per-panel layouts" },
-        { es: "Informes fiscales anuales exportables a PDF", en: "Annual tax reports exportable to PDF" }
+        { es: "Monitor de mercado en tiempo real sin login: índices, amplitud, sectores, macro y valoración", en: "Real-time market monitor with no login: indices, breadth, sectors, macro and valuation" },
+        { es: "Mapa de 19 industrias y ~436 empresas con valoración Fair PE relativa", en: "Map of 19 industries and ~436 companies valued on relative Fair P/E" },
+        { es: "Ranking GARP cuantitativo semanal y escáner de señales técnicas", en: "Weekly quantitative GARP ranking and technical-signal screener" },
+        { es: "Smart money: movimientos trimestrales de los superinversores en sus 13F", en: "Smart money: superinvestors' quarterly moves from their 13F filings" },
+        { es: "Mercados de predicción y agenda de Fed, BCE, macro y resultados", en: "Prediction markets and a Fed, ECB, macro and earnings calendar" },
+        { es: "Cartera de acciones y ETFs: CAGR, Sharpe, drawdown, rayos X y solapamientos", en: "Stock and ETF portfolio: CAGR, Sharpe, drawdown, X-ray and overlap" },
+        { es: "85 módulos de feature y pipelines de datos nocturnos y semanales hacia Firestore", en: "85 feature modules and nightly and weekly data pipelines into Firestore" },
+        { es: "Quality gate con ~650 ficheros de test, escaneo de secretos y presupuestos de rendimiento", en: "Quality gate with ~650 test files, secret scanning and performance budgets" }
       ],
     }
   },
