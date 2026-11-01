@@ -977,12 +977,15 @@ class ProjectDetailModal {
       const isFirst = index === 0;
       // Escape src for safe use in onclick handler
       const safeSrc = this.escapeAttr(src);
-      // Thumbnails pick a WebP variant from srcset; the lightbox keeps the largest one (src).
-      const srcset = this.thumbs[index] ? this.escapeAttr(this.thumbs[index]) : '';
-      const thumbAttrs = srcset ? ` srcset="${srcset}" sizes="(max-width: 600px) 90vw, 380px"` : '';
+      // Thumbnails pick a WebP variant from srcset with the size they actually paint;
+      // the lightbox keeps the largest one (src).
+      const thumb = this.thumbs[index] || {};
+      const srcset = thumb.srcset ? this.escapeAttr(thumb.srcset) : '';
+      const sizes = thumb.sizes ? ` sizes="${this.escapeAttr(thumb.sizes)}"` : '';
+      const cap = thumb.maxHeight ? ` style="max-height: ${Number(thumb.maxHeight)}px"` : '';
       const imgAttrs = isFirst
-        ? `src="${safeSrc}"${thumbAttrs} onload="this.classList.add('loaded')"`
-        : `data-src="${safeSrc}"${srcset ? ` data-srcset="${srcset}" sizes="(max-width: 600px) 90vw, 380px"` : ''}`;
+        ? `src="${safeSrc}"${srcset ? ` srcset="${srcset}"${sizes}` : ''}${cap} onload="this.classList.add('loaded')"`
+        : `data-src="${safeSrc}"${srcset ? ` data-srcset="${srcset}"${sizes}` : ''}${cap}`;
       return `<div class="modal-screenshot-container">
         <div class="modal-screenshot-skeleton"></div>
         <img ${imgAttrs} alt="Screenshot ${index + 1}" class="modal-screenshot-img" onclick="window.projectModal.openLightbox('${safeSrc}')" />

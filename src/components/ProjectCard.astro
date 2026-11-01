@@ -64,6 +64,17 @@ async function mediaImage(key: string) {
 const cover = keys[0] ? await mediaImage(keys[0]) : null;
 // Modal gallery: the largest variant feeds the lightbox, the srcset feeds the thumbnails.
 const gallery = await Promise.all(keys.map((key) => responsive(key, MODAL_WIDTHS)));
+// Modal thumbnails are contained in a cell up to 750 px wide (90vw on phones) and at most
+// 250 px tall; capping the height at a third of the source keeps them ≤ 1x up to 3x screens.
+const thumbs = gallery.map((g) => {
+  const maxHeight = Math.min(250, Math.floor(g.height / 3));
+  const painted = Math.round((maxHeight * g.width) / g.height);
+  return {
+    srcset: g.srcset,
+    sizes: `(max-width: 600px) ${Math.min(painted, 540)}px, ${Math.min(painted, 750)}px`,
+    maxHeight,
+  };
+});
 const number = String(index + 1).padStart(2, '0');
 const githubUrl = project.githubUrl || project.detailedInfo?.githubUrl;
 const opensModal = Boolean(project.detailedInfo);
@@ -82,7 +93,7 @@ const opensModal = Boolean(project.detailedInfo);
   data-project-long-desc={project.detailedInfo?.longDescription[lang] || ''}
   data-project-architecture={project.detailedInfo?.architecture[lang] || ''}
   data-project-screenshots={JSON.stringify(gallery.map((g) => g.src))}
-  data-project-thumbs={JSON.stringify(gallery.map((g) => g.srcset))}
+  data-project-thumbs={JSON.stringify(thumbs)}
   data-project-highlights={JSON.stringify(project.detailedInfo?.keyHighlights.map((h) => h[lang]) || [])}
   data-project-demo={project.detailedInfo?.demoUrl || ''}
   data-project-github={project.detailedInfo?.githubUrl || ''}
