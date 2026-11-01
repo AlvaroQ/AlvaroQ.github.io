@@ -45,7 +45,6 @@ class ProjectDetailModal {
 
     this.translations = {
       es: {
-        featured: 'DESTACADO',
         privateRepo: 'Repositorio Privado',
         architecture: 'Arquitectura',
         keyHighlights: 'Aspectos Clave',
@@ -55,7 +54,7 @@ class ProjectDetailModal {
         videoDemo: 'Video Demo',
         videoPlaceholder: 'Grabacion en progreso...',
         close: 'Cerrar',
-        openDemo: 'Abrir Demo',
+        openDemo: 'Abrir demo',
         viewOnGithub: 'Ver en GitHub',
         swipeToClose: 'Desliza para cerrar',
         previousImage: 'Imagen anterior',
@@ -63,7 +62,6 @@ class ProjectDetailModal {
         imageOf: 'de'
       },
       en: {
-        featured: 'FEATURED',
         privateRepo: 'Private Repository',
         architecture: 'Architecture',
         keyHighlights: 'Key Highlights',
@@ -73,7 +71,7 @@ class ProjectDetailModal {
         videoDemo: 'Video Demo',
         videoPlaceholder: 'Recording in progress...',
         close: 'Close',
-        openDemo: 'Open Demo',
+        openDemo: 'Open demo',
         viewOnGithub: 'View on GitHub',
         swipeToClose: 'Swipe to close',
         previousImage: 'Previous image',
@@ -185,26 +183,6 @@ class ProjectDetailModal {
         display: flex;
         flex-direction: column;
         gap: 8px;
-      }
-
-      .modal-badges {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
-
-      .badge-featured {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 4px 10px;
-        border-radius: 4px;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 1px;
-        background: var(--accent-color-dim);
-        color: var(--accent-color);
-        border: 1px solid var(--accent-color-border);
       }
 
       .badge-private {
@@ -923,14 +901,11 @@ class ProjectDetailModal {
       <div id="project-modal-content">
         <div class="modal-header">
           <div class="modal-header-left">
-            <div class="modal-badges">
-              ${data.isFeatured ? `<span class="badge-featured">${this.t.featured}</span>` : ''}
-            </div>
             <h2 class="modal-title" id="project-modal-title">${this.escapeHtml(data.title)}</h2>
             <div class="modal-subtitle-row">
               <p class="modal-subtitle">${this.escapeHtml(data.subtitle)}</p>
-              ${data.demoUrl ? `<a href="${data.demoUrl}" target="_blank" rel="noopener noreferrer" class="modal-demo-btn">▶ ${this.t.openDemo}</a>` : ''}
-              ${data.githubUrl ? `<a href="${data.githubUrl}" target="_blank" rel="noopener noreferrer" class="modal-github-btn" aria-label="${this.t.viewOnGithub}">&lt;/&gt; ${this.t.viewOnGithub}</a>` : ''}
+              ${data.demoUrl ? `<a href="${data.demoUrl}" target="_blank" rel="noopener noreferrer" class="modal-demo-btn">${this.t.openDemo}</a>` : ''}
+              ${data.githubUrl ? `<a href="${data.githubUrl}" target="_blank" rel="noopener noreferrer" class="modal-github-btn" aria-label="${this.t.viewOnGithub}">${this.t.viewOnGithub}</a>` : ''}
             </div>
           </div>
           <button class="modal-close" id="project-modal-close" aria-label="${this.t.close}">&times;</button>

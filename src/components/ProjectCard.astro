@@ -1,0 +1,258 @@
+---
+// One project card. 'feature' is the editorial row (media at 50%, alternating sides from md);
+// 'compact' is a grid tile (media on top, no feature list). Both open the project modal.
+import type { Strings } from '../i18n/es';
+import type { AIProject } from '../data/projects';
+import { asset, fitFor, responsive, type Slot } from '../lib/images';
+
+interface Props {
+  project: AIProject;
+  /** Zero-based position in the full project list. */
+  index: number;
+  /** Zero-padded project count, e.g. "09". */
+  total: string;
+  variant: 'feature' | 'compact';
+  strings: Strings;
+  lang: 'es' | 'en';
+}
+
+const { project, index, total, variant, strings, lang } = Astro.props;
+
+// 16:10 media box per breakpoint (CSS px): lg, md, mobile.
+const LAYOUT: Record<Props['variant'], { slots: Slot[]; lg: number; md: string }> = {
+  feature: {
+    slots: [{ w: 600, h: 375, dpr: 2 }, { w: 488, h: 305, dpr: 2 }, { w: 342, h: 214, dpr: 3 }],
+    lg: 600,
+    md: 'calc((100vw - 48px) / 2)',
+  },
+  compact: {
+    slots: [{ w: 379, h: 237, dpr: 2 }, { w: 472, h: 295, dpr: 2 }, { w: 342, h: 214, dpr: 3 }],
+    lg: 379,
+    md: 'calc((100vw - 80px) / 2)',
+  },
+};
+const MEDIA_WIDTHS = [400, 600, 800, 1000, 1200, 1440];
+const MODAL_WIDTHS = [480, 800, 1200, 1600];
+
+const layout = LAYOUT[variant];
+const keys = project.detailedInfo?.screenshots ?? [];
+
+async function mediaImage(key: string) {
+  const meta = asset(key);
+  const fit = fitFor(meta, layout.slots);
+  const img = await responsive(key, MEDIA_WIDTHS);
+  if (fit === 'cover') {
+    // A source wider than 16:10 is painted wider than its box (cropped at the sides).
+    const k = Math.max(1, meta.width / meta.height / (16 / 10)).toFixed(3);
+    return {
+      ...img,
+      fit,
+      cap: undefined,
+      sizes: `(min-width: 1024px) ${Math.round(layout.lg * Number(k))}px, (min-width: 768px) calc(${layout.md} * ${k}), calc((100vw - 48px) * ${k})`,
+    };
+  }
+  // Shown whole on the plate, never larger than half the source (≤ 1x on 2x screens).
+  const [lg, md, sm] = layout.slots.map((s) => Math.round(Math.min(s.w, (s.h * meta.width) / meta.height, meta.width / 2)));
+  return {
+    ...img,
+    fit,
+    cap: `max-width: ${Math.floor(meta.width / 2)}px; max-height: ${Math.floor(meta.height / 2)}px`,
+    sizes: `(min-width: 1024px) ${lg}px, (min-width: 768px) ${md}px, ${sm}px`,
+  };
+}
+
+const cover = keys[0] ? await mediaImage(keys[0]) : null;
+// Modal gallery: the largest variant feeds the lightbox, the srcset feeds the thumbnails.
+const gallery = await Promise.all(keys.map((key) => responsive(key, MODAL_WIDTHS)));
+const number = String(index + 1).padStart(2, '0');
+const githubUrl = project.githubUrl || project.detailedInfo?.githubUrl;
+const opensModal = Boolean(project.detailedInfo);
+---
+
+<article
+  class:list={['card media-zoom animate-on-scroll group', `card-${variant}`, opensModal && 'cursor-pointer']}
+  style={`--stagger: ${(index % 3) * 80}ms`}
+  data-project-index={index}
+  data-featured={opensModal ? 'true' : 'false'}
+  {...(opensModal ? { role: 'button', tabindex: '0', 'aria-label': `${strings.viewDetails}: ${project.title}` } : {})}
+  data-project-title={project.title}
+  data-project-subtitle={project.subtitle[lang]}
+  data-project-description={project.description[lang]}
+  data-project-accent={project.accentColor}
+  data-project-long-desc={project.detailedInfo?.longDescription[lang] || ''}
+  data-project-architecture={project.detailedInfo?.architecture[lang] || ''}
+  data-project-screenshots={JSON.stringify(gallery.map((g) => g.src))}
+  data-project-thumbs={JSON.stringify(gallery.map((g) => g.srcset))}
+  data-project-highlights={JSON.stringify(project.detailedInfo?.keyHighlights.map((h) => h[lang]) || [])}
+  data-project-demo={project.detailedInfo?.demoUrl || ''}
+  data-project-github={project.detailedInfo?.githubUrl || ''}
+  data-project-tech={JSON.stringify(project.techStack)}
+>
+  <div class:list={['media relative overflow-hidden bg-(--paper-2)', cover?.fit === 'contain' && 'media-contain']}>
+    {cover ? (
+      <img
+        src={cover.src}
+        srcset={cover.srcset}
+        sizes={cover.sizes}
+        width={cover.width}
+        height={cover.height}
+        style={cover.cap}
+        alt=""
+        class={cover.fit === 'cover' ? 'h-full w-full object-cover object-top' : 'max-h-full max-w-full object-contain'}
+        loading="lazy"
+        decoding="async"
+      />
+    ) : (
+      <span class="plate font-display text-(--ink-muted)" aria-hidden="true">{project.title.charAt(0)}</span>
+    )}
+  </div>
+
+  <div class="body grid content-start gap-3">
+    <p class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs tracking-[0.1em] text-(--ink-muted)">
+      <span>{strings.projectLabel} {number} / {total}</span>
+      {project.isLive && <span class="badge badge-live">{strings.liveBadge}</span>}
+      {project.isDiscontinued && <span class="badge badge-discontinued">{strings.discontinuedBadge}</span>}
+    </p>
+    <h3 class="title font-display font-semibold leading-[1.05] tracking-[-0.01em] text-(--ink)">{project.title}</h3>
+    <p class="font-display text-[17px] italic text-(--accent)">{project.subtitle[lang]}</p>
+    <p class:list={['max-w-[48ch] text-[15px] leading-relaxed text-(--ink-muted)', variant === 'compact' && 'line-clamp-3']}>{project.description[lang]}</p>
+    {variant === 'feature' && (
+      <ul class="feats flex flex-wrap gap-x-4 gap-y-1.5 text-[13px] text-(--ink)">
+        {project.features.map((f) => <li>{f[lang]}</li>)}
+      </ul>
+    )}
+    <ul class="flex flex-wrap gap-1.5">
+      {project.techStack.map((tech) => <li class="tag">{tech}</li>)}
+    </ul>
+    <div class="mt-1 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+      {opensModal && <span class="more font-semibold text-(--ink)">{strings.viewCase}</span>}
+      {githubUrl && (
+        <a
+          href={githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link-grow text-(--ink-muted) hover:text-(--ink)"
+          aria-label={`${strings.a11yOpenProject}: ${project.title}`}
+          onclick="event.stopPropagation()"
+        >
+          {strings.viewOnGithub}
+        </a>
+      )}
+      {project.isLive && (
+        <button
+          type="button"
+          class="link-grow open-chat-btn text-(--accent)"
+          onclick="event.stopPropagation(); window.openChatWidget && window.openChatWidget();"
+          aria-label={`${strings.tryIt}: ${project.title}`}
+        >
+          {strings.tryIt}
+        </button>
+      )}
+    </div>
+  </div>
+</article>
+
+<style>
+  .card {
+    display: grid;
+  }
+
+  .media {
+    aspect-ratio: 16 / 10;
+  }
+
+  /* Shown whole on the plate when the source cannot fill the box without upscaling */
+  .media-contain {
+    display: grid;
+    place-items: center;
+    padding: 16px;
+  }
+
+  .media-contain img {
+    height: auto;
+    width: auto;
+  }
+
+  .media img {
+    filter: sepia(0.25) contrast(1.05);
+  }
+
+  .plate {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    font-size: 96px;
+    font-weight: 600;
+  }
+
+  .feats li::before {
+    content: "— ";
+    color: var(--accent);
+  }
+
+  .more {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 4px;
+  }
+
+  .card:focus-visible {
+    outline-offset: 6px;
+  }
+
+  /* Feature: editorial row, media at 50%, alternating sides from md */
+  .card-feature {
+    border-top: 1px solid var(--line);
+  }
+
+  .card-feature .title {
+    font-size: clamp(28px, 3vw, 34px);
+  }
+
+  .card-feature .body {
+    padding: 24px 0 32px;
+  }
+
+  @media (min-width: 768px) {
+    .card-feature {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .card-feature .media,
+    .card-feature .body {
+      align-self: center;
+    }
+
+    .card-feature .body {
+      padding: 32px 0 32px 40px;
+    }
+
+    .card-feature:nth-child(even) .media {
+      order: 2;
+    }
+
+    .card-feature:nth-child(even) .body {
+      padding: 32px 40px 32px 0;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .card-feature .body {
+      padding-left: 48px;
+    }
+
+    .card-feature:nth-child(even) .body {
+      padding: 32px 48px 32px 0;
+    }
+  }
+
+  /* Compact: grid tile, media on top */
+  .card-compact {
+    align-content: start;
+    gap: 18px;
+  }
+
+  .card-compact .title {
+    font-size: 24px;
+  }
+</style>

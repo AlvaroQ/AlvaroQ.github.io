@@ -2,7 +2,7 @@
 import type { Strings } from '../i18n/es';
 import { projects } from '../data/projects';
 import SectionHeading from './SectionHeading.astro';
-import { asset, fitFor, responsive, type Slot } from '../lib/images';
+import ProjectCard from './ProjectCard.astro';
 
 interface Props {
   strings: Strings;
@@ -12,233 +12,29 @@ interface Props {
 const { strings, lang } = Astro.props;
 const total = String(projects.length).padStart(2, '0');
 
-// 16:10 media box per breakpoint: lg row half (600 px), md column (~470 px), mobile (342 px).
-const SLOTS: Slot[] = [
-  { w: 600, h: 375, dpr: 2 },
-  { w: 470, h: 294, dpr: 2 },
-  { w: 342, h: 214, dpr: 3 },
-];
-const MEDIA_WIDTHS = [480, 720, 960, 1200, 1440];
-const MODAL_WIDTHS = [480, 800, 1200, 1600];
-
-// Width the image actually paints in a slot when shown whole (contain + cap at natural ÷ 2).
-const containWidth = (slot: Slot, w: number, h: number) => Math.round(Math.min(slot.w, (slot.h * w) / h, w / 2));
-
-const media = await Promise.all(
-  projects.map(async (project) => {
-    const key = project.detailedInfo?.screenshots[0];
-    if (!key) return null;
-    const meta = asset(key);
-    const fit = fitFor(meta, SLOTS);
-    const img = await responsive(key, MEDIA_WIDTHS);
-    if (fit === 'cover') {
-      // A source wider than 16:10 is painted wider than its box (cropped at the sides).
-      const k = Math.max(1, meta.width / meta.height / (16 / 10)).toFixed(3);
-      const lg = Math.round(600 * Number(k));
-      return {
-        ...img,
-        fit,
-        cap: undefined,
-        sizes: `(min-width: 1024px) ${lg}px, (min-width: 768px) calc((100vw - 88px) / 2 * ${k}), calc((100vw - 48px) * ${k})`,
-      };
-    }
-    const [lg, md, sm] = SLOTS.map((slot) => containWidth(slot, meta.width, meta.height));
-    return {
-      ...img,
-      fit,
-      // Never painted larger than half the source, so it stays at or under 1x on 2x screens.
-      cap: `max-width: ${Math.floor(meta.width / 2)}px; max-height: ${Math.floor(meta.height / 2)}px`,
-      sizes: `(min-width: 1024px) ${lg}px, (min-width: 768px) ${md}px, ${sm}px`,
-    };
-  }),
-);
-
-// Modal gallery: the largest variant feeds the lightbox, the srcset feeds the thumbnails.
-const galleries = await Promise.all(
-  projects.map((project) => Promise.all((project.detailedInfo?.screenshots ?? []).map((key) => responsive(key, MODAL_WIDTHS)))),
-);
+// The first three projects (data row 1) are the editorial features; the rest form a grid.
+const FEATURED = 3;
+const featured = projects.slice(0, FEATURED);
+const rest = projects.slice(FEATURED);
 ---
 
 <section id="projects">
   <div class="section-container">
     <SectionHeading index="03" title={strings.latestAiProjects} subtitle={strings.showcasingProjects} />
 
-    <div class="cards grid gap-10 md:grid-cols-2 lg:grid-cols-1 lg:gap-0">
-      {projects.map((project, i) => {
-        const cover = media[i];
-        const gallery = galleries[i];
-        const number = String(i + 1).padStart(2, '0');
-        return (
-          <article
-            class={`card media-zoom animate-on-scroll group ${project.detailedInfo ? 'cursor-pointer' : ''}`}
-            style={`--stagger: ${(i % 2) * 80}ms`}
-            data-project-index={i}
-            data-featured={project.detailedInfo ? 'true' : 'false'}
-            {...(project.detailedInfo ? { role: 'button', tabindex: '0', 'aria-label': `${strings.viewDetails}: ${project.title}` } : {})}
-            data-project-title={project.title}
-            data-project-subtitle={project.subtitle[lang]}
-            data-project-description={project.description[lang]}
-            data-project-accent={project.accentColor}
-            data-project-long-desc={project.detailedInfo?.longDescription[lang] || ''}
-            data-project-architecture={project.detailedInfo?.architecture[lang] || ''}
-            data-project-screenshots={JSON.stringify(gallery.map((g) => g.src))}
-            data-project-thumbs={JSON.stringify(gallery.map((g) => g.srcset))}
-            data-project-highlights={JSON.stringify(project.detailedInfo?.keyHighlights.map(h => h[lang]) || [])}
-            data-project-demo={project.detailedInfo?.demoUrl || ''}
-            data-project-github={project.detailedInfo?.githubUrl || ''}
-            data-project-tech={JSON.stringify(project.techStack)}
-            data-project-featured={project.isFeatured ? 'true' : 'false'}
-          >
-            <div class:list={['media relative overflow-hidden bg-(--paper-2)', cover?.fit === 'contain' && 'media-contain']}>
-              {cover ? (
-                <img
-                  src={cover.src}
-                  srcset={cover.srcset}
-                  sizes={cover.sizes}
-                  width={cover.width}
-                  height={cover.height}
-                  style={cover.cap}
-                  alt=""
-                  class={cover.fit === 'cover' ? 'h-full w-full object-cover object-top' : 'max-h-full max-w-full object-contain'}
-                  loading="lazy"
-                  decoding="async"
-                />
-              ) : (
-                <span class="plate font-display text-(--ink-muted)" aria-hidden="true">{project.title.charAt(0)}</span>
-              )}
-              <div class="absolute left-4 top-4 flex gap-2">
-                {project.isLive && <span class="badge badge-live">{strings.liveBadge}</span>}
-                {project.isDiscontinued && <span class="badge badge-discontinued">{strings.discontinuedBadge}</span>}
-              </div>
-            </div>
+    <div class="featured border-b border-(--line)">
+      {featured.map((project, i) => (
+        <ProjectCard project={project} index={i} total={total} variant="feature" strings={strings} lang={lang} />
+      ))}
+    </div>
 
-            <div class="body grid content-start gap-3.5">
-              <p class="font-mono text-xs tracking-[0.1em] text-(--ink-muted)">{strings.projectLabel} {number} / {total}</p>
-              <h3 class="font-display text-[clamp(28px,3vw,34px)] font-semibold leading-[1.05] tracking-[-0.01em] text-(--ink)">{project.title}</h3>
-              <p class="font-display text-[17px] italic text-(--accent)">{project.subtitle[lang]}</p>
-              <p class="max-w-[48ch] text-[15px] leading-relaxed text-(--ink-muted)">{project.description[lang]}</p>
-              <ul class="feats flex flex-wrap gap-x-4 gap-y-1.5 text-[13px] text-(--ink)">
-                {project.features.map((f) => <li>{f[lang]}</li>)}
-              </ul>
-              <ul class="flex flex-wrap gap-1.5">
-                {project.techStack.map((tech) => <li class="tag">{tech}</li>)}
-              </ul>
-              <div class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
-                {project.detailedInfo && <span class="more font-semibold text-(--ink)">{strings.viewCase}</span>}
-                {(project.githubUrl || project.detailedInfo?.githubUrl) && (
-                  <a
-                    href={project.githubUrl || project.detailedInfo?.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="link-grow text-(--ink-muted) hover:text-(--ink)"
-                    aria-label={`${strings.a11yOpenProject}: ${project.title}`}
-                    onclick="event.stopPropagation()"
-                  >
-                    {strings.viewOnGithub}
-                  </a>
-                )}
-                {project.isLive && (
-                  <button
-                    type="button"
-                    class="link-grow open-chat-btn text-(--accent)"
-                    onclick="event.stopPropagation(); window.openChatWidget && window.openChatWidget();"
-                    aria-label={`${strings.tryIt}: ${project.title}`}
-                  >
-                    {strings.tryIt}
-                  </button>
-                )}
-              </div>
-            </div>
-          </article>
-        );
-      })}
+    <div class="mt-12 grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
+      {rest.map((project, i) => (
+        <ProjectCard project={project} index={FEATURED + i} total={total} variant="compact" strings={strings} lang={lang} />
+      ))}
     </div>
   </div>
 </section>
-
-<style>
-  .card {
-    display: grid;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-  }
-
-  .media {
-    aspect-ratio: 16 / 10;
-  }
-
-  /* Shown whole on the plate when the source cannot fill the box without upscaling */
-  .media-contain {
-    display: grid;
-    place-items: center;
-    padding: 16px;
-  }
-
-  .media-contain img {
-    height: auto;
-    width: auto;
-  }
-
-  .media img {
-    filter: sepia(0.25) contrast(1.05);
-  }
-
-  .plate {
-    display: grid;
-    place-items: center;
-    height: 100%;
-    font-size: 96px;
-    font-weight: 600;
-  }
-
-  .body {
-    padding: 26px 0 30px;
-  }
-
-  .feats li::before {
-    content: "— ";
-    color: var(--accent);
-  }
-
-  .more {
-    text-decoration: underline;
-    text-decoration-color: var(--accent);
-    text-underline-offset: 4px;
-  }
-
-  .card:focus-visible {
-    outline-offset: 6px;
-  }
-
-  /* From lg: one editorial row per project, media at 50%, alternating sides */
-  @media (min-width: 1024px) {
-    .card {
-      grid-template-columns: 1fr 1fr;
-      border-bottom: 0;
-    }
-
-    .card:last-child {
-      border-bottom: 1px solid var(--line);
-    }
-
-    .media {
-      align-self: center;
-    }
-
-    .body {
-      align-self: center;
-      padding: 40px 0 40px 48px;
-    }
-
-    .card:nth-child(even) .media {
-      order: 2;
-    }
-
-    .card:nth-child(even) .body {
-      padding: 40px 48px 40px 0;
-    }
-  }
-</style>
 
 <script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
@@ -256,8 +52,7 @@ const galleries = await Promise.all(
         keyHighlights: JSON.parse(card.dataset.projectHighlights || '[]'),
         demoUrl: card.dataset.projectDemo || null,
         githubUrl: card.dataset.projectGithub || null,
-        techStack: JSON.parse(card.dataset.projectTech || '[]'),
-        isFeatured: card.dataset.projectFeatured === 'true'
+        techStack: JSON.parse(card.dataset.projectTech || '[]')
       };
       window.projectModal.open(data);
     }
