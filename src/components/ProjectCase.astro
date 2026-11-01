@@ -135,6 +135,13 @@ const shots = await Promise.all(
           ))}
         </dl>
       </div>
+
+      <div class="case-section">
+        <h3 class="case-heading">{strings.caseTechStack}</h3>
+        <ul class="case-tech">
+          {project.techStack.map((tech) => <li class="tag">{tech}</li>)}
+        </ul>
+      </div>
     </div>
 
     <div class="case-side">
@@ -171,12 +178,6 @@ const shots = await Promise.all(
         </div>
       )}
 
-      <div class="case-section">
-        <h3 class="case-heading">{strings.caseTechStack}</h3>
-        <ul class="case-tech">
-          {project.techStack.map((tech) => <li class="tag">{tech}</li>)}
-        </ul>
-      </div>
     </div>
   </div>
 </template>

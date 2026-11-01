@@ -106,9 +106,10 @@ export const projects: Project[] = [
       },
       screenshots: [
         "projects/invirtiendo-site.webp",
+        "projects/sector-context-investing.webp",
+        "projects/per-growth-investing.webp",
         "projects/sesion-investing.webp",
-        "projects/cartera-investing.webp",
-        "projects/comparativa-investing.webp"
+        "projects/cartera-investing.webp"
       ],
       keyHighlights: [
         { es: "Monitor de mercado en tiempo real sin login: índices, amplitud, sectores, macro y valoración", en: "Real-time market monitor with no login: indices, breadth, sectors, macro and valuation" },

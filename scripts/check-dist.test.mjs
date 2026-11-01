@@ -354,3 +354,23 @@ for (const [lang, root] of Object.entries(dom)) {
     assert.deepEqual(stats, STATS[lang]);
   });
 }
+
+// invirtiendo.site case (L10): two new screenshots in 2nd and 3rd place, the old last one dropped,
+// and the tech stack in the left column of the case.
+const INVIRTIENDO_SHOTS = ['invirtiendo-site', 'sector-context-investing', 'per-growth-investing', 'sesion-investing', 'cartera-investing'];
+for (const [lang, root] of Object.entries(dom)) {
+  test(`${lang}: invirtiendo.site case screenshots in the requested order`, () => {
+    const shots = root
+      .querySelectorAll('template[data-case="invirtiendo-site"] .case-shot img')
+      .map((img) => img.getAttribute('src').match(/\/_astro\/([\w-]+)\./)?.[1]);
+    assert.deepEqual(shots, INVIRTIENDO_SHOTS);
+  });
+
+  test(`${lang}: every case lists its tech stack in the left column`, () => {
+    for (const tpl of root.querySelectorAll('template[data-case]')) {
+      const slug = tpl.getAttribute('data-case');
+      assert.ok(tpl.querySelector('.case-main .case-tech'), `${slug}: stack not in .case-main`);
+      assert.equal(tpl.querySelector('.case-side .case-tech'), null, `${slug}: stack still in .case-side`);
+    }
+  });
+}
