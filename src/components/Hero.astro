@@ -29,8 +29,8 @@ const { strings } = Astro.props;
       >{strings.inkPause}</button>
     </div>
     <div class="ctas hero-enter step-3">
-      <a class="btn btn-solid" href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label={strings.a11yOpenLinkedIn}>{strings.linkedIn}</a>
-      <a class="btn btn-ghost" href={contact.githubUrl} target="_blank" rel="noopener noreferrer" aria-label={strings.a11yOpenGitHub}>{strings.github}</a>
+      <a class="btn btn-solid" href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer">{strings.linkedIn}</a>
+      <a class="btn btn-ghost" href={contact.githubUrl} target="_blank" rel="noopener noreferrer">{strings.github}</a>
     </div>
   </div>
   <InkWatermark />
@@ -120,14 +120,22 @@ const { strings } = Astro.props;
     margin-top: 6px;
   }
 
-  /* .control at the compact size it had before the control family (44 px targets: P3) */
+  /* A compact .control: 32 px tall on screen, but the ::before below extends the hit area to
+     44 px (WCAG 2.5.8) without changing its look or the height of its reserved slot. */
   .ink-pause {
+    position: relative;
     min-width: 0;
     min-height: 32px;
     padding: 8px 10px;
     letter-spacing: 0.04em;
     text-transform: none;
     transition: none;
+  }
+
+  .ink-pause::before {
+    content: "";
+    position: absolute;
+    inset: -7px 0;
   }
 
   .ink-pause:hover {

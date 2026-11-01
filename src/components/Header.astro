@@ -22,11 +22,13 @@ const altPath = lang === 'es' ? '/en/' : '/';
 
   <!-- Controls -->
   <div class="header-controls absolute right-4 z-10 flex gap-2">
-    <button id="theme-toggle" type="button" class="control" aria-label={strings.a11yThemeToggle}>
+    <!-- Accessible names start with the visible label (WCAG 2.5.3); the purpose follows in sr-only text -->
+    <button id="theme-toggle" type="button" class="control">
       <span class="dark-label">{strings.lightMode}</span>
       <span class="light-label">{strings.darkMode}</span>
+      <span class="sr-only">, {strings.a11yThemeToggle}</span>
     </button>
-    <a href={altPath} class="control" aria-label={strings.a11yLanguageToggle} hreflang={altLang}>{altLang}</a>
+    <a href={altPath} class="control" hreflang={altLang}>{altLang}<span class="sr-only" lang={altLang}>, {strings.altLanguageName}</span></a>
   </div>
 
   <Hero strings={strings} />

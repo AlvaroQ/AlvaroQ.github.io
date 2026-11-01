@@ -41,10 +41,6 @@ const number = String(index + 1).padStart(2, '0');
 
 <article
   class:list={['card media-zoom animate-on-scroll group cursor-pointer', `card-${variant}`, `stagger-${index % 3}`]}
-  data-open-case={project.slug}
-  role="button"
-  tabindex="0"
-  aria-label={`${strings.viewDetails}: ${project.title}`}
 >
   <div class:list={['media relative overflow-hidden bg-(--paper-2)', cover?.fit === 'contain' && 'media-contain']}>
     {cover ? (
@@ -70,7 +66,10 @@ const number = String(index + 1).padStart(2, '0');
       {project.status === 'live' && <span class="badge badge-live">{strings.liveBadge}</span>}
       {project.status === 'discontinued' && <span class="badge badge-discontinued">{strings.discontinuedBadge}</span>}
     </p>
-    <h3 class="title font-display font-semibold leading-[1.05] tracking-[-0.01em] text-(--ink)">{project.title}</h3>
+    <!-- Extended link: the heading button opens the case and its ::after covers the whole card -->
+    <h3 class="title font-display font-semibold leading-[1.05] tracking-[-0.01em] text-(--ink)">
+      <button type="button" class="case-link" data-open-case={project.slug}>{project.title}</button>
+    </h3>
     <p class="font-display text-[17px] italic text-(--accent)">{project.subtitle[lang]}</p>
     <p class:list={['max-w-[48ch] text-[15px] leading-relaxed text-(--ink-muted)', variant === 'compact' && 'line-clamp-3']}>{project.description[lang]}</p>
     {variant === 'feature' && (
@@ -82,26 +81,24 @@ const number = String(index + 1).padStart(2, '0');
       {project.techStack.map((tech) => <li class="tag">{tech}</li>)}
     </ul>
     <div class="mt-1 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
-      <span class="more font-semibold text-(--ink)">{strings.viewCase}</span>
+      <span class="more font-semibold text-(--ink)" aria-hidden="true">{strings.viewCase}</span>
       {links.github && (
         <a
           href={links.github}
           target="_blank"
           rel="noopener noreferrer"
-          class="link-grow text-(--ink-muted) hover:text-(--ink)"
-          aria-label={`${strings.a11yOpenProject}: ${project.title}`}
+          class="card-action link-grow text-(--ink-muted) hover:text-(--ink)"
         >
-          {strings.viewOnGithub}
+          {strings.viewOnGithub}<span class="sr-only">: {project.title}</span>
         </a>
       )}
       {project.status === 'live' && (
         <button
           type="button"
-          class="link-grow open-chat-btn text-(--accent)"
+          class="card-action link-grow open-chat-btn text-(--accent)"
           data-action="open-chat"
-          aria-label={`${strings.tryIt}: ${project.title}`}
         >
-          {strings.tryIt}
+          {strings.tryIt}<span class="sr-only">: {project.title}</span>
         </button>
       )}
     </div>
@@ -154,8 +151,41 @@ const number = String(index + 1).padStart(2, '0');
     text-underline-offset: 4px;
   }
 
-  .card:focus-visible {
+  /* Extended link: the case button's ::after spans the card, so the whole card is clickable
+     while only the button is focusable; links in the actions row stay above it. */
+  .card {
+    position: relative;
+  }
+
+  .case-link {
+    all: unset;
+    cursor: pointer;
+    /* Transparent, so forced-colors mode still draws it; the ring is drawn by ::after */
+    outline: 2px solid transparent;
+  }
+
+  .case-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .case-link:focus-visible::after {
+    outline: 2px solid var(--accent);
     outline-offset: 6px;
+  }
+
+  .card-action {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* 44 px hit area (WCAG 2.5.8) around a ~22 px text link, without moving its underline */
+  .card-action::before {
+    content: "";
+    position: absolute;
+    inset: -11px -4px;
   }
 
   /* Feature: editorial row, media at 50%, alternating sides from md */

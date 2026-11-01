@@ -52,7 +52,6 @@ export const en: Strings = {
   liveBadge: "LIVE",
   tryIt: "Try it",
   discontinuedBadge: "Discontinued",
-  viewDetails: "View Details",
 
   // Case study modal
   caseContentLabel: "Case study content",
@@ -119,12 +118,9 @@ export const en: Strings = {
   navContact: "Contact",
 
   // Accessibility
-  a11yThemeToggle: "Toggle theme",
-  a11yLanguageToggle: "Change language",
+  a11yThemeToggle: "toggle theme",
+  altLanguageName: "Español",
   a11yNavigation: "Navigation menu",
-  a11yCopyEmail: "Copy email to clipboard",
+  a11yCopyEmail: "copy to clipboard",
   a11yEmailCopied: "Email copied",
-  a11yOpenLinkedIn: "Open LinkedIn profile",
-  a11yOpenGitHub: "Open GitHub profile",
-  a11yOpenProject: "Open project on GitHub",
 };

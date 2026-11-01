@@ -51,7 +51,6 @@ export const es = {
   liveBadge: "LIVE",
   tryIt: "Pruébalo",
   discontinuedBadge: "Descontinuado",
-  viewDetails: "Ver Detalles",
 
   // Case study modal
   caseContentLabel: "Contenido del caso",
@@ -118,14 +117,11 @@ export const es = {
   navContact: "Contacto",
 
   // Accessibility
-  a11yThemeToggle: "Cambiar tema",
-  a11yLanguageToggle: "Cambiar idioma",
+  a11yThemeToggle: "cambiar tema",
+  altLanguageName: "English",
   a11yNavigation: "Menú de navegación",
-  a11yCopyEmail: "Copiar email al portapapeles",
+  a11yCopyEmail: "copiar al portapapeles",
   a11yEmailCopied: "Email copiado",
-  a11yOpenLinkedIn: "Abrir perfil de LinkedIn",
-  a11yOpenGitHub: "Abrir perfil de GitHub",
-  a11yOpenProject: "Abrir proyecto en GitHub",
 } as const;
 
 export type Strings = { readonly [K in keyof typeof es]: string };

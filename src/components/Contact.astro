@@ -38,10 +38,9 @@ const availability = strings.availableFor.split(' • ');
               id="copy-email"
               type="button"
               class="link-grow cursor-pointer border-none bg-transparent font-mono text-sm text-(--ink)"
-              aria-label={strings.a11yCopyEmail}
               data-email={contact.email}
             >
-              {contact.email}
+              {contact.email}<span class="sr-only">, {strings.a11yCopyEmail}</span>
             </button>
             <span id="email-copied" class="ml-2 text-xs text-(--accent) opacity-0 transition-opacity" aria-live="polite" aria-atomic="true">{strings.a11yEmailCopied}</span>
           </p>
@@ -54,10 +53,10 @@ const availability = strings.availableFor.split(' • ');
         <p class="text-(--accent)">{strings.catLinks}</p>
         <div class="space-y-1 pl-4">
           <p>
-            <a href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer" class="link-grow text-(--ink)" aria-label={strings.a11yOpenLinkedIn}>{contact.linkedinDisplay}</a>
+            <a href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer" class="link-grow text-(--ink)">{contact.linkedinDisplay}</a>
           </p>
           <p>
-            <a href={contact.githubUrl} target="_blank" rel="noopener noreferrer" class="link-grow text-(--ink)" aria-label={strings.a11yOpenGitHub}>{contact.githubDisplay}</a>
+            <a href={contact.githubUrl} target="_blank" rel="noopener noreferrer" class="link-grow text-(--ink)">{contact.githubDisplay}</a>
           </p>
         </div>
       </div>

@@ -174,3 +174,38 @@ for (const [lang, root] of Object.entries(dom)) {
     assert.deepEqual(insecure, []);
   });
 }
+
+// Accessibility (P3): extended-link cards and accessible names that start with the visible text.
+const visibleText = (el) => {
+  const clone = el.clone();
+  for (const hidden of clone.querySelectorAll('.sr-only, [aria-hidden="true"]')) hidden.remove();
+  return clone.textContent.replace(/\s+/g, ' ').trim();
+};
+
+for (const [lang, root] of Object.entries(dom)) {
+  test(`${lang}: no ARIA roles on articles`, () => {
+    assert.deepEqual(root.querySelectorAll('article[role]').map((a) => a.getAttribute('role')), []);
+  });
+
+  test(`${lang}: one case button inside the heading of each card`, () => {
+    const cards = root.querySelectorAll('article.card');
+    assert.equal(cards.length, 9);
+    for (const card of cards) {
+      const buttons = card.querySelectorAll('h3 button[data-open-case]');
+      assert.equal(buttons.length, 1, card.querySelector('h3')?.textContent);
+      assert.ok(!card.hasAttribute('tabindex') && !card.hasAttribute('aria-label'));
+    }
+  });
+
+  test(`${lang}: accessible names start with the visible text`, () => {
+    const bad = [];
+    // Controls only (WCAG 2.5.3 label in name); landmarks and regions may carry any name.
+    for (const el of root.querySelectorAll('a[aria-label], button[aria-label], [role="button"][aria-label], [role="link"][aria-label]')) {
+      const visible = visibleText(el);
+      if (!/[\p{L}\p{N}]/u.test(visible)) continue; // icon-only controls: the label is the name
+      const name = el.getAttribute('aria-label').trim();
+      if (!name.toLowerCase().startsWith(visible.toLowerCase())) bad.push(`"${visible}" → "${name}"`);
+    }
+    assert.deepEqual(bad, []);
+  });
+}
