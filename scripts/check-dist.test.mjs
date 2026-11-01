@@ -248,7 +248,7 @@ for (const [lang, root] of Object.entries(dom)) {
 
   test(`${lang}: Gran Premio IA opens the list and invirtiendo.site replaces Cartera Investing`, () => {
     const titles = root.querySelectorAll('article.card h3 button').map((b) => b.textContent.trim());
-    assert.equal(titles[0], 'Gran Premio IA');
+    assert.deepEqual(titles.slice(0, 3), ['Gran Premio IA', 'invirtiendo.site', 'Adivina Perro']);
     assert.ok(titles.includes('invirtiendo.site'));
     assert.ok(!html[lang].includes('Cartera Investing'), 'old project name still on the page');
     const first = root.querySelector('article.card .label-ui span').textContent.replace(/\s+/g, ' ').trim();
