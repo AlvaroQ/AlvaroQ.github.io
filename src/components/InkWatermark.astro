@@ -3,9 +3,9 @@
 // hero, so it can bleed off the edge without moving the layout or widening the page.
 import { responsive } from '../lib/images';
 
-// Height map (generate-relief.js): the script picks the variant that covers the canvas,
-// never wider than the 1200 px master.
-const reliefHeight = await responsive('profile/portrait-relief-height.jpg', [600, 900, 1200]);
+// Height map (scripts/assets/relief.mjs): the script picks the variant that covers the canvas;
+// responsive() never goes above the master's own width (320 px for the current figure).
+const reliefHeight = await responsive('profile/hero-relief-height.jpg', [600, 900, 1200]);
 ---
 
 <div class="wm-clip" aria-hidden="true">
