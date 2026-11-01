@@ -112,7 +112,8 @@ const number = String(index + 1).padStart(2, '0');
         <button
           type="button"
           class="link-grow open-chat-btn text-(--accent)"
-          onclick="event.stopPropagation(); window.openChatWidget && window.openChatWidget();"
+          data-action="open-chat"
+          onclick="event.stopPropagation()"
           aria-label={`${strings.tryIt}: ${project.title}`}
         >
           {strings.tryIt}

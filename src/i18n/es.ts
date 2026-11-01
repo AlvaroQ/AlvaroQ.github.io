@@ -53,6 +53,21 @@ export const es = {
   discontinuedBadge: "Descontinuado",
   viewDetails: "Ver Detalles",
 
+  // Chat widget
+  chatTitle: "Chat con Álvaro",
+  chatOpen: "Abrir chat",
+  chatClose: "Cerrar chat",
+  chatGreeting: "¡Hola! Soy el asistente virtual de Álvaro. Pregúntame por su experiencia, sus proyectos o sus habilidades.",
+  chatInputLabel: "Tu pregunta",
+  chatPlaceholder: "Pregunta sobre mi experiencia…",
+  chatSend: "Enviar",
+  chatTyping: "Pensando…",
+  chatError: "No he podido procesar tu pregunta. Inténtalo de nuevo.",
+  chatSuggestion1: "¿Experiencia con Kotlin?",
+  chatSuggestion2: "¿Proyectos de IA?",
+  chatSuggestion3: "¿Años de experiencia?",
+  chatPrivacy: "Tu pregunta y el idioma se envían a un servicio externo para generar la respuesta. No incluyas datos personales.",
+
   // Skills
   skillsMatrix: "Habilidades",
   depthCore: "Núcleo",

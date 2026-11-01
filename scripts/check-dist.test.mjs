@@ -88,3 +88,21 @@ test('no source maps or .DS_Store in dist', () => {
   const stray = walk(dist).filter((f) => f.endsWith('.map') || f.endsWith('.DS_Store'));
   assert.deepEqual(stray, []);
 });
+
+// The chat widget is an Astro component with a native dialog (P5a).
+for (const [lang, root] of Object.entries(dom)) {
+  test(`${lang}: the chat is a named dialog with a live log and a labelled input`, () => {
+    const dialog = root.querySelector('dialog#chat-dialog');
+    assert.ok(dialog, 'dialog#chat-dialog missing');
+    assert.ok(dialog.getAttribute('aria-labelledby') || dialog.getAttribute('aria-label'));
+    assert.ok(dialog.querySelector('[role="log"][aria-live="polite"]'));
+    const input = dialog.querySelector('input');
+    assert.ok(input && dialog.querySelector(`label[for="${input.id}"]`), 'input without <label>');
+    assert.equal(input.getAttribute('maxlength'), '500');
+  });
+
+  test(`${lang}: chat strings are in the page language`, () => {
+    const close = lang === 'es' ? 'Cerrar chat' : 'Close chat';
+    assert.ok(html[lang].includes(close), `"${close}" not found`);
+  });
+}

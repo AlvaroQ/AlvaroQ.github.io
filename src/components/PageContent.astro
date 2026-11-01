@@ -6,6 +6,7 @@ import Career from './Career.astro';
 import Projects from './Projects.astro';
 import Skills from './Skills.astro';
 import Contact from './Contact.astro';
+import ChatWidget from './ChatWidget.astro';
 import { t, type Lang } from '../i18n';
 
 interface Props {
@@ -24,15 +25,7 @@ const strings = t(lang);
 <Skills strings={strings} lang={lang} />
 <Contact strings={strings} />
 
-<!-- Chat Widget -->
-<script is:inline src="/scripts/chat-widget.js" defer></script>
-<script is:inline define:vars={{ lang }}>
-  document.addEventListener('DOMContentLoaded', () => {
-    var theme = document.documentElement.classList.contains('light') ? 'light' : 'dark';
-    window.chatWidget = new PortfolioChatWidget({ lang: lang, theme: theme });
-    document.addEventListener('themechange', function (e) { window.chatWidget.setTheme(e.detail.theme); });
-  });
-</script>
+<ChatWidget strings={strings} lang={lang} />
 
 <!-- Project Modal -->
 <script is:inline src="/scripts/project-modal.js" defer></script>

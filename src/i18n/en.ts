@@ -54,6 +54,21 @@ export const en: Strings = {
   discontinuedBadge: "Discontinued",
   viewDetails: "View Details",
 
+  // Chat widget
+  chatTitle: "Chat with Álvaro",
+  chatOpen: "Open chat",
+  chatClose: "Close chat",
+  chatGreeting: "Hi! I'm Álvaro's virtual assistant. Ask me about his experience, projects or skills.",
+  chatInputLabel: "Your question",
+  chatPlaceholder: "Ask about my experience…",
+  chatSend: "Send",
+  chatTyping: "Thinking…",
+  chatError: "I couldn't process your question. Please try again.",
+  chatSuggestion1: "Kotlin experience?",
+  chatSuggestion2: "AI projects?",
+  chatSuggestion3: "Years of experience?",
+  chatPrivacy: "Your question and language are sent to an external service to generate the answer. Do not include personal data.",
+
   // Skills
   skillsMatrix: "Skills",
   depthCore: "Core",
