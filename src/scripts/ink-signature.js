@@ -4,6 +4,7 @@
 // Gating: reduced motion / no WebGL never start; low-end devices start at
 // quality 0.5; an FPS watchdog degrades once and then stops.
 import { VERTEX_SHADER, fragmentShader } from './ink-shader.js';
+import { parseColor } from './ink-color.js';
 
 const STORAGE_KEY = 'portfolio_ink';
 const PAD = 24; // canvas overflow around the name box, in CSS px (matches .fx)
@@ -19,18 +20,6 @@ function writeStored(value) {
     if (value) localStorage.setItem(STORAGE_KEY, value);
     else localStorage.removeItem(STORAGE_KEY);
   } catch { /* storage unavailable */ }
-}
-
-function parseColor(value) {
-  const v = value.trim();
-  if (v.startsWith('#')) {
-    let h = v.slice(1);
-    if (h.length === 3) h = h.split('').map((c) => c + c).join('');
-    const n = parseInt(h.slice(0, 6), 16);
-    return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
-  }
-  const parts = v.match(/[\d.]+/g);
-  return parts && parts.length >= 3 ? parts.slice(0, 3).map((x) => Number(x) / 255) : [1, 1, 1];
 }
 
 function setup(hero) {
