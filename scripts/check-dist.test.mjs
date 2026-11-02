@@ -383,9 +383,9 @@ for (const [lang, root] of Object.entries(dom)) {
   });
 }
 
-// invirtiendo.site case (L10): two new screenshots in 2nd and 3rd place, the old last one dropped,
+// invirtiendo.site case (L10): the PER vs growth chart is the cover (first shot), then the rest,
 // and the tech stack in the left column of the case.
-const INVIRTIENDO_SHOTS = ['invirtiendo-site', 'sector-context-investing', 'per-growth-investing', 'sesion-investing', 'cartera-investing'];
+const INVIRTIENDO_SHOTS = ['per-growth-investing', 'invirtiendo-site', 'sector-context-investing', 'sesion-investing', 'cartera-investing'];
 for (const [lang, root] of Object.entries(dom)) {
   test(`${lang}: invirtiendo.site case screenshots in the requested order`, () => {
     const shots = root

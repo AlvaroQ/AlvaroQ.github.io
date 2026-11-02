@@ -106,9 +106,9 @@ export const projects: Project[] = [
         en: "Frontend: Next.js 16 App Router + React 19 + React Compiler\nUI: Tailwind CSS 4 + Lightweight Charts + Recharts + Framer Motion\nState: Zustand (client) + TanStack Query (server)\nBackend: Firebase (Auth + Firestore, rules tested in the emulator)\nData: Yahoo Finance, SEC EDGAR (13F), FRED, EODHD, Polymarket, AAII and RSS\nPipelines: nightly jobs on a VPS + weekly GitHub Actions\nDeployment: Vercel (PWA)\nTesting: Vitest (~650 test files) + Playwright with performance budgets"
       },
       screenshots: [
+        "projects/per-growth-investing.webp",
         "projects/invirtiendo-site.webp",
         "projects/sector-context-investing.webp",
-        "projects/per-growth-investing.webp",
         "projects/sesion-investing.webp",
         "projects/cartera-investing.webp"
       ],
