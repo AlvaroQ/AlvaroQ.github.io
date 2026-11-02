@@ -1,5 +1,5 @@
 ---
-applies_to:
+paths:
   - "src/components/**/*.astro"
   - "src/layouts/**/*.astro"
   - "src/pages/**/*.astro"

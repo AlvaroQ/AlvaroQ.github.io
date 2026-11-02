@@ -1,3 +1,11 @@
+---
+name: tailwind-4
+description: "Patrones de Tailwind CSS v4 CSS-first: @theme inline, tokens de diseno y utilidades. Usar al escribir estilos o clases en .astro y .css."
+paths:
+  - "src/styles/**"
+  - "**/*.astro"
+---
+
 # Tailwind CSS v4 — Patrones y Migracion
 
 ## Configuracion CSS-First

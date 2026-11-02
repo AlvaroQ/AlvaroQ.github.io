@@ -1,3 +1,11 @@
+---
+name: typescript-strict
+description: "Patrones de TypeScript en modo strict: tipos, generics, import type, sin any. Usar al escribir o editar codigo TypeScript."
+paths:
+  - "**/*.ts"
+  - "**/*.astro"
+---
+
 # TypeScript Strict Mode — Patrones
 
 ## Configuracion
