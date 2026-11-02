@@ -82,6 +82,7 @@ export const en: Strings = {
   chatSend: "Send",
   chatTyping: "Thinking…",
   chatError: "I couldn't process your question. Please try again.",
+  chatRateLimited: "Too many questions in a row. Wait a minute and try again.",
   chatSuggestion1: "Kotlin experience?",
   chatSuggestion2: "AI projects?",
   chatSuggestion3: "Years of experience?",

@@ -81,6 +81,7 @@ export const es = {
   chatSend: "Enviar",
   chatTyping: "Pensando…",
   chatError: "No he podido procesar tu pregunta. Inténtalo de nuevo.",
+  chatRateLimited: "Demasiadas preguntas seguidas. Espera un minuto e inténtalo de nuevo.",
   chatSuggestion1: "¿Experiencia con Kotlin?",
   chatSuggestion2: "¿Proyectos de IA?",
   chatSuggestion3: "¿Años de experiencia?",

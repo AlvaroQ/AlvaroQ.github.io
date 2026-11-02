@@ -114,6 +114,9 @@ for (const [lang, root] of Object.entries(dom)) {
     const input = dialog.querySelector('input');
     assert.ok(input && dialog.querySelector(`label[for="${input.id}"]`), 'input without <label>');
     assert.equal(input.getAttribute('maxlength'), '500');
+    // The API answers 429 over 20 questions/minute; the widget needs a message for it, in the page language.
+    const limited = lang === 'es' ? 'Demasiadas preguntas seguidas. Espera un minuto e inténtalo de nuevo.' : 'Too many questions in a row. Wait a minute and try again.';
+    assert.equal(dialog.getAttribute('data-rate-limited'), limited);
   });
 
   test(`${lang}: chat strings are in the page language`, () => {
