@@ -157,8 +157,9 @@ const shots = await Promise.all(
                     srcset={shot.srcset}
                     sizes={shot.sizes}
                     alt={shot.alt}
+                    width={shot.width}
+                    height={shot.height}
                     data-index={i}
-                    data-max-height={shot.maxHeight}
                     loading="lazy"
                     decoding="async"
                   />
@@ -334,19 +335,21 @@ const shots = await Promise.all(
   .case-shots {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    align-items: start;
     gap: 12px;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
+  /* Uniform 16:10 thumbnails cropped from the top; the lightbox shows the whole capture. */
   .case-shot {
     display: block;
     width: 100%;
+    aspect-ratio: 16 / 10;
     padding: 0;
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: var(--paper);
     cursor: zoom-in;
     overflow: hidden;
   }
@@ -354,8 +357,9 @@ const shots = await Promise.all(
   .case-shot img {
     display: block;
     width: 100%;
-    max-height: 250px;
-    object-fit: contain;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
   }
 
   .case-tech {

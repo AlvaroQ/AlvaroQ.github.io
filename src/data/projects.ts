@@ -61,7 +61,8 @@ export const projects: Project[] = [
         en: "Frontend: Next.js 16 App Router + React 19 + React Compiler\nData: Yahoo Finance on the server + TanStack Query, coordinated server/CDN/client caching\nCharts: Recharts + custom SVG circuits\nDomain: pure, validated race maths, no database\nRace report: Claude cloud agent every weekday after the close\nVideo: Claude + speech synthesis + Whisper + Remotion, uploaded to YouTube\nDeployment: Vercel\nTesting: Vitest (300+ tests)"
       },
       screenshots: [
-        "projects/gran-premio-ia.webp"
+        "projects/gran-premio-ia.webp",
+        "projects/gran-premio-ia-telemetry-garage.webp"
       ],
       keyHighlights: [
         { es: "Cinco modelos de IA de frontera compiten con carteras reales frente al S&P 500", en: "Five frontier AI models race real-priced portfolios against the S&P 500" },
@@ -105,9 +106,9 @@ export const projects: Project[] = [
         en: "Frontend: Next.js 16 App Router + React 19 + React Compiler\nUI: Tailwind CSS 4 + Lightweight Charts + Recharts + Framer Motion\nState: Zustand (client) + TanStack Query (server)\nBackend: Firebase (Auth + Firestore, rules tested in the emulator)\nData: Yahoo Finance, SEC EDGAR (13F), FRED, EODHD, Polymarket, AAII and RSS\nPipelines: nightly jobs on a VPS + weekly GitHub Actions\nDeployment: Vercel (PWA)\nTesting: Vitest (~650 test files) + Playwright with performance budgets"
       },
       screenshots: [
+        "projects/per-growth-investing.webp",
         "projects/invirtiendo-site.webp",
         "projects/sector-context-investing.webp",
-        "projects/per-growth-investing.webp",
         "projects/sesion-investing.webp",
         "projects/cartera-investing.webp"
       ],
@@ -153,8 +154,9 @@ export const projects: Project[] = [
         en: "Job: daily cron at 10:15 (Europe/Madrid) on a VPS\nLanguage: Python 3, standard library only\nMarkets: Yahoo Finance (quotes and RSS), Nasdaq, US Treasury\nCalendar: ForexFactory + EODHD\nSentiment and portfolio: Firestore (Node reader with firebase-admin)\nAI: Claude Code in headless mode (claude -p) for summaries, titles and relevance\nInbox: read with himalaya without marking anything as read\nDelivery: Gmail SMTP, table-based HTML + plain-text version\nTesting: unittest (240+ tests)"
       },
       screenshots: [
-        "projects/briefing-mundial-sp500.webp",
-        "projects/briefing-mundial-overview.webp"
+        "projects/briefing-mundial-markets.webp",
+        "projects/briefing-mundial-sectors.webp",
+        "projects/briefing-mundial-sentiment.webp"
       ],
       keyHighlights: [
         { es: "Llega solo cada mañana a las 10:15: un cron en un VPS, sin intervención", en: "Arrives on its own every morning at 10:15: a cron job on a VPS, hands-free" },
@@ -393,7 +395,7 @@ export const projects: Project[] = [
         es: "Backend: Python + FastAPI\nScraping: Playwright (headless browser)\nAnti-bot: Camoufox (Firefox stealth)\nExport: PDF, HTML, TXT, JSON\nDespliegue: Docker containerizado",
         en: "Backend: Python + FastAPI\nScraping: Playwright (headless browser)\nAnti-bot: Camoufox (Firefox stealth)\nExport: PDF, HTML, TXT, JSON\nDeployment: Docker containerized"
       },
-      screenshots: ["projects/scrapper_pro_preview.webp"],
+      screenshots: ["projects/scrapper_pro_cover.webp", "projects/scrapper_pro_preview.webp"],
       keyHighlights: [
         { es: "Captura páginas con contenido renderizado por JavaScript", en: "Captures pages with JavaScript-rendered content" },
         { es: "Sistema anti-detección con Camoufox para sitios protegidos", en: "Anti-detection system with Camoufox for protected sites" },
@@ -428,6 +430,7 @@ export const projects: Project[] = [
         en: "UI: Compose Multiplatform (Android + Desktop)\nOCR: PaddleOCR Lite optimized for mobile\nInference: ONNX Runtime for cross-platform\nDB: SQLDelight (type-safe SQL)\nDI: Koin Multiplatform\nAsync: Kotlin Coroutines + Flow"
       },
       screenshots: [
+        "projects/lotto-scan-cover.webp",
         "projects/lotto-scan-camera.webp",
         "projects/lotto-scan-preview.webp"
       ],
@@ -465,7 +468,7 @@ export const projects: Project[] = [
         es: "Backend: Python + FastAPI\nDescarga: yt-dlp\nIA: Perplexity AI para resúmenes\nFrontend: HTML/CSS/JavaScript con glassmorphism\nFormatos: MP4, MP3, WebM, múltiples calidades",
         en: "Backend: Python + FastAPI\nDownload: yt-dlp\nAI: Perplexity AI for summaries\nFrontend: HTML/CSS/JavaScript with glassmorphism\nFormats: MP4, MP3, WebM, multiple qualities"
       },
-      screenshots: ["projects/youtube_downloader_preview.webp"],
+      screenshots: ["projects/youtube_downloader_cover.webp", "projects/youtube_downloader_preview.webp"],
       keyHighlights: [
         { es: "Resúmenes automáticos de videos con Perplexity AI", en: "Automatic video summaries with Perplexity AI" },
         { es: "Extracción de audio para podcasts y música", en: "Audio extraction for podcasts and music" },

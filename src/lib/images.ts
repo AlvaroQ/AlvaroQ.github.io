@@ -41,7 +41,6 @@ const MEDIA_WIDTHS = [400, 600, 800, 1000, 1200, 1440];
 const MODAL_WIDTHS = [480, 800, 1200, 1600];
 /** Thumbnail cells of the case modal (ProjectModal/ProjectCase styles): keep in sync with the CSS. */
 const MODAL_THUMBS: ThumbLayout = {
-  maxHeight: 250,
   maxWidth: 750,
   mobileMaxWidth: 540,
   // 5/12 of the 1200 px box minus its 2 × 32 px padding and the 40 px column gap
@@ -61,5 +60,5 @@ export async function mediaFor(key: string, layout: MediaLayout) {
 /** Case-study screenshot: the largest variant feeds the lightbox, the srcset the thumbnail. */
 export async function thumbFor(key: string, layout: Partial<ThumbLayout> = {}) {
   const img = await responsive(key, MODAL_WIDTHS);
-  return { src: img.src, srcset: img.srcset, ...thumbSizes(img, { ...MODAL_THUMBS, ...layout }) };
+  return { src: img.src, srcset: img.srcset, width: img.width, height: img.height, ...thumbSizes({ ...MODAL_THUMBS, ...layout }) };
 }

@@ -383,9 +383,9 @@ for (const [lang, root] of Object.entries(dom)) {
   });
 }
 
-// invirtiendo.site case (L10): two new screenshots in 2nd and 3rd place, the old last one dropped,
+// invirtiendo.site case (L10): the PER vs growth chart is the cover (first shot), then the rest,
 // and the tech stack in the left column of the case.
-const INVIRTIENDO_SHOTS = ['invirtiendo-site', 'sector-context-investing', 'per-growth-investing', 'sesion-investing', 'cartera-investing'];
+const INVIRTIENDO_SHOTS = ['per-growth-investing', 'invirtiendo-site', 'sector-context-investing', 'sesion-investing', 'cartera-investing'];
 for (const [lang, root] of Object.entries(dom)) {
   test(`${lang}: invirtiendo.site case screenshots in the requested order`, () => {
     const shots = root
@@ -401,11 +401,33 @@ for (const [lang, root] of Object.entries(dom)) {
     assert.deepEqual(shots, ['chart-analyzer-and-stock-news', 'chart-analyzer-claude-analysis']);
   });
 
-  test(`${lang}: Briefing Mundial case shows the masked overview after the S&P 500 screenshot`, () => {
+  test(`${lang}: Gran Premio IA case adds the telemetry and garage screenshot after the cover`, () => {
+    const shots = root
+      .querySelectorAll('template[data-case="gran-premio-ia"] .case-shot img')
+      .map((img) => img.getAttribute('src').match(/\/_astro\/([\w-]+)\./)?.[1]);
+    assert.deepEqual(shots, ['gran-premio-ia', 'gran-premio-ia-telemetry-garage']);
+  });
+
+  test(`${lang}: Lotto Scan case opens with the side-by-side phones cover`, () => {
+    const shots = root
+      .querySelectorAll('template[data-case="lotto-scan"] .case-shot img')
+      .map((img) => img.getAttribute('src').match(/\/_astro\/([\w-]+)\./)?.[1]);
+    assert.deepEqual(shots, ['lotto-scan-cover', 'lotto-scan-camera', 'lotto-scan-preview']);
+  });
+
+  test(`${lang}: Web Scraper Pro and YouTube Downloader open with a 16:10 cover crop`, () => {
+    const shots = (slug) => root
+      .querySelectorAll(`template[data-case="${slug}"] .case-shot img`)
+      .map((img) => img.getAttribute('src').match(/\/_astro\/([\w-]+)\./)?.[1]);
+    assert.deepEqual(shots('web-scraper-pro'), ['scrapper_pro_cover', 'scrapper_pro_preview']);
+    assert.deepEqual(shots('youtube-downloader'), ['youtube_downloader_cover', 'youtube_downloader_preview']);
+  });
+
+  test(`${lang}: Briefing Mundial case shows markets, sectors and sentiment, with no personal data`, () => {
     const shots = root
       .querySelectorAll('template[data-case="briefing-mundial"] .case-shot img')
       .map((img) => img.getAttribute('src').match(/\/_astro\/([\w-]+)\./)?.[1]);
-    assert.deepEqual(shots, ['briefing-mundial-sp500', 'briefing-mundial-overview']);
+    assert.deepEqual(shots, ['briefing-mundial-markets', 'briefing-mundial-sectors', 'briefing-mundial-sentiment']);
   });
 
   test(`${lang}: every case lists its tech stack in the left column`, () => {
