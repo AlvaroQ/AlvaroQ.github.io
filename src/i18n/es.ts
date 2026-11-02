@@ -15,6 +15,9 @@ export const es = {
   heroHeadline: "AI Engineer",
   heroHeadlineEm: "con base mobile",
   platforms: "Agentes IA · Kotlin/KMP · Android · iOS · CI/CD · Web",
+  heroProof: "App Development Lead en B-FY · De semanas a media hora: releases verificadas por agentes de IA",
+  heroCtaEmail: "Escríbeme",
+  emailSubject: "Contacto desde alvaroq.github.io",
   inkPause: "Pausar tinta",
   inkResume: "Reanudar tinta",
 

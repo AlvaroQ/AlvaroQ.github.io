@@ -16,6 +16,9 @@ export const en: Strings = {
   heroHeadline: "AI Engineer",
   heroHeadlineEm: "with a mobile background",
   platforms: "AI agents · Kotlin/KMP · Android · iOS · CI/CD · Web",
+  heroProof: "App Development Lead at B-FY · From weeks to half an hour: releases verified by AI agents",
+  heroCtaEmail: "Email me",
+  emailSubject: "Contact from alvaroq.github.io",
   inkPause: "Pause ink",
   inkResume: "Resume ink",
 

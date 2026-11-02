@@ -438,3 +438,78 @@ for (const [lang, root] of Object.entries(dom)) {
     }
   });
 }
+
+// Professional brand (odd/tasks/professional-brand-refresh.md): one positioning, verifiable claims only.
+const BRAND = {
+  es: { title: 'AI Engineer con base mobile', subject: 'Contacto desde alvaroq.github.io', proof: 'App Development Lead en B-FY' },
+  en: { title: 'AI Engineer with a mobile background', subject: 'Contact from alvaroq.github.io', proof: 'App Development Lead at B-FY' },
+};
+const textOf = (node) => (node.querySelector('body') ?? node).textContent.replace(/\s+/g, ' ');
+for (const [lang, root] of Object.entries(dom)) {
+  test(`${lang}: title, description and JSON-LD carry the AI Engineer positioning`, () => {
+    assert.ok(root.querySelector('title').textContent.includes(BRAND[lang].title));
+    assert.ok(root.querySelector('meta[name="description"]').getAttribute('content').includes('AI Engineer'));
+    const person = JSON.parse(root.querySelector('script[type="application/ld+json"]').textContent)['@graph'].find((n) => n['@type'] === 'Person');
+    assert.ok(person.jobTitle.startsWith('AI Engineer'), person.jobTitle);
+    assert.doesNotMatch(html[lang], /Full-Stack Engineer|Ingeniero Full-Stack/);
+  });
+
+  test(`${lang}: B-FY role is App Development Lead and no team size is published`, () => {
+    const text = textOf(root);
+    assert.match(text, /App Development Lead/);
+    assert.doesNotMatch(text, /App Development Director|Director de desarrollo/);
+    assert.doesNotMatch(text, /equipo de \d|team of \d/i);
+  });
+
+  test(`${lang}: no unverifiable tooling, internal tools, CV or education claims`, () => {
+    const text = textOf(root);
+    for (const word of ['Detekt', 'OWASP', 'Dokka', 'Firebase App Distribution', 'Orca', 'HERDR', 'AI Specialist']) {
+      assert.ok(!text.includes(word), `${word} still on the page`);
+    }
+    assert.doesNotMatch(text, /Video demo próximamente|Demo video coming soon/);
+    assert.doesNotMatch(text, /Universidad|University|Educación|Education/i);
+    assert.equal(root.querySelectorAll('a[href]').filter((a) => /\.pdf$|\bcv\b|resume/i.test(a.getAttribute('href'))).length, 0, 'a CV link is published');
+  });
+
+  test(`${lang}: the bio has three paragraphs`, () => {
+    assert.equal(root.querySelectorAll('#about .bio-text').length, 3);
+  });
+
+  test(`${lang}: career opens with the 2011-2013 early years and TheRanking ends in 2014`, () => {
+    const periods = root.querySelectorAll('#career ol > li .label-ui').map((p) => p.textContent.trim());
+    assert.equal(periods[0], '2011 — 2013');
+    assert.equal(periods[1], '2013 — 2014');
+  });
+
+  test(`${lang}: skills include a security category`, () => {
+    assert.match(textOf(root.querySelector('#skills')), /Seguridad e identidad|Security & Identity/);
+  });
+
+  test(`${lang}: the hero's primary CTA is a prefilled email, LinkedIn and GitHub follow`, () => {
+    const links = root.querySelectorAll('.hero .ctas a');
+    const href = links[0].getAttribute('href');
+    assert.ok(href.startsWith('mailto:alvaroquintanapalacios@gmail.com?subject='), href);
+    assert.equal(decodeURIComponent(href.split('subject=')[1]), BRAND[lang].subject);
+    assert.ok(links[0].classList.contains('btn-solid'));
+    assert.deepEqual(links.slice(1).map((a) => a.getAttribute('href')), ['https://www.linkedin.com/in/alvaro-quintana-palacios/', 'https://github.com/AlvaroQ']);
+    assert.ok(links.slice(1).every((a) => a.classList.contains('btn-ghost')));
+  });
+
+  test(`${lang}: the hero shows one proof line`, () => {
+    const proof = root.querySelectorAll('.hero .proof');
+    assert.equal(proof.length, 1);
+    assert.ok(proof[0].textContent.includes(BRAND[lang].proof));
+  });
+}
+
+test('hero copy is painted from the first frame (its entrance never animates opacity)', () => {
+  const css = walk(dist).filter((f) => f.endsWith('.css')).map((f) => readFileSync(f, 'utf8')).join('\n');
+  const names = [...css.matchAll(/\.hero-enter[^{}]*\{[^}]*animation:([^};]+)/g)].map((m) => m[1]).filter((v) => v.trim() !== 'none');
+  assert.ok(names.length > 0, 'no hero entrance rule found');
+  for (const value of names) {
+    const name = value.trim().split(/\s+/).find((t) => /^[a-z][\w-]*$/i.test(t) && css.includes(`@keyframes ${t}`));
+    assert.ok(name, `no keyframes in "${value}"`);
+    const body = css.slice(css.indexOf(`@keyframes ${name}`)).match(/\{(.*?\})\s*\}/s)[1];
+    assert.doesNotMatch(body, /opacity/, `${name} animates opacity`);
+  }
+});
