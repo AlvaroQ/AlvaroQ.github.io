@@ -265,7 +265,7 @@ export const projects: Project[] = [
       { es: "100% Serverless", en: "100% Serverless" },
       { es: "Respuestas Contextuales", en: "Contextual Answers" }
     ],
-    techStack: ["Cloudflare Workers", "Vectorize", "Llama 3.1", "BGE Embeddings"],
+    techStack: ["Cloudflare Workers", "Vectorize", "Mistral Small 3.1", "EmbeddingGemma"],
     status: 'live',
     links: {},
     caseStudy: {
@@ -274,15 +274,16 @@ export const projects: Project[] = [
         en: "This chatbot represents my vision of how AI can transform the recruitment experience. Instead of recruiters reading pages of CVs, they can simply ask what they need to know. The system uses RAG (Retrieval-Augmented Generation) to search my vectorized knowledge base and generate precise, contextual answers."
       },
       architecture: {
-        es: "Frontend: Widget JS embebido en portfolio\nBackend: Cloudflare Workers (Edge Computing)\nVector DB: Cloudflare Vectorize\nLLM: Llama 3.1 via Workers AI\nEmbeddings: BGE-base-en-v1.5\nDatos: Markdown con CV, proyectos y skills",
-        en: "Frontend: JS widget embedded in portfolio\nBackend: Cloudflare Workers (Edge Computing)\nVector DB: Cloudflare Vectorize\nLLM: Llama 3.1 via Workers AI\nEmbeddings: BGE-base-en-v1.5\nData: Markdown with CV, projects and skills"
+        es: "Frontend: Widget JS embebido en portfolio\nBackend: Cloudflare Workers (Edge Computing)\nVector DB: Cloudflare Vectorize\nLLM: Mistral Small 3.1 24B via Workers AI\nEmbeddings: EmbeddingGemma 300M (768d)\nRecuperación: top 5 filtrado por idioma (metadato lang)\nDatos: Markdown con CV, proyectos y skills en es/en",
+        en: "Frontend: JS widget embedded in portfolio\nBackend: Cloudflare Workers (Edge Computing)\nVector DB: Cloudflare Vectorize\nLLM: Mistral Small 3.1 24B via Workers AI\nEmbeddings: EmbeddingGemma 300M (768d)\nRetrieval: top 5 filtered by language (lang metadata)\nData: Markdown with CV, projects and skills in es/en"
       },
       screenshots: ["projects/rag-chatbot.webp"],
       keyHighlights: [
-        { es: "Latencia <500ms gracias a edge computing", en: "Latency <500ms thanks to edge computing" },
+        { es: "Respuestas en menos de un segundo gracias a edge computing", en: "Answers in under a second thanks to edge computing" },
         { es: "Coste $0 - 100% en free tier de Cloudflare", en: "Cost $0 - 100% on Cloudflare free tier" },
         { es: "Embeddings vectoriales para búsqueda semántica", en: "Vector embeddings for semantic search" },
-        { es: "Respuestas en español e inglés", en: "Responses in Spanish and English" },
+        { es: "Recupera solo fuentes en el idioma de la pregunta", en: "Retrieves only sources in the question language" },
+        { es: "Si no hay contexto, responde que no tiene datos en vez de inventarlos", en: "With no context it says it has no data instead of making it up" },
         { es: "Integrado directamente en este portfolio", en: "Integrated directly into this portfolio" }
       ]
     }
