@@ -80,14 +80,29 @@ function og(/** @type {'es' | 'en'} */ lang, /** @type {string} */ out) {
   </div>`, 1200, 630, out);
 }
 
-/** LinkedIn cover (1584×396). The profile photo covers the lower left, so the copy sits on the right. */
+/** LinkedIn cover (1584×396). The profile photo covers the lower left, so the copy sits on the right;
+ *  between both, the hero's watermark: the relief height map embossed by an SVG lighting filter,
+ *  over the same paper veins as the hero. */
 function banner(/** @type {'es' | 'en'} */ lang, /** @type {string} */ out) {
   const c = copy(lang);
-  render(`<div style="width:1584px;height:396px;padding:56px 96px 56px 480px;display:grid;align-content:center;justify-items:end;gap:18px;text-align:right;background:radial-gradient(120% 140% at 0% 100%, ${t.paper2}, ${t.paper} 60%);color:${t.ink}">
-    <p style="font:500 18px Mono;letter-spacing:0.14em;text-transform:uppercase;color:${t.muted}">${c.eyebrow}</p>
-    <p style="font:900 56px/1.1 Fraunces;letter-spacing:-0.01em;white-space:nowrap;${INK}">${c.headline} <em style="font-weight:400">${c.em}</em></p>
-    <p style="font:400 24px/1.35 Fraunces;color:${t.ink2};max-width:1000px">${c.proof}</p>
-    <p style="margin-top:6px;font:500 18px Mono;color:${t.muted}">alvaroq.github.io</p>
+  const veins = pathToFileURL(join(pub, 'images/paper-veins.svg')).href;
+  const relief = pathToFileURL(join(root, 'src/assets/profile/hero-relief-height.jpg')).href;
+  render(`<div style="position:relative;width:1584px;height:396px;overflow:hidden;background:radial-gradient(120% 140% at 0% 100%, ${t.paper2}, ${t.paper} 60%)">
+    <div style="position:absolute;inset:0;background:${t.ink2};opacity:0.1;-webkit-mask:url(${veins}) center / cover no-repeat"></div>
+    <svg width="330" height="440" viewBox="0 0 320 427" style="position:absolute;left:330px;bottom:-24px;mix-blend-mode:overlay;opacity:0.9;-webkit-mask:radial-gradient(closest-side at 50% 42%, black 72%, transparent)">
+      <filter id="emboss" color-interpolation-filters="sRGB">
+        <feColorMatrix type="luminanceToAlpha" result="h"/>
+        <feGaussianBlur in="h" stdDeviation="0.8" result="hb"/>
+        <feDiffuseLighting in="hb" surfaceScale="6" diffuseConstant="1" lighting-color="#fff"><feDistantLight azimuth="225" elevation="30"/></feDiffuseLighting>
+      </filter>
+      <image href="${relief}" width="320" height="427" filter="url(#emboss)"/>
+    </svg>
+    <div style="position:relative;height:100%;padding:56px 96px 56px 480px;display:grid;align-content:center;justify-items:end;gap:18px;text-align:right;color:${t.ink}">
+      <p style="font:500 18px Mono;letter-spacing:0.14em;text-transform:uppercase;color:${t.muted}">${c.eyebrow}</p>
+      <p style="font:900 56px/1.1 Fraunces;letter-spacing:-0.01em;white-space:nowrap;${INK}">${c.headline} <em style="font-weight:400">${c.em}</em></p>
+      <p style="font:400 24px/1.35 Fraunces;color:${t.ink2};max-width:1000px">${c.proof}</p>
+      <p style="margin-top:6px;font:500 18px Mono;color:${t.muted}">alvaroq.github.io</p>
+    </div>
   </div>`, 1584, 396, out);
 }
 
