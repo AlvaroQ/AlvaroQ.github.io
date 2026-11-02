@@ -1,5 +1,5 @@
 ---
-applies_to:
+paths:
   - "src/styles/**/*.css"
   - "**/*.astro"
 ---

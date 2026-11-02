@@ -1,3 +1,13 @@
+---
+name: astro-6
+description: "Patrones de Astro 6 para este portfolio: componentes .astro, islands, routing e i18n es/en. Usar al crear o editar componentes, layouts o paginas."
+paths:
+  - "src/components/**"
+  - "src/layouts/**"
+  - "src/pages/**"
+  - "src/i18n/**"
+---
+
 # Astro 6 — Patrones y Buenas Practicas
 
 ## Arquitectura

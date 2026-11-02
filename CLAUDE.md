@@ -131,9 +131,9 @@ Los skills contienen patrones y reglas por tecnologia. Leer ANTES de escribir co
 
 | Contexto | Skill | Archivo |
 |----------|-------|---------|
-| Componentes Astro, routing, i18n | **astro-6** | `.claude/skills/astro-6.md` |
-| Tailwind, estilos, tokens | **tailwind-4** | `.claude/skills/tailwind-4.md` |
-| TypeScript, tipos, generics | **typescript-strict** | `.claude/skills/typescript-strict.md` |
+| Componentes Astro, routing, i18n | **astro-6** | `.claude/skills/astro-6/SKILL.md` |
+| Tailwind, estilos, tokens | **tailwind-4** | `.claude/skills/tailwind-4/SKILL.md` |
+| TypeScript, tipos, generics | **typescript-strict** | `.claude/skills/typescript-strict/SKILL.md` |
 
 ## Rules
 
