@@ -1,12 +1,13 @@
 // @ts-check
 // Brand assets in identity A (paper, ink, accent, Fraunces): favicon.svg, favicon.ico,
-// favicon-32x32.png, apple-touch-icon.png and one Open Graph image per language.
+// favicon-32x32.png, apple-touch-icon.png, one Open Graph image per language and the LinkedIn
+// cover (brand/linkedin-banner.png, outside public/ so it is never published).
 // Copy and colours are read from the site's own sources (i18n, site.ts, global.css tokens),
 // so the images follow the content. Rendering uses the system Chrome in headless mode with the
 // self-hosted fonts; set CHROME_PATH if Chrome is not at its default macOS location.
 // Run: npm run assets:icons   (not part of the build)
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -38,7 +39,7 @@ function copy(lang) {
     if (!m) throw new Error(`${lang}.${key} not found`);
     return m[1].replace('${YEARS_IN_TECH}', String(YEARS_IN_TECH));
   };
-  return { name: get('name'), eyebrow: get('heroEyebrow'), headline: get('heroHeadline'), em: get('heroHeadlineEm') };
+  return { name: get('name'), eyebrow: get('heroEyebrow'), headline: get('heroHeadline'), em: get('heroHeadlineEm'), proof: get('heroProof') };
 }
 
 const t = tokens();
@@ -79,6 +80,17 @@ function og(/** @type {'es' | 'en'} */ lang, /** @type {string} */ out) {
   </div>`, 1200, 630, out);
 }
 
+/** LinkedIn cover (1584×396). The profile photo covers the lower left, so the copy sits on the right. */
+function banner(/** @type {'es' | 'en'} */ lang, /** @type {string} */ out) {
+  const c = copy(lang);
+  render(`<div style="width:1584px;height:396px;padding:56px 96px 56px 480px;display:grid;align-content:center;justify-items:end;gap:18px;text-align:right;background:radial-gradient(120% 140% at 0% 100%, ${t.paper2}, ${t.paper} 60%);color:${t.ink}">
+    <p style="font:500 18px Mono;letter-spacing:0.14em;text-transform:uppercase;color:${t.muted}">${c.eyebrow}</p>
+    <p style="font:900 56px/1.1 Fraunces;letter-spacing:-0.01em;white-space:nowrap;${INK}">${c.headline} <em style="font-weight:400">${c.em}</em></p>
+    <p style="font:400 24px/1.35 Fraunces;color:${t.ink2};max-width:1000px">${c.proof}</p>
+    <p style="margin-top:6px;font:500 18px Mono;color:${t.muted}">alvaroq.github.io</p>
+  </div>`, 1584, 396, out);
+}
+
 // favicon.svg: vector mark (browsers draw SVG favicons without web fonts, so the serif falls back)
 writeFileSync(join(pub, 'favicon.svg'), `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <defs><linearGradient id="ink" x1="0" y1="0" x2="1" y2="1"><stop offset=".2" stop-color="${t.ink}"/><stop offset=".55" stop-color="${t.ink2}"/><stop offset=".85" stop-color="${t.accent}"/></linearGradient></defs>
@@ -99,4 +111,7 @@ writeFileSync(join(pub, 'favicon.ico'), Buffer.concat([ico, png]));
 
 og('es', join(pub, 'images/og-image.png'));
 og('en', join(pub, 'images/og-image-en.png'));
-console.log('Brand assets written to public/');
+// The LinkedIn cover is uploaded by hand, so it stays outside public/ (never published).
+mkdirSync(join(root, 'brand'), { recursive: true });
+banner('en', join(root, 'brand/linkedin-banner.png'));
+console.log('Brand assets written to public/ and the LinkedIn cover to brand/');
