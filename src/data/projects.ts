@@ -61,7 +61,8 @@ export const projects: Project[] = [
         en: "Frontend: Next.js 16 App Router + React 19 + React Compiler\nData: Yahoo Finance on the server + TanStack Query, coordinated server/CDN/client caching\nCharts: Recharts + custom SVG circuits\nDomain: pure, validated race maths, no database\nRace report: Claude cloud agent every weekday after the close\nVideo: Claude + speech synthesis + Whisper + Remotion, uploaded to YouTube\nDeployment: Vercel\nTesting: Vitest (300+ tests)"
       },
       screenshots: [
-        "projects/gran-premio-ia.webp"
+        "projects/gran-premio-ia.webp",
+        "projects/gran-premio-ia-telemetry-garage.webp"
       ],
       keyHighlights: [
         { es: "Cinco modelos de IA de frontera compiten con carteras reales frente al S&P 500", en: "Five frontier AI models race real-priced portfolios against the S&P 500" },

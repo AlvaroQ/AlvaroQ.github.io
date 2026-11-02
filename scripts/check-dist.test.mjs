@@ -401,6 +401,13 @@ for (const [lang, root] of Object.entries(dom)) {
     assert.deepEqual(shots, ['chart-analyzer-and-stock-news', 'chart-analyzer-claude-analysis']);
   });
 
+  test(`${lang}: Gran Premio IA case adds the telemetry and garage screenshot after the cover`, () => {
+    const shots = root
+      .querySelectorAll('template[data-case="gran-premio-ia"] .case-shot img')
+      .map((img) => img.getAttribute('src').match(/\/_astro\/([\w-]+)\./)?.[1]);
+    assert.deepEqual(shots, ['gran-premio-ia', 'gran-premio-ia-telemetry-garage']);
+  });
+
   test(`${lang}: Briefing Mundial case shows the masked overview after the S&P 500 screenshot`, () => {
     const shots = root
       .querySelectorAll('template[data-case="briefing-mundial"] .case-shot img')
