@@ -43,10 +43,6 @@ export function openCase(dialog, slug, trigger) {
   opener = trigger;
   region.replaceChildren(template.content.cloneNode(true));
   region.scrollTop = 0;
-  // Height cap per screenshot comes from the data (kept out of the markup for the strict CSP).
-  for (const img of region.querySelectorAll('img[data-max-height]')) {
-    if (img instanceof HTMLElement) img.style.maxHeight = `${Number(img.dataset.maxHeight)}px`;
-  }
   wire();
 
   dialog.showModal();

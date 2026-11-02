@@ -53,8 +53,6 @@ export function sizesFor(meta: Dimensions, layout: MediaLayout, fit: Fit): { siz
 }
 
 export interface ThumbLayout {
-  /** Height cap of a thumbnail (CSS px). */
-  maxHeight: number;
   /** Cell width in the single-column modal (up to 1023 px viewports). */
   maxWidth: number;
   /** Cell width on phones (≤ 600 px viewports). */
@@ -65,16 +63,9 @@ export interface ThumbLayout {
   stripWidth: string;
 }
 
-/**
- * Modal thumbnail contained in its cell for each modal layout and at most `maxHeight` px tall;
- * capping the height at a third of the source keeps it ≤ 1x up to 3x screens.
- */
-export function thumbSizes(meta: Dimensions, opts: ThumbLayout) {
-  const maxHeight = Math.min(opts.maxHeight, Math.floor(meta.height / 3));
-  const painted = Math.round((maxHeight * meta.width) / meta.height);
-  const at = (cell: number) => `${Math.min(painted, cell)}px`;
+/** Modal thumbnail: a fixed 16:10 crop that fills its cell, so its width is the cell width in each layout. */
+export function thumbSizes(opts: ThumbLayout) {
   return {
-    maxHeight,
-    sizes: `(min-width: 1280px) ${at(opts.sideWidth)}, (min-width: 1024px) min(${painted}px, ${opts.stripWidth}), (max-width: 600px) ${at(opts.mobileMaxWidth)}, ${at(opts.maxWidth)}`,
+    sizes: `(min-width: 1280px) ${opts.sideWidth}px, (min-width: 1024px) ${opts.stripWidth}, (max-width: 600px) ${opts.mobileMaxWidth}px, ${opts.maxWidth}px`,
   };
 }
