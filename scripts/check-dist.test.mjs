@@ -415,11 +415,19 @@ for (const [lang, root] of Object.entries(dom)) {
     assert.deepEqual(shots, ['lotto-scan-cover', 'lotto-scan-camera', 'lotto-scan-preview']);
   });
 
-  test(`${lang}: Briefing Mundial case shows the masked overview after the S&P 500 screenshot`, () => {
+  test(`${lang}: Web Scraper Pro and YouTube Downloader open with a 16:10 cover crop`, () => {
+    const shots = (slug) => root
+      .querySelectorAll(`template[data-case="${slug}"] .case-shot img`)
+      .map((img) => img.getAttribute('src').match(/\/_astro\/([\w-]+)\./)?.[1]);
+    assert.deepEqual(shots('web-scraper-pro'), ['scrapper_pro_cover', 'scrapper_pro_preview']);
+    assert.deepEqual(shots('youtube-downloader'), ['youtube_downloader_cover', 'youtube_downloader_preview']);
+  });
+
+  test(`${lang}: Briefing Mundial case shows markets, sectors and sentiment, with no personal data`, () => {
     const shots = root
       .querySelectorAll('template[data-case="briefing-mundial"] .case-shot img')
       .map((img) => img.getAttribute('src').match(/\/_astro\/([\w-]+)\./)?.[1]);
-    assert.deepEqual(shots, ['briefing-mundial-sp500', 'briefing-mundial-overview']);
+    assert.deepEqual(shots, ['briefing-mundial-markets', 'briefing-mundial-sectors', 'briefing-mundial-sentiment']);
   });
 
   test(`${lang}: every case lists its tech stack in the left column`, () => {
