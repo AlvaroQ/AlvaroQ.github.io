@@ -3,32 +3,30 @@ import { YEARS_IN_TECH } from '../data/site';
 
 export const en: Strings = {
   // Page metadata
-  pageTitle: "Álvaro Quintana | Full-Stack Engineer — Mobile, Web & AI",
-  pageDescription: `Álvaro Quintana, senior Full-Stack engineer in Madrid with over ${YEARS_IN_TECH} years building Android, iOS and KMP apps, web platforms and AI agent systems.`,
+  pageTitle: "Álvaro Quintana | AI Engineer with a mobile background (Kotlin/KMP)",
+  pageDescription: `Álvaro Quintana, AI Engineer in Madrid with over ${YEARS_IN_TECH} years in mobile (Android, iOS, Kotlin/KMP), security and identity. App Development Lead at B-FY.`,
   skipLink: "Skip to content",
-  portraitAlt: "Álvaro Quintana, senior Full-Stack engineer, in Madrid",
-  ogImageAlt: "Álvaro Quintana in ink on dark paper: Full-Stack engineer, Mobile, Web and AI, in Madrid",
-  location: "Madrid, Spain (remote)",
+  portraitAlt: "Álvaro Quintana, AI Engineer with a mobile background, in Madrid",
+  ogImageAlt: "Álvaro Quintana in ink on dark paper: AI Engineer with a mobile background, in Madrid",
+  location: "Madrid, Spain (remote or hybrid)",
 
   // Header (ink signature hero)
   name: "Álvaro Quintana",
-  heroEyebrow: `Madrid · ${YEARS_IN_TECH}+ years · Senior Full-Stack`,
-  heroHeadline: "Full-Stack Engineer",
-  heroHeadlineEm: "Mobile · Web · AI",
-  platforms: "Android · iOS · KMP · Web · CI/CD · AI Agents",
+  heroEyebrow: `Madrid · ${YEARS_IN_TECH}+ years · Kotlin/KMP · Security`,
+  heroHeadline: "AI Engineer",
+  heroHeadlineEm: "with a mobile background",
+  platforms: "AI agents · Kotlin/KMP · Android · iOS · CI/CD · Web",
   inkPause: "Pause ink",
   inkResume: "Resume ink",
 
   // Presentation
   hiImAlvaro: "Hi, I'm Álvaro",
-  jobTitle: "Senior Full-Stack Engineer — Mobile, Web & AI",
+  jobTitle: "AI Engineer with a mobile background — Kotlin/KMP, security & identity",
   linkedIn: "LinkedIn",
   github: "GitHub",
-  bioP1: `Full-stack engineer with over <strong>${YEARS_IN_TECH} years of experience</strong> building digital products end-to-end — from native mobile apps (<strong>Android</strong>, <strong>iOS</strong>) to web platforms and <strong>CI/CD</strong> pipelines. Currently leading development at <strong>B-FY</strong>, a <strong>passwordless IDaaS</strong> platform protecting businesses against <strong>identity fraud</strong>.`,
-  bioP2: 'Deep expertise in the <strong>Kotlin</strong> ecosystem: <strong>Jetpack Compose</strong>, <strong>Compose Multiplatform</strong>, and <strong>KMP</strong> for sharing business logic across Android, iOS, web, and desktop. I design <strong>scalable architectures</strong> with clean code built to last.',
-  bioP3: 'On the web side, I build with <strong>Astro</strong>, <strong>Vite</strong>, <strong>Next.js</strong>, <strong>React</strong>, and <strong>Tailwind CSS</strong>. Recently designed and implemented a <strong>full CI/CD pipeline in Jenkins</strong> featuring E2E tests with <strong>Appium</strong>, static analysis via <strong>Detekt</strong>, <strong>OWASP</strong> security scanning, automated docs with <strong>Dokka</strong>, distribution through <strong>Firebase App Distribution</strong>, and <strong>Jira</strong> integration — cutting release time and ensuring quality on every build.',
-  bioP4: 'Specialized in <strong>secure applications</strong>: <strong>biometric</strong> solutions, <strong>encryption</strong>, and <strong>authentication</strong> protocols. My hands-on <strong>IDaaS</strong> experience gives me a unique perspective on security, privacy, and regulatory compliance.',
-  bioP5: 'My current focus: <strong>AI Agent Orchestration</strong> with <strong>Claude</strong>, <strong>LangChain</strong>, <strong>MCP</strong>, and <strong>RAG</strong>. I build intelligent systems that integrate AI into real workflows — from code assistants to automated data pipelines. I am currently comparing <strong>Orca</strong> and <strong>HERDR</strong> to optimise my multi-environment workflows across <strong>mobile, Mac and PC</strong>, pairing different orchestrators with different models to cover the whole flow: brainstorming an idea, cross-checking data between agents, planning, implementing and verifying, with a <strong>continuous learning system</strong> that keeps failure points in memory so they are not repeated. Humans are the only animal that trips over the same stone twice; I try to keep my agents from doing it. Is it something we run again and again? We build a <strong>pipeline</strong>: in the cloud or at the edge? Let’s put the focus on the product. Getting better every day.',
+  bioP1: `AI Engineer with over <strong>${YEARS_IN_TECH} years</strong> building mobile products —Android, iOS and <strong>Kotlin Multiplatform</strong>— and web too, with security and identity as the common thread. Before that I built for Santander Bank in Spain and the UK: biometric signature, face recognition and NFC.`,
+  bioP2: 'Today I am <strong>App Development Lead at B-FY</strong>, a passwordless IDaaS platform against identity fraud, where I own the SDKs and apps on Android, iOS and desktop with KMP. There I built an AI agent-driven flow that plans, implements and verifies: Appium E2E tests on a physical device (happy path and failure cases, from enrollment to operations), APK security analysis, signed Android and iOS releases, and Jira documentation with screenshots and evidence. A process that could take weeks now finishes in <strong>just over half an hour</strong>.',
+  bioP3: 'I am looking for <strong>AI Engineer</strong> or mobile leadership roles where AI reaches real products: agents, MCP and RAG on secure apps, with Kotlin/KMP as the foundation. I work remotely or hybrid from Madrid, in English or Spanish.',
 
   platformsNum: "4",
   platformsUnit: "environments",
@@ -41,7 +39,7 @@ export const en: Strings = {
   // Evolution
   careerTimeline: "Career",
   present: "present",
-  careerSubtitle: "From startup developer to full-stack engineer to AI specialist",
+  careerSubtitle: "From mobile developer to AI Engineer, with security as the common thread",
   yearsUnit: "years",
   yearsInTechLabel: "in Tech",
   yearsAtBfyLabel: "at B-FY",
@@ -95,14 +93,14 @@ export const en: Strings = {
 
   // Contact
   connect: "Contact",
-  contactLead: "I live in Madrid and work remotely. Write to me.",
+  contactLead: "I live in Madrid and work remotely or hybrid. Write to me.",
   whoami: "$ whoami",
   whoamiResult: "alvaro_quintana",
   catContact: "$ cat contact.txt",
   emailLabel: "Email: ",
   locationLabel: "Location: ",
   catLinks: "$ cat links.txt",
-  availableFor: "Open to Senior/Staff roles • Remote • Full-Stack / Mobile / AI",
+  availableFor: "Open to Senior/Staff roles • Remote or hybrid in Madrid • AI Engineer / Mobile • English & Spanish",
 
   // Theme/Language
   lightMode: "Light",

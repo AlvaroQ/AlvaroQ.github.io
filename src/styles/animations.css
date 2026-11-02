@@ -19,6 +19,7 @@
 .stagger-2 { --stagger: 160ms; }
 .stagger-3 { --stagger: 240ms; }
 .stagger-4 { --stagger: 320ms; }
+.stagger-5 { --stagger: 400ms; }
 
 .animate-on-scroll.fade-in {
   transform: none;

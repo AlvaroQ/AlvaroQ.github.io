@@ -16,7 +16,7 @@ const { strings, lang } = Astro.props;
 const portrait = await responsive('profile/portrait.jpg', [300, 450, 600, 900, 1200]);
 // 5 % over the painted width: at 390@3× the exact slot landed at ×1.02 of the chosen file.
 const portraitSizes = '(min-width: 1024px) min(435px, calc((34vw - 26px) * 1.05)), min(309px, calc((100vw - 74px) * 1.05))';
-const bio = [strings.bioP1, strings.bioP2, strings.bioP3, strings.bioP4, strings.bioP5];
+const bio = [strings.bioP1, strings.bioP2, strings.bioP3];
 ---
 
 <Section id="about" strings={strings} subtitle={strings.jobTitle}>

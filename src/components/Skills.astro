@@ -18,7 +18,7 @@ const depthLabel: Record<SkillDepth, string> = {
 
 <Section id="skills" strings={strings}>
 
-    <div class="grid gap-12 md:grid-cols-3 md:gap-10">
+    <div class="grid gap-12 md:grid-cols-2 md:gap-10 xl:grid-cols-4">
       {skillCategories.map((cat, i) => (
         <div class={`animate-on-scroll stagger-${i}`}>
           <h3 class="border-b border-(--line) pb-3 label-index text-(--ink-muted)">{cat.title[lang]}</h3>
