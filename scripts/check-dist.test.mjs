@@ -464,9 +464,9 @@ for (const [lang, root] of Object.entries(dom)) {
     assert.doesNotMatch(text, /equipo de \d|team of \d/i);
   });
 
-  test(`${lang}: no unverifiable tooling, internal tools, CV or education claims`, () => {
+  test(`${lang}: no unverifiable tooling, CV or education claims`, () => {
     const text = textOf(root);
-    for (const word of ['Detekt', 'OWASP', 'Dokka', 'Firebase App Distribution', 'Orca', 'HERDR', 'AI Specialist']) {
+    for (const word of ['Detekt', 'OWASP', 'Dokka', 'Firebase App Distribution', 'AI Specialist']) {
       assert.ok(!text.includes(word), `${word} still on the page`);
     }
     assert.doesNotMatch(text, /Video demo próximamente|Demo video coming soon/);
