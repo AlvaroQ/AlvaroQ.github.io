@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { strings } = Astro.props;
-// Each segment stays on one line so "Full-Stack" never splits at its hyphen.
+// Each segment stays on one line so "Senior/Staff" never splits at its slash.
 const availability = strings.availableFor.split(' • ');
 // The address may only break before the "@" (never inside "gmail.com").
 const [emailUser, emailDomain] = contact.email.split('@');

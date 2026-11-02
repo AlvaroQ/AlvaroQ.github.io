@@ -26,7 +26,7 @@ const stats: { value: string; unit?: string; label: string }[] = [
 <Section id="career" strings={strings} subtitle={strings.careerSubtitle}>
 
     <!-- Timeline: vertical below lg, horizontal from lg -->
-    <ol class="timeline relative grid gap-10 lg:grid-cols-5 lg:gap-8">
+    <ol class="timeline relative grid gap-10 lg:grid-cols-6 lg:gap-6">
       {career.map((node, i) => (
         <li class={`entry animate-on-scroll relative stagger-${i}`}>
           <span class="dot" aria-hidden="true"></span>
@@ -40,7 +40,7 @@ const stats: { value: string; unit?: string; label: string }[] = [
             </span>
             <p class="label-ui text-(--accent)">{formatPeriod(node.period)}</p>
           </div>
-          <h3 class="mt-4 font-display text-[22px] font-semibold leading-tight text-(--ink)">{node.company}</h3>
+          <h3 class="mt-4 font-display text-[20px] font-semibold leading-tight text-(--ink)">{node.company[lang]}</h3>
           <p class="mt-1 text-sm font-medium text-(--ink)">{node.role[lang]}</p>
           <p class="mt-3 text-sm leading-relaxed text-(--ink-muted)">{node.description[lang]}</p>
           <ul class="mt-4 flex flex-wrap gap-1.5">

@@ -7,7 +7,7 @@ export interface Period {
 }
 
 export interface CareerNode {
-  company: string;
+  company: Localized;
   period: Period;
   role: Localized;
   description: Localized;
@@ -19,8 +19,19 @@ export interface CareerNode {
 
 export const career: CareerNode[] = [
   {
-    company: "TheRanking",
-    period: { from: 2013, to: 2015 },
+    company: { es: "Inicios", en: "Early years" },
+    period: { from: 2011, to: 2013 },
+    role: { es: "Desarrollador web y mobile freelance", en: "Freelance Web & Mobile Developer" },
+    description: {
+      es: "Primeros proyectos web y Android y encargos freelance para clientes.",
+      en: "First web and Android projects and freelance work for clients."
+    },
+    skills: ["Android", "Java", "Web"],
+    icon: "11",
+  },
+  {
+    company: { es: "TheRanking", en: "TheRanking" },
+    period: { from: 2013, to: 2014 },
     role: { es: "Desarrollador Android e iOS", en: "Android & iOS Developer" },
     description: {
       es: "Desarrollo cross-platform con Titanium. Apps startup con integraciones sociales.",
@@ -31,7 +42,7 @@ export const career: CareerNode[] = [
     logo: "logos/logo_theranking.png"
   },
   {
-    company: "TalentoMOBILE",
+    company: { es: "TalentoMOBILE", en: "TalentoMOBILE" },
     period: { from: 2015, to: 2017 },
     role: { es: "Desarrollador Mobile sénior", en: "Senior Mobile Developer" },
     description: {
@@ -43,7 +54,7 @@ export const career: CareerNode[] = [
     logo: "logos/logo_talento.png"
   },
   {
-    company: "Santander UK",
+    company: { es: "Santander UK", en: "Santander UK" },
     period: { from: 2017, to: 2017 },
     role: { es: "Desarrollador sénior y especialista Android", en: "Senior Developer & Android Specialist" },
     description: {
@@ -55,24 +66,24 @@ export const career: CareerNode[] = [
     logo: "logos/logo_santander_uk.png"
   },
   {
-    company: "B-FY",
+    company: { es: "B-FY", en: "B-FY" },
     period: { from: 2018 },
-    role: { es: "Director de desarrollo de apps", en: "App Development Director" },
+    role: { es: "App Development Lead", en: "App Development Lead" },
     description: {
-      es: "Plataforma IDaaS passwordless para protección de identidad contra suplantación. Liderando desarrollo de SDKs en Android, iOS y Desktop con KMP.",
-      en: "Passwordless IDaaS platform for identity protection against impersonation. Leading SDK development across Android, iOS and Desktop with KMP."
+      es: "Plataforma IDaaS passwordless contra la suplantación de identidad. Lidero los SDKs y apps en Android, iOS y desktop con KMP, y un flujo de release dirigido por agentes de IA.",
+      en: "Passwordless IDaaS platform against identity fraud. I lead the SDKs and apps on Android, iOS and desktop with KMP, and an AI agent-driven release flow."
     },
-    skills: ["KMP", "iOS", "Compose", "Ktor"],
+    skills: ["KMP", "iOS", "Appium", "AI agents"],
     icon: "BF",
     logo: "logos/logo_bfy.png"
   },
   {
-    company: "AI Specialist",
+    company: { es: "Proyectos propios · IA", en: "Side projects · AI" },
     period: { from: 2024 },
-    role: { es: "Orquestador de agentes de IA", en: "AI Agent Orchestrator" },
+    role: { es: "Agentes de IA de la idea al producto", en: "AI agents from idea to product" },
     description: {
-      es: "Construyendo sistemas inteligentes con LLMs, agentes autónomos y workflows potenciados por IA.",
-      en: "Building intelligent systems with LLMs, autonomous agents, and AI-powered workflows."
+      es: "Apps publicadas con LLMs y agentes: una competición bursátil entre cinco IAs, análisis de mercado y visión on-device.",
+      en: "Shipped apps with LLMs and agents: a stock-market race between five AIs, market analysis and on-device vision."
     },
     skills: ["Claude", "LangChain", "MCP", "RAG"],
     icon: "AI",

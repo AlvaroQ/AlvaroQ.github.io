@@ -78,7 +78,7 @@ function setup() {
   const input = /** @type {HTMLInputElement} */ (byId('chat-input'));
   const send = /** @type {HTMLButtonElement} */ (byId('chat-send'));
   const fab = byId('chat-fab');
-  const { api = '', lang = 'es', typing = '', error = '' } = root.dataset;
+  const { api = '', lang = 'es', typing = '', error = '', rateLimited = error } = root.dataset;
 
   /**
    * @param {'user' | 'assistant'} role
@@ -129,7 +129,9 @@ function setup() {
       });
       const data = await response.json();
       indicator.remove();
-      addMessage('assistant', typeof data?.answer === 'string' && data.answer ? data.answer : error);
+      // 429: the API limits questions per client and minute. 400 is unreachable from here (maxlength matches).
+      if (response.status === 429) addMessage('assistant', rateLimited);
+      else addMessage('assistant', typeof data?.answer === 'string' && data.answer ? data.answer : error);
     } catch (err) {
       console.error('[chat] request failed', err);
       indicator.remove();

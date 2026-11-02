@@ -42,10 +42,19 @@ export const skillCategories: SkillCategory[] = [
     skills: [
       { name: "Claude / Codex", years: 2, depth: 'core' },
       { name: "Prompt Engineering", years: 2, depth: 'core' },
-      { name: "Pen-testing", years: 3, depth: 'core' },
-      { name: "Gemini / Grok / …", years: 2, depth: 'solid' },
+      { name: "GPT / Gemini / Grok", years: 2, depth: 'solid' },
       { name: "LangChain", years: 2, depth: 'solid' },
-      { name: "MCP / RAG", years: 2, depth: 'solid' }
+      { name: "MCP / RAG", years: 2, depth: 'solid' },
+      { name: "Jenkins / Appium", years: 2, depth: 'solid' }
+    ]
+  },
+  {
+    title: { es: "Seguridad e identidad", en: "Security & Identity" },
+    skills: [
+      { name: "Biometrics", years: 11, depth: 'core' },
+      { name: "Authentication / IDaaS", years: 8, depth: 'core' },
+      { name: "Encryption", years: 8, depth: 'solid' },
+      { name: "Pen-testing", years: 3, depth: 'core' }
     ]
   }
 ];
