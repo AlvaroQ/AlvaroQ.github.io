@@ -408,6 +408,13 @@ for (const [lang, root] of Object.entries(dom)) {
     assert.deepEqual(shots, ['gran-premio-ia', 'gran-premio-ia-telemetry-garage']);
   });
 
+  test(`${lang}: Lotto Scan case opens with the side-by-side phones cover`, () => {
+    const shots = root
+      .querySelectorAll('template[data-case="lotto-scan"] .case-shot img')
+      .map((img) => img.getAttribute('src').match(/\/_astro\/([\w-]+)\./)?.[1]);
+    assert.deepEqual(shots, ['lotto-scan-cover', 'lotto-scan-camera', 'lotto-scan-preview']);
+  });
+
   test(`${lang}: Briefing Mundial case shows the masked overview after the S&P 500 screenshot`, () => {
     const shots = root
       .querySelectorAll('template[data-case="briefing-mundial"] .case-shot img')

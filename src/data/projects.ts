@@ -429,6 +429,7 @@ export const projects: Project[] = [
         en: "UI: Compose Multiplatform (Android + Desktop)\nOCR: PaddleOCR Lite optimized for mobile\nInference: ONNX Runtime for cross-platform\nDB: SQLDelight (type-safe SQL)\nDI: Koin Multiplatform\nAsync: Kotlin Coroutines + Flow"
       },
       screenshots: [
+        "projects/lotto-scan-cover.webp",
         "projects/lotto-scan-camera.webp",
         "projects/lotto-scan-preview.webp"
       ],
