@@ -70,6 +70,18 @@ test('the wall mask marks the image boxes in simulation cells, row 0 at the bott
   assert.equal(mask.filter(Boolean).length, 8);
 });
 
+test('a contained screenshot leaves water on both sides while other media remain full walls', () => {
+  // A 30 × 12 media slot contains a portrait at x 12–18; another full slot sits below it.
+  const mask = wallMask(10, 10, [[12, 0, 18, 12], [0, 18, 30, 30]], { w: 30, h: 30 }, 3);
+  const at = (x, y) => mask[(9 - y) * 10 + x];
+  for (let y = 0; y < 10; y++) {
+    for (let x = 0; x < 10; x++) {
+      const wall = (y < 4 && x >= 4 && x < 6) || y >= 6;
+      assert.equal(at(x, y), wall ? 255 : 0, `cell ${x},${y}`);
+    }
+  }
+});
+
 test('the wall mask clamps boxes that leave the section', () => {
   const mask = wallMask(4, 4, [[-30, -30, 300, 300]], { w: 12, h: 12 }, 3);
   assert.equal(mask.filter(Boolean).length, 16);

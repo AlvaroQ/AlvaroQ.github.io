@@ -37,15 +37,25 @@ const LAYOUT: Record<Props['variant'], MediaLayout> = {
 
 const { caseStudy, links } = project;
 const keys = caseStudy.screenshots;
-const cover = keys[0] ? await mediaFor(keys[0], LAYOUT[variant]) : null;
+// Alpha derivatives belong to the card only; case-study screenshot order stays intact.
+const cardCovers: Record<string, string> = {
+  'lotto-scan': 'projects/lotto-scan-card.webp',
+  'web-scraper-pro': 'projects/scrapper-pro-card.webp',
+};
+const coverKey = cardCovers[project.slug] ?? keys[0];
+const cover = coverKey ? await mediaFor(coverKey, LAYOUT[variant]) : null;
 const number = String(index + 1).padStart(2, '0');
+const imageOnlyObstacle = project.slug === 'rag-chatbot' || project.slug === 'youtube-downloader' || project.slug === 'lotto-scan';
 ---
 
 <article
   class:list={['card media-zoom animate-on-scroll group cursor-pointer', `card-${variant}`, `stagger-${stagger}`]}
 >
   <!-- Contained images sit on the card itself (no plate), so short screenshots do not show an empty box -->
-  <div class:list={['media relative overflow-hidden', cover?.fit === 'contain' ? 'media-contain' : 'bg-(--paper-2)']}>
+  <div
+    class:list={['media relative overflow-hidden', cover?.fit === 'contain' ? 'media-contain' : project.slug !== 'youtube-downloader' && project.slug !== 'lotto-scan' && 'bg-(--paper-2)']}
+    data-ripple-image-only={imageOnlyObstacle ? 'true' : undefined}
+  >
     {cover ? (
       <img
         src={cover.src}

@@ -302,6 +302,18 @@ for (const [lang, root] of Object.entries(dom)) {
   });
 }
 
+// Card alpha overrides must not leak into the modal or change any other card.
+for (const [lang, root] of Object.entries(dom)) {
+  test(`${lang}: other cards still use their first modal screenshot as cover`, () => {
+    const stem = (img) => img.getAttribute('src').match(/\/_astro\/([\w-]+)\./)?.[1];
+    for (const card of root.querySelectorAll('article.card')) {
+      const slug = card.querySelector('[data-open-case]').getAttribute('data-open-case');
+      if (['lotto-scan', 'web-scraper-pro'].includes(slug)) continue;
+      assert.equal(stem(card.querySelector('.media img')), stem(root.querySelector(`template[data-case="${slug}"] .case-shot img`)), slug);
+    }
+  });
+}
+
 test('personal notes and pasted images are not published', () => {
   const stray = walk(dist).filter((f) => /new_proyect\.md$|orca-paste-/.test(f));
   assert.deepEqual(stray, []);
@@ -498,10 +510,36 @@ for (const [lang, root] of Object.entries(dom)) {
     assert.ok(links.slice(1).every((a) => a.classList.contains('btn-ghost')));
   });
 
-  test(`${lang}: the hero shows one proof line`, () => {
-    const proof = root.querySelectorAll('.hero .proof');
-    assert.equal(proof.length, 1);
-    assert.ok(proof[0].textContent.includes(BRAND[lang].proof));
+  test(`${lang}: the hero no longer shows the release proof line`, () => {
+    assert.equal(root.querySelectorAll('.hero .proof').length, 0);
+    assert.ok(!textOf(root.querySelector('.hero')).includes(BRAND[lang].proof));
+  });
+
+  test(`${lang}: the hero lists mobile, web and AI`, () => {
+    assert.equal(root.querySelector('.hero .eyebrow').textContent.trim(),
+      lang === 'es' ? 'Madrid · 15+ años · Mobile · WEB · IA' : 'Madrid · 15+ years · Mobile · WEB · AI');
+  });
+
+  test(`${lang}: the hero lists the requested technologies`, () => {
+    assert.equal(root.querySelector('.hero .platforms').textContent.trim(),
+      lang === 'es' ? 'agentes IA · Kotlin · KMP · Swift · CI/CD' : 'AI agents · Kotlin · KMP · Swift · CI/CD');
+  });
+
+  test(`${lang}: only RAG, YouTube and Lotto use their screenshots as the ripple obstacle without a background plate`, () => {
+    const cards = root.querySelectorAll('article.card');
+    const imageOnlySlugs = ['rag-chatbot', 'youtube-downloader', 'lotto-scan'];
+    for (const slug of imageOnlySlugs) {
+      const card = cards.find((card) => card.querySelector(`[data-open-case="${slug}"]`));
+      assert.ok(card, `${slug} card missing`);
+      const media = card.querySelector('.media');
+      assert.ok(media.querySelector('img'), `${slug} screenshot missing`);
+      assert.equal(media.getAttribute('data-ripple-image-only'), 'true', slug);
+      assert.ok(!media.classList.contains('bg-(--paper-2)'), `${slug} has a background plate`);
+    }
+    assert.equal(root.querySelectorAll('[data-ripple-image-only]').length, 3);
+    for (const card of cards.filter((card) => !imageOnlySlugs.includes(card.querySelector('[data-open-case]').getAttribute('data-open-case')))) {
+      assert.ok(!card.querySelector('.media').hasAttribute('data-ripple-image-only'));
+    }
   });
 }
 

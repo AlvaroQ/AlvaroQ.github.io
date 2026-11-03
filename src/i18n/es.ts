@@ -11,11 +11,10 @@ export const es = {
 
   // Header (ink signature hero)
   name: "Álvaro Quintana",
-  heroEyebrow: `Madrid · ${YEARS_IN_TECH}+ años · Kotlin/KMP · Seguridad`,
+  heroEyebrow: `Madrid · ${YEARS_IN_TECH}+ años · Mobile · WEB · IA`,
   heroHeadline: "AI Engineer",
   heroHeadlineEm: "con base mobile",
-  platforms: "Agentes IA · Kotlin/KMP · Android · iOS · CI/CD · Web",
-  heroProof: "App Development Lead en B-FY · De semanas a media hora: releases verificadas por agentes de IA",
+  platforms: "agentes IA · Kotlin · KMP · Swift · CI/CD",
   heroCtaEmail: "Escríbeme",
   emailSubject: "Contacto desde alvaroq.github.io",
   inkPause: "Pausar tinta",

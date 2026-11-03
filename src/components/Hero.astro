@@ -1,5 +1,5 @@
 ---
-// Hero: eyebrow, the ink name, headline, proof line, platforms + ink pause, CTAs, and the watermark behind.
+// Hero: eyebrow, the ink name, headline, platforms + ink pause, CTAs, and the watermark behind.
 import type { Strings } from '../i18n';
 import { contact } from '../data/contact';
 import InkName from './InkName.astro';
@@ -18,7 +18,6 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(strings.ema
     <p class="eyebrow label-index hero-enter">{strings.heroEyebrow}</p>
     <InkName name={strings.name} />
     <p class="headline hero-enter step-2">{strings.heroHeadline} <em>{strings.heroHeadlineEm}</em></p>
-    <p class="proof hero-enter step-2">{strings.heroProof}</p>
     <div class="platforms-row hero-enter step-2">
       <p class="platforms">{strings.platforms}</p>
       <button
@@ -111,13 +110,6 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(strings.ema
     font-style: italic;
     white-space: nowrap;
     color: var(--accent);
-  }
-
-  .proof {
-    font-size: 15px;
-    line-height: 1.5;
-    color: var(--ink-2);
-    max-width: 60ch;
   }
 
   .platforms {

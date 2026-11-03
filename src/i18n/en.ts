@@ -12,11 +12,10 @@ export const en: Strings = {
 
   // Header (ink signature hero)
   name: "Álvaro Quintana",
-  heroEyebrow: `Madrid · ${YEARS_IN_TECH}+ years · Kotlin/KMP · Security`,
+  heroEyebrow: `Madrid · ${YEARS_IN_TECH}+ years · Mobile · WEB · AI`,
   heroHeadline: "AI Engineer",
   heroHeadlineEm: "with a mobile background",
-  platforms: "AI agents · Kotlin/KMP · Android · iOS · CI/CD · Web",
-  heroProof: "App Development Lead at B-FY · From weeks to half an hour: releases verified by AI agents",
+  platforms: "AI agents · Kotlin · KMP · Swift · CI/CD",
   heroCtaEmail: "Email me",
   emailSubject: "Contact from alvaroq.github.io",
   inkPause: "Pause ink",

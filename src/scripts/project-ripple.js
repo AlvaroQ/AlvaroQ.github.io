@@ -177,7 +177,9 @@ export function init(scope, { shader, color }) {
     size = { w: r.width, h: r.height };
     resizeTargets(Math.max(2, Math.round(size.w / TUNE.sim)), Math.max(2, Math.round(size.h / TUNE.sim)));
     holes = [...scope.querySelectorAll('.media')].map((m) => {
-      const b = m.getBoundingClientRect();
+      // RAG's contained screenshot leaves open water around it, not a rectangular plate.
+      const obstacle = m.hasAttribute('data-ripple-image-only') ? (m.querySelector('img') ?? m) : m;
+      const b = obstacle.getBoundingClientRect();
       return [b.left - r.left, b.top - r.top, b.right - r.left, b.bottom - r.top];
     });
     uploadWalls(wallMask(simW, simH, holes, size, TUNE.sim));
@@ -306,6 +308,8 @@ export function init(scope, { shader, color }) {
   // Card heights change with the viewport (and the fonts): keep the section map in sync.
   const ro = new ResizeObserver(() => measure());
   ro.observe(scope);
+  // A lazy image can resize inside a fixed media box without changing the section height.
+  for (const img of scope.querySelectorAll('.media[data-ripple-image-only] img')) ro.observe(img);
 
   // Context loss: the section goes back to exactly how it is without the effect.
   canvas.addEventListener('webglcontextlost', () => {
